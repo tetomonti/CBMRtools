@@ -2,9 +2,6 @@
 .Rhistory
 .RData
 
-# compiled files
-*.pyc
-
 # temp files
 \#*\#
 *~
