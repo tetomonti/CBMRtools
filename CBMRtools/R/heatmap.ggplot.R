@@ -374,7 +374,7 @@ heatmap.ggplot2<-function(eSet,
   	} else{
 
 	  	col.meta<-pData(eSet)[col.ord, ]
-	  	for (i in 1:ncol(col.meta)){
+	  	for (i in col.lab){
 	  		col.meta[,i]<-strtrim(col.meta[,i], legend.lab.max.char)
 	  	}
 	 	meta.c<-data.frame(type = vector(), id = vector(), num = vector() )
@@ -454,7 +454,7 @@ heatmap.ggplot2<-function(eSet,
   	} else {
 
 	  	row.meta<-fData(eSet)[row.ord,]
-	  	for (i in 1:ncol(row.meta)){
+	  	for (i in row.lab){
 	  		row.meta[,i]<-strtrim(row.meta[,i], legend.lab.max.char)
 	  	}
 	 	meta.r<-data.frame(type = vector(), id = vector(), num = vector() )
