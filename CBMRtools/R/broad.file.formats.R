@@ -79,6 +79,8 @@ setGeneric("genenames",function(object){standardGeneric("genenames")})
 #' @export
 setMethod(f="genenames",signature="gctdata",
           definition=function(object) { return ( rownames(object@signal) ) } )
+setMethod(f="featureNames",signature="gctdata",
+          definition=function(object) { return ( rownames(object@signal) ) } )
 
 setGeneric("genenames<-",function(object,value){standardGeneric("genenames<-")})
 #' @export
@@ -94,6 +96,8 @@ setReplaceMethod(f="genenames",
 setGeneric("exptnames",function(object){standardGeneric("exptnames")})
 #' @export
 setMethod(f="exptnames",signature="gctdata",
+          definition=function(object) { return ( colnames(object@signal) ) } )
+setMethod(f="sampleNames",signature="gctdata",
           definition=function(object) { return ( colnames(object@signal) ) } )
 
 setGeneric("exptnames<-",function(object,value){standardGeneric("exptnames<-")})
@@ -631,7 +635,15 @@ subset.all <- function( dat, cls, subfile=NULL, subset=NULL, verbose=FALSE )
   VERBOSE( verbose, "done, [", paste(dim(dat),collapse=" x "), "] data entries.\n", sep="" )
   list( data=dat, cls=cls )
 }
-
+###############################################################################################
+## definition of functions for ExpressionSet object (not sure it's kosher)
+##
+setMethod("getDescription","ExpressionSet", function(object) {
+    if ( length(idx <- grep('symbol',colnames(fData(object)), ignore.case=TRUE))==1 )
+        return( fData(object)[,idx] )
+    else
+        return( featureNames(object) )
+})
 ###############################################################################################
 ###############################################################################################
 if (FALSE)

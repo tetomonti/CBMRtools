@@ -168,7 +168,7 @@ match.index <- function( key, names, ignore.case=FALSE )
   if ( ignore.case ) {
     key <- toupper(key); names <- toupper(names)
   }
-  if ( length(grep(key,names))>1 ) {
+  if ( length(mmatch(key,names))>1 ) {
     warning('multiple matches, returning first only')
   }
   idx <- match(key,names)
@@ -564,7 +564,7 @@ genIndex <- function( X, base=0, add.levels=TRUE, do.sort=FALSE )
 {
   idx <- match( X, if (do.sort) sort(unique(X)) else unique(X) ) + (base-1)
   if ( add.levels )
-    levels(idx) <- if (is.null(levels(X))) unique(idx) else levels(X)
+    levels(idx) <- if (is.null(levels(X))) unique(X) else levels(X)
   idx
 }
 ## depends on library(xlsx)
