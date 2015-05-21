@@ -61,12 +61,12 @@ GeneSet <- setClass("GeneSet",
                               type="hgnc_symbol",  
                               do.save=TRUE, 
                               verbose=FALSE, 
-                              name=NULL))
+                              name=character(0)))
 
 ## GeneSet constructor
 #' @export
 setMethod("initialize", "GeneSet",
-  function(.Object, source.file=NULL, geneset=NULL, type="hgnc_symbol", do.save=TRUE, verbose=FALSE, name=NULL) {
+  function(.Object,source.file=character(0),geneset=NULL,type="hgnc_symbol",do.save=TRUE,verbose=FALSE,name=character(0)) {
     if (is(geneset, "GeneSet")) {
        .Object <- GeneSet(geneset@source.file,
                           geneset@geneset, 
@@ -76,7 +76,14 @@ setMethod("initialize", "GeneSet",
                           name=geneset@name)
        
     }
-    else if (is(source.file, "character") && length(source.file) == 1) {
+    else if ( is.list(geneset) && length(source.file)==0 ) {
+        .Object@verbose <- verbose
+        .Object@do.save <- do.save
+        .Object@source.file <- "stdin"
+        .Object@geneset <- geneset
+        .Object@name<-name
+    }
+    else if ( is(source.file, "character") && length(source.file) == 1) {
         .Object@verbose <- verbose
         .Object@do.save <- do.save
         
@@ -141,3 +148,18 @@ setReplaceMethod("setGeneSet",
                      validObject(object)
                      return(object)
                  })
+
+## READ GMT
+##
+## Read gmt file into a named list
+##
+read.gmt <- function( gmtfile, verbose=TRUE )
+{
+  gsets <- lapply(scan(gmtfile,what="character",sep="\n",quiet=TRUE),
+                  function(z) unlist(strsplit(z,"\t"))[-2])
+  names(gsets) <- sapply(gsets,function(z) z[1])
+  
+  ## *** IMPORTANT: all gene names are 'upper-cased' and replicates are removed ***
+  gsets <- lapply(gsets,function(z) {z <- z[-1]; unique(toupper(z[z!=""]))}) # <== upper-case + removal
+  gsets
+}

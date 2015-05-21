@@ -182,22 +182,6 @@ nnAnalysis <- function
            description=getDescription(dat)[match(rownames(nn.perm$pval),genenames(dat))],check.names=FALSE),
        nperm=nn.perm$nperm)
 }
-nnAnalysis.4gp <- function( gp.filename, gene.name, out.filename,
-                             score=c("pearson","spearman","euclid"),
-                             nperm=100, verbose=T )
-{
-  score <- match.arg(score)
-  nperm <- as.numeric(nperm)
-  prob <- as.numeric(prob)
-
-  res <- read.res( gp.filename, verbose=verbose )
-  x <- nnAnalysis( res, y.i=match(gene.name,rownames(res)),
-                    score=score, nperm=nperm, verbose=verbose )
-
-  my.write.matrix( x, justify="none", sep="\t", row.names=T, file=out.filename )
-  VERBOSE( verbose, "output saved to file '", out.filename, "'.\n", sep="" )
-  out.filename
-}
 ## EXAMPLE OF USE (not assuming existence of CBMRtools package)
 ##
 if ( FALSE )
@@ -206,18 +190,18 @@ if ( FALSE )
   CBMGIT <- Sys.getenv('CBMGIT')
   if (CBMGIT=="") stop( "Use 'setenv CBMGIT ..' to set CBMgithub's base directory" )
 
-  source(paste(CBMGIT,"scripts/R/CBMRtools/R/misc.R",sep="/"))
-  source(paste(CBMGIT,"scripts/R/CBMRtools/R/misc.math.R",sep="/"))
-  source(paste(CBMGIT,"scripts/R/CBMRtools/R/broad.file.formats.R",sep="/"))
-  source(paste(CBMGIT,"scripts/R/CBMRtools/R/permute.array.R",sep="/"))
-  source(paste(CBMGIT,"scripts/R/CBMRtools/R/perm.1side.R",sep="/"))
-  source(paste(CBMGIT,"scripts/R/CBMRtools/R/perm.2side.R",sep="/"))
-  source(paste(CBMGIT,"scripts/R/CBMRtools/R/diffanal.scores.R",sep="/"))
-  source(paste(CBMGIT,"scripts/R/CBMRtools/R/nnAnalysis.R",sep="/"))
+  source(paste(CBMGIT,"CBMRtools/CBMRtools/R/misc.R",sep="/"))
+  source(paste(CBMGIT,"CBMRtools/CBMRtools/R/misc.math.R",sep="/"))
+  source(paste(CBMGIT,"CBMRtools/CBMRtools/R/broad.file.formats.R",sep="/"))
+  source(paste(CBMGIT,"CBMRtools/CBMRtools/R/permute.array.R",sep="/"))
+  source(paste(CBMGIT,"CBMRtools/CBMRtools/R/perm.1side.R",sep="/"))
+  source(paste(CBMGIT,"CBMRtools/CBMRtools/R/perm.2side.R",sep="/"))
+  source(paste(CBMGIT,"CBMRtools/CBMRtools/R/diffanal.scores.R",sep="/"))
+  source(paste(CBMGIT,"CBMRtools/CBMRtools/R/nnAnalysis.R",sep="/"))
   
   require(Biobase)
   
-  eSet.brca.100 <- load.var(paste(CBMGIT,"scripts/R/CBMRtools/data/eSet.brca.100.rda",sep='/'))
+  eSet.brca.100 <- load.var(paste(CBMGIT,"CBMRtools/CBMRtools/data/eSet.brca.100.rda",sep='/'))
 
   ## passing the actual vector as argument
   ##
