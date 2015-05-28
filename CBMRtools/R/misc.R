@@ -146,6 +146,7 @@ dir.test <- function( dirname )
   }
   T
 }
+#' @export
 mmatch <- function( x, y )
 {
   #unlist(lapply( x, function(z) which(y==z) ))
@@ -370,11 +371,13 @@ read.csv.delim <- function(file,header=T,sep=",",stringsAsFactors=F,check.names=
   read.csv(file,header=header,sep=sep,stringsAsFactors=stringsAsFactors,check.names=check.names,
            blank.lines.skip=blank.lines.skip,...)
 }
+#' @export
 read.tab.delim <- function(file,header=T,sep="\t",stringsAsFactors=F,check.names=F,blank.lines.skip=T,...)
 {
   read.delim(file,header=header,sep=sep,stringsAsFactors=stringsAsFactors,check.names=check.names,
              blank.lines.skip=blank.lines.skip,...)
 }
+#' @export
 read.delim.wsave <- function(file,do.save=T,force.read=F,verbose=T,ext=".RData",...)
 {
   binfile <- paste(file.stub(file),ext,sep="")
@@ -514,6 +517,7 @@ table2list <- function( tab, header=TRUE, fill=NA )
 }
 ## write.table wrapper that adds a column header to row names column, if specified
 ##
+#' @export
 my.write.table <- function(x, file="", append=F, sep="\t", row.names=T, col.names=T, names=NULL, dec=".", 
                            quote=F, eol="\n", na="NA", qmethod=c("escape", "double"), fileEncoding="",newline=0)
 {
@@ -536,6 +540,7 @@ list.append <- function( LIST, item, name=NULL )
   names(LIST)[length(LIST)] <- name
   LIST
 }
+#' @export
 col.gradient <- function( cols, length, cmax=255 )
 {
   ## e.g., to create a white-to-red gradient with 10 levels
@@ -560,6 +565,7 @@ genName <- function( stub=NULL )
 ## map any type of vector (e.g., vector of strings) to a vector of
 ## consecutive numbers (starting at base)
 ##
+#' @export
 genIndex <- function( X, base=0, add.levels=TRUE, do.sort=FALSE )
 {
   idx <- match( X, if (do.sort) sort(unique(X)) else unique(X) ) + (base-1)
@@ -571,6 +577,7 @@ genIndex <- function( X, base=0, add.levels=TRUE, do.sort=FALSE )
 ##
 ## write a list of matrices (or data.frames) to a multi-sheet excell workbook
 ##
+#' @export
 multi.write.xlsx <- function
 (
  LIST,       # named list of data.frames; list names will be used as sheet names
