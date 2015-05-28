@@ -152,6 +152,7 @@ mmatch <- function( x, y )
   #unlist(lapply( x, function(z) which(y==z) ))
   unlist(lapply( x, function(z) { tmp <- which(y==z); names(tmp) <- rep(z,length(tmp)); tmp}))
 }
+#' @export
 match.nona <- function( a1, a2, na.rm=F, suppressWarnings=F )
 {
   if ( any(is.na(idx <- match(a1,a2))) )
@@ -164,6 +165,7 @@ match.nona <- function( a1, a2, na.rm=F, suppressWarnings=F )
       stop( "mismatch | missing in a2: ", paste(a1[is.na(idx)],collapse=", ") )
   idx[!is.na(idx)]
 }
+#' @export
 match.index <- function( key, names, ignore.case=FALSE )
 {
   if ( ignore.case ) {
@@ -176,6 +178,7 @@ match.index <- function( key, names, ignore.case=FALSE )
   if (is.na(idx)) stop( "index not found: ", key )
   return( idx )
 }
+#' @export
 plot.norm <- function( n=1000, mean=0, sd=1, add=F, lty="solid", ...)
 {
   p <- (1:(n-1))/n
@@ -186,6 +189,7 @@ plot.norm <- function( n=1000, mean=0, sd=1, add=F, lty="solid", ...)
     plot( qnorm(p,mean=mean,sd=sd), dnorm( qnorm(p,mean=mean,sd=sd),mean=mean,sd=sd ),type="l", lty=lty, ...)
   }
 }
+#' @export
 cumineq <- function( prm, obs, dir=1, debug=F )
 {
   ## INPUT:
