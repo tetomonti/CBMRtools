@@ -7,10 +7,9 @@
 #' @param f.name file name (appended to file header)
 #' @export
 
-save.xlsx<-function(x, f.dir = NA, f.header = "", f.name){
-	options(java.parameters = "-Xmx3g" )
+save.xlsx<-function(x, f.dir = NA, f.header = "", f.name, java.param = "-Xmx3g"){
+	options(java.parameters = java.param )
 	#require(XLConnect)
-
 	# Load workbook (create if not existing)
 	if(is.na(f.dir)) 
 		wb.name<-paste(f.name, ".xlsx", sep = "")

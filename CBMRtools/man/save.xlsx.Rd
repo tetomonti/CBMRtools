@@ -4,7 +4,7 @@
 \alias{save.xlsx}
 \title{\code{save.xlsx} save to .xlsx}
 \usage{
-save.xlsx(x, f.dir = NA, f.header = "", f.name)
+save.xlsx(x, f.dir = NA, f.header = "", f.name, java.param = "-Xmx3g")
 }
 \arguments{
 \item{x}{R object to save, must be a named list of data.frames, row limit =65535 for each data frame}
