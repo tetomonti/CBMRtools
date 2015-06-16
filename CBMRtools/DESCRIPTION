@@ -19,5 +19,7 @@ Depends:
     RColorBrewer,
     scales,
     survival
+Imports:
+    XLConnect
 License: Boston University
 LazyData: true

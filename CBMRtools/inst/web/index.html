@@ -14,6 +14,18 @@
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
   </head>
 
   <body>
@@ -50,9 +62,6 @@
         <code><a href="CBMRtools.html">CBMRtools</a></code>(CBMRtools-package)<br />CBMRtools</li>
             
       <li>
-        <code><a href="GeneSet-class.html">GeneSet-class</a></code>(GeneSet)<br />GeneSet</li>
-            
-      <li>
         <code><a href="eSet.brca.100.html">eSet.brca.100</a></code><br />Example dataset
 </li>
             
@@ -61,6 +70,9 @@
             
       <li>
         <code><a href="geneNormalization.html">geneNormalization</a></code><br />geneNormalization</li>
+            
+      <li>
+        <code><a href="GeneSet-class.html">GeneSet-class</a></code>(GeneSet)<br />GeneSet</li>
             
       <li>
         <code><a href="geneSetProjection.html">geneSetProjection</a></code><br />geneSetProjection</li>
@@ -86,6 +98,9 @@
         <code><a href="resdata-class.html">resdata-class</a></code><br />resdata</li>
             
       <li>
+        <code><a href="save.xlsx.html">save.xlsx</a></code><br />save.xlsx</li>
+            
+      <li>
         <code><a href="variationFilter.html">variationFilter</a></code><br />variationFilter</li>
     
     </ul>
@@ -96,9 +111,9 @@
     <h2>Dependencies</h2>
     <ul>
       <li><strong>Depends</strong>: ggplot2, ggdendro, combinat, cba, grid, proxy, stats, Biobase, reshape2, gridExtra, gtable, RColorBrewer, scales, survival</li>
-      <li><strong>Imports</strong>: </li>
-      <li><strong>Suggests</strong>: </li>
-      <li><strong>Extends</strong>: </li>
+      <li><strong>Imports</strong>: XLConnect</li>
+      
+      
     </ul>
     <h2>Authors</h2>
     <ul>

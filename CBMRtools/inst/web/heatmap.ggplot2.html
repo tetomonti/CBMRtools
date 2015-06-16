@@ -14,6 +14,18 @@
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
   </head>
 
   <body>
@@ -171,7 +183,8 @@ cuttree.col = 4, cuttree.row = 3,
 verbose = TRUE, show = FALSE)
 p3$heatmap
 </div>
-<p><img src='heatmap.ggplot2-6.png' alt='' width='540' height='400' /></p>
+<strong class='error'>Error in UseMethod(&quot;depth&quot;): no applicable method for &#39;depth&#39; applied to an object of class &quot;NULL&quot;</strong>
+<p><img src='heatmap.ggplot2-7.png' alt='' width='540' height='400' /></p>
 <div class='input'>
 meta.c.lab&lt;-levels(unique(p3$meta.c$id))
 meta.c.color.string&lt;-c(&quot;yellow&quot;, &quot;khaki3&quot;, &quot;gold&quot;, &quot;chocolate&quot;, &quot;darkred&quot;, &quot;cyan&quot;, &quot;white&quot;)
@@ -199,7 +212,8 @@ cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
 p4
 </div>
-<p><img src='heatmap.ggplot2-8.png' alt='' width='540' height='400' /></p>
+<strong class='error'>Error in UseMethod(&quot;depth&quot;): no applicable method for &#39;depth&#39; applied to an object of class &quot;NULL&quot;</strong>
+<p><img src='heatmap.ggplot2-10.png' alt='' width='540' height='400' /></p>
 <div class='input'>
 #ggsave(p1, file = &quot;p1.pdf&quot;)
 #ggsave(p2, file = &quot;p2.pdf&quot;)
