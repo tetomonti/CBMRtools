@@ -14,6 +14,8 @@ save.xlsx(x, f.dir = NA, f.header = "", f.name, java.param = "-Xmx3g")
 \item{f.header}{file header}
 
 \item{f.name}{file name (appended to file header)}
+
+\item{java.param}{max java memory, default =  "-Xmx3g"}
 }
 \description{
 \code{save.xlsx} save to .xlsx

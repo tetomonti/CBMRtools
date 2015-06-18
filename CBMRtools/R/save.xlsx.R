@@ -5,6 +5,7 @@
 #' @param f.dir directory to save to, default = NA, current working directory
 #' @param f.header file header
 #' @param f.name file name (appended to file header)
+#' @param java.param max java memory, default =  "-Xmx3g"
 #' @export
 
 save.xlsx<-function(x, f.dir = NA, f.header = "", f.name, java.param = "-Xmx3g"){

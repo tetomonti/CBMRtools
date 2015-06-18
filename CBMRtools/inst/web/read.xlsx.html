@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>save.xlsx. CBMRtools 0.1</title>
+<title>read.xlsx. CBMRtools 0.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="">
 
@@ -47,23 +47,17 @@
         
       </header>
       
-      <h1><code>save.xlsx</code> save to .xlsx</h1>
+      <h1><code>read.xlsx</code> read from .xlsx</h1>
 
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre><div>save.xlsx(x, f.dir&nbsp;=&nbsp;NA, f.header&nbsp;=&nbsp;"", f.name, java.param&nbsp;=&nbsp;"-Xmx3g")</div></pre>
+    <pre><div>read.xlsx(file, java.param&nbsp;=&nbsp;"-Xmx3g")</div></pre>
     
     <h2>Arguments</h2>
     <dl>
-      <dt>x</dt>
-      <dd>R object to save, must be a named list of data.frames, row limit =65535 for each data frame</dd>
-      <dt>f.dir</dt>
-      <dd>directory to save to, default = NA, current working directory</dd>
-      <dt>f.header</dt>
-      <dd>file header</dd>
-      <dt>f.name</dt>
-      <dd>file name (appended to file header)</dd>
+      <dt>file</dt>
+      <dd>the xlsx file to read from, may contain multiple sheets</dd>
       <dt>java.param</dt>
       <dd>max java memory, default =  "-Xmx3g"</dd>
     </dl>
@@ -71,13 +65,13 @@
     <div class="Description">
       <h2>Description</h2>
 
-      <p><code>save.xlsx</code> save to .xlsx</p>
+      <p><code>read.xlsx</code> read from .xlsx</p>
   
     </div>
       </div>
   <div class="span4">
     <!-- <ul>
-      <li>save.xlsx</li>
+      <li>read.xlsx</li>
     </ul>
     <ul>
       
