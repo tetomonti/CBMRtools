@@ -28,5 +28,6 @@ save.xlsx<-function(x, f.dir = NA, f.header = "", f.name, java.param = "-Xmx3g")
 		writeWorksheet(wb, x[[i]], sheet = i, startRow = 1, startCol = 1)
 	}
 	saveWorkbook(wb)
+	xlcFreeMemory()
 }
 

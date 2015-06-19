@@ -13,6 +13,7 @@ read.xlsx <- function( file, java.param = "-Xmx3g")
 	for (i in wb.names){
 		res[[i]]<-readWorksheet(wb, sheet = i)
 	}
+	xlcFreeMemory()
 	return(res)
 }
 
