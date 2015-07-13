@@ -20,6 +20,7 @@ Depends:
     scales,
     survival
 Imports:
-    XLConnect
+    XLConnect,
+    data.table
 License: Boston University
 LazyData: true
