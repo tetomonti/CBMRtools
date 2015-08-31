@@ -2,7 +2,7 @@
 % Please edit documentation in R/read.xlsx.R
 \name{read.xlsx}
 \alias{read.xlsx}
-\title{\code{read.xlsx} read from .xlsx}
+\title{read from .xlsx}
 \usage{
 read.xlsx(file, java.param = "-Xmx3g")
 }
@@ -12,6 +12,6 @@ read.xlsx(file, java.param = "-Xmx3g")
 \item{java.param}{max java memory, default =  "-Xmx3g"}
 }
 \description{
-\code{read.xlsx} read from .xlsx
+read from .xlsx
 }
 

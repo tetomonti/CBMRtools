@@ -1,5 +1,5 @@
 
-#' \code{read.xlsx} read from .xlsx  
+#' read from .xlsx  
 #' @import XLConnect
 #' @param file the xlsx file to read from, may contain multiple sheets
 #' @param java.param max java memory, default =  "-Xmx3g"

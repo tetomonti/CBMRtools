@@ -2,7 +2,7 @@
 % Please edit documentation in R/hyperEnrichment.R
 \name{hyperEnrichment}
 \alias{hyperEnrichment}
-\title{hyperEnrichment}
+\title{Carry out set enrichment test based on hyper-geometric distribution}
 \usage{
 hyperEnrichment(drawn, categories,
   ntotal = length(unique(unlist(categories))), min.drawsize = 4,
@@ -23,7 +23,7 @@ hyperEnrichment(drawn, categories,
 a data.frame with rows indexed by the signature(s) tested
 }
 \description{
-\code{hyperEnrichment} carry out set enrichment test based on hyper-geometric distribution
+Carry out set enrichment test based on hyper-geometric distribution
 }
 \examples{
 # load objects hyperSig (a list of signatures) and hyperGsets (a GeneSet object)

@@ -53,64 +53,100 @@
 
     <h2>Help topics</h2>
 
-    <h3></h3>
-    
+    <h3>Excel reading and writing</h3>
+    <p>These functions are used to read from and write to excel files</p>
+
     
     <ul class="index">
         
       <li>
-        <code><a href="CBMRtools.html">CBMRtools</a></code>(CBMRtools-package)<br />CBMRtools</li>
+        <code><a href="read.xlsx.html">read.xlsx</a></code><br />read from .xlsx</li>
             
       <li>
-        <code><a href="collapse.probes.html">collapse.probes</a></code><br />collapse.probes</li>
+        <code><a href="save.xlsx.html">save.xlsx</a></code><br />save to .xlsx</li>
+    
+    </ul>
+    <h3>Algorithms for gene expression based analysis</h3>
+    <p>These functions perform gene expression based statistical analysis</p>
+
+    
+    <ul class="index">
+        
+      <li>
+        <code><a href="hyperEnrichment.html">hyperEnrichment</a></code><br />Carry out set enrichment test based on hyper-geometric distribution</li>
             
       <li>
-        <code><a href="eSet.brca.100.html">eSet.brca.100</a></code><br />Example dataset
+        <code><a href="nnAnalysis.html">nnAnalysis</a></code><br />nnAnalysis</li>
+            
+      <li>
+        <code><a href="oligo_wrapper.html">oligo_wrapper</a></code><br />wrapper script for microarray gene ST chips processing into expression set object</li>
+            
+      <li>
+        <code><a href="geneSetProjection.html">geneSetProjection</a></code><br />map a gene-level dataset to a geneset-level dataset based on control-treatment pairing
 </li>
+    
+    </ul>
+    <h3>Support functions</h3>
+    <p>Support functions for gene expression based analysis</p>
+
+    
+    <ul class="index">
+        
+      <li>
+        <code><a href="variationFilter.html">variationFilter</a></code><br />subset an expression dataset by extracting genes based on their level of variation</li>
             
       <li>
-        <code><a href="gctdata-class.html">gctdata-class</a></code><br />gctdata</li>
+        <code><a href="collapse.probes.html">collapse.probes</a></code><br />collapse eSet object by non-unique row feature IDs</li>
+            
+      <li>
+        <code><a href="to.eSet.html">to.eSet</a></code><br />construct an eSet object</li>
             
       <li>
         <code><a href="geneNormalization.html">geneNormalization</a></code><br />geneNormalization</li>
-            
+    
+    </ul>
+    <h3>Datasets</h3>
+    <p>Datasets used in examples</p>
+
+    
+    <ul class="index">
+        
       <li>
-        <code><a href="GeneSet-class.html">GeneSet-class</a></code>(GeneSet)<br />GeneSet</li>
-            
-      <li>
-        <code><a href="geneSetProjection.html">geneSetProjection</a></code><br />geneSetProjection</li>
+        <code><a href="eSet.brca.100.html">eSet.brca.100</a></code><br />Example dataset
+</li>
             
       <li>
         <code><a href="gspData.html">gspData</a></code><br />Example dataset
 </li>
             
       <li>
-        <code><a href="heatmap.ggplot2.html">heatmap.ggplot2</a></code><br />heatmap.ggplot2</li>
-            
-      <li>
         <code><a href="hyper.html">hyper</a></code><br />Example dataset
 </li>
             
       <li>
-        <code><a href="hyperEnrichment.html">hyperEnrichment</a></code><br />hyperEnrichment</li>
-            
-      <li>
-        <code><a href="nnAnalysis.html">nnAnalysis</a></code><br />nnAnalysis</li>
-            
-      <li>
-        <code><a href="read.xlsx.html">read.xlsx</a></code><br />read.xlsx</li>
-            
-      <li>
         <code><a href="resdata-class.html">resdata-class</a></code><br />resdata</li>
+    
+    </ul>
+    <h3>Documentation related pages</h3>
+    <p>These are pages purely associated with documentation</p>
+
+    
+    <ul class="index">
+        
+      <li>
+        <code><a href="CBMRtools.html">CBMRtools</a></code>(CBMRtools-package)<br />CBMRtools</li>
+    
+    </ul>
+    <h3>Other</h3>
+    
+    
+    <ul class="index">
+        
+      <li>
+        <code><a href="gctdata-class.html">gctdata-class</a></code><br />gctdata</li>
             
       <li>
-        <code><a href="save.xlsx.html">save.xlsx</a></code><br />save.xlsx</li>
-            
-      <li>
-        <code><a href="to.eSet.html">to.eSet</a></code><br />to.eSet</li>
-            
-      <li>
-        <code><a href="variationFilter.html">variationFilter</a></code><br />variationFilter</li>
+        <code><a href="GeneSet-class.html">GeneSet-class</a></code>(GeneSet)<br />GeneSet</li>
     
     </ul>
   </div>
@@ -120,7 +156,7 @@
     <h2>Dependencies</h2>
     <ul>
       <li><strong>Depends</strong>: ggplot2, ggdendro, combinat, cba, grid, proxy, stats, Biobase, reshape2, gridExtra, gtable, RColorBrewer, scales, survival</li>
-      <li><strong>Imports</strong>: XLConnect, data.table</li>
+      <li><strong>Imports</strong>: XLConnect, data.table, oligo, oligoClasses</li>
       
       
     </ul>

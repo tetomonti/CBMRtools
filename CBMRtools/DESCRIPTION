@@ -21,6 +21,8 @@ Depends:
     survival
 Imports:
     XLConnect,
-    data.table
-License: Boston University
+    data.table,
+    oligo,
+    oligoClasses
+License: MIT + file LICENSE
 LazyData: true

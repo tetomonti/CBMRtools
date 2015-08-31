@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>collapse.probes. CBMRtools 0.1</title>
+<title>oligo_wrapper. CBMRtools 0.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="">
 
@@ -47,35 +47,49 @@
         
       </header>
       
-      <h1>collapse eSet object by non-unique row feature IDs</h1>
+      <h1>wrapper script for microarray gene ST chips processing into expression set object</h1>
 
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre><div>collapse.probes(eset, fdat.id&nbsp;=&nbsp;"SYMBOL", method&nbsp;=&nbsp;c("single.mad", "summarize.mean", "summarize.median", "summarize.max", "summarize.min"))</div></pre>
+    <pre><div>oligo_wrapper(indir, outdir, header)</div></pre>
     
     <h2>Arguments</h2>
     <dl>
-      <dt>fdat.id</dt>
-      <dd>feature id to collapse on</dd>
-      <dt>method</dt>
-      <dd>= "single" or "summarize" followed by "." followed by "mean", "median", "max" or "min", e.g. "single.mean"
-"single" chooses one probe for ambiguous probes with maximum of summary function across row,
-"summarize" aggregates summary metric across multiple rows for each column index</dd>
-      <dt>eSet</dt>
-      <dd>expression set object</dd>
+      <dt>indir</dt>
+      <dd>input directory</dd>
+      <dt>outdir</dt>
+      <dd>output directory</dd>
+      <dt>header</dt>
+      <dd>of outfile</dd>
     </dl>
     
+    <div class="Value">
+      <h2>Value</h2>
+
+      <p><dl>
+the normalized expressionSet object
+</dl></p>
+  
+    </div>
+
     <div class="Description">
       <h2>Description</h2>
 
-      <p>collapse eSet object by non-unique row feature IDs</p>
+      <p>wrapper script for microarray gene ST chips processing into expression set object</p>
   
     </div>
-      </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>#running example
+#indir&lt;-&quot;/Users/amyli/Desktop/temp_dir/example_script/raw&quot;
+#outdir&lt;-&quot;/Users/amyli/Desktop/temp_dir/example_script/processed&quot;
+#dat&lt;-oligo_wrapper(indir = indir, outdir = outdir, header = &quot;my_eset&quot;)
+</div></pre>
+  </div>
   <div class="span4">
     <!-- <ul>
-      <li>collapse.probes</li>
+      <li>oligo_wrapper</li>
     </ul>
     <ul>
       

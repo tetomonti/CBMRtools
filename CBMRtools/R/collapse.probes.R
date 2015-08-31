@@ -1,7 +1,6 @@
-###this script reduces expression set objects to rows with unique transcript IDS
 
 ##single always fetches the probe with maximum of summary function (e.g. probe with maximum according to MAD statistic)
-#' \code{collapse.probes} collapse eSet object by non-unique row feature IDs
+#' collapse eSet object by non-unique row feature IDs
 #' @import Biobase data.table
 #' @param eSet expression set object
 #' @param fdat.id feature id to collapse on

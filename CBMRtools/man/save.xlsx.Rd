@@ -2,7 +2,7 @@
 % Please edit documentation in R/save.xlsx.R
 \name{save.xlsx}
 \alias{save.xlsx}
-\title{\code{save.xlsx} save to .xlsx}
+\title{save to .xlsx}
 \usage{
 save.xlsx(x, f.dir = NA, f.header = "", f.name, java.param = "-Xmx3g")
 }
@@ -18,6 +18,6 @@ save.xlsx(x, f.dir = NA, f.header = "", f.name, java.param = "-Xmx3g")
 \item{java.param}{max java memory, default =  "-Xmx3g"}
 }
 \description{
-\code{save.xlsx} save to .xlsx
+save to .xlsx
 }
 

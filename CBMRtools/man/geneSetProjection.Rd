@@ -2,7 +2,11 @@
 % Please edit documentation in R/geneSetProjection.R
 \name{geneSetProjection}
 \alias{geneSetProjection}
-\title{geneSetProjection}
+\title{map a gene-level dataset to a geneset-level dataset based on control-treatment pairing
+(i.e., the ks score is done with respect to the 'control vs. treatment'
+phenotype).  This function is ideal for 'time-series' data of
+response to treatment, where for each time point there are several
+replicates for both the control and the treated.}
 \usage{
 geneSetProjection(dat, pairing, GS, method = c("ks", "logistic", "median",
   "mean"), collapse = T, weighted = T, absolute = F, min.gset = 5,
@@ -29,9 +33,8 @@ geneSetProjection(dat, pairing, GS, method = c("ks", "logistic", "median",
 an expression set
 }
 \description{
-\code{geneSetProjection} map a gene-level dataset to a
-geneset-level dataset based on control-treatment pairing (i.e., the
-ks score is done with respect to the 'control vs. treatment'
+map a gene-level dataset to a geneset-level dataset based on control-treatment pairing
+(i.e., the ks score is done with respect to the 'control vs. treatment'
 phenotype).  This function is ideal for 'time-series' data of
 response to treatment, where for each time point there are several
 replicates for both the control and the treated.
@@ -82,18 +85,5 @@ GSPdir <- geneSetProjection(dat=DAT1,
                             absolute=FALSE, # keep sign of enrichment scores
                             min.gset=5,
                             verbose=TRUE)
-
-gradeID <- 'my_grade'
-stageID <- 'my_stage'
-p2 <- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
-                      col.lab=c(gradeID,stageID),row.lab="",
-                      heatmap.y.text=FALSE, heatmap.x.text=FALSE,
-                      heatmap.colorlegend.name="RNASeq_expression",
-                      title.text="TCGA BRCA log2 gene set projection",
-                      col.legend.name=c(gradeID,stageID), row.legend.name="",
-                      row.scaling="none",z.norm=FALSE,
-                      cuttree.col=0, cuttree.row=0,
-                      verbose=FALSE, show=TRUE)
-p2
 }
 

@@ -1,4 +1,4 @@
-#' \code{to.eSet} construct an eSet object 
+#' construct an eSet object 
 #' @import Biobase
 #' @param mat expression matrix
 #' @param pdat phenoData data frame

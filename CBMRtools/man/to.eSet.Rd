@@ -2,7 +2,7 @@
 % Please edit documentation in R/to.eset.R
 \name{to.eSet}
 \alias{to.eSet}
-\title{\code{to.eSet} construct an eSet object}
+\title{construct an eSet object}
 \usage{
 to.eSet(mat, pdat, fdat)
 }
@@ -14,6 +14,6 @@ to.eSet(mat, pdat, fdat)
 \item{fdat}{featureData data frame}
 }
 \description{
-\code{to.eSet} construct an eSet object
+construct an eSet object
 }
 

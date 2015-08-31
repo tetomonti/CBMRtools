@@ -2,7 +2,7 @@
 % Please edit documentation in R/variationFilter.R
 \name{variationFilter}
 \alias{variationFilter}
-\title{variationFilter}
+\title{subset an expression dataset by extracting genes based on their level of variation}
 \usage{
 variationFilter(dat, score = c("mad", "sd", "cv"), dir = c("top", "bottom"),
   transform = c("none", "log2", "exp2", "log", "exp"), ngenes = NULL,
@@ -27,7 +27,7 @@ variationFilter(dat, score = c("mad", "sd", "cv"), dir = c("top", "bottom"),
 the filtered expressionSet object
 }
 \description{
-\code{variationFilter} subset an expression dataset by extracting genes based on their level of variation
+subset an expression dataset by extracting genes based on their level of variation
 }
 \examples{
 # select the top 100 genes by median absolute deviation (mad) and also generate plot

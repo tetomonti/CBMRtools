@@ -1,5 +1,5 @@
 
-#' \code{save.xlsx} save to .xlsx  
+#' save to .xlsx  
 #' @import XLConnect
 #' @param x R object to save, must be a named list of data.frames, row limit =65535 for each data frame
 #' @param f.dir directory to save to, default = NA, current working directory

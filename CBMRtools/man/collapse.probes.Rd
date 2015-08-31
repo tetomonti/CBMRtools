@@ -2,7 +2,7 @@
 % Please edit documentation in R/collapse.probes.R
 \name{collapse.probes}
 \alias{collapse.probes}
-\title{\code{collapse.probes} collapse eSet object by non-unique row feature IDs}
+\title{collapse eSet object by non-unique row feature IDs}
 \usage{
 collapse.probes(eset, fdat.id = "SYMBOL", method = c("single.mad",
   "summarize.mean", "summarize.median", "summarize.max", "summarize.min"))
@@ -17,6 +17,6 @@ collapse.probes(eset, fdat.id = "SYMBOL", method = c("single.mad",
 \item{eSet}{expression set object}
 }
 \description{
-\code{collapse.probes} collapse eSet object by non-unique row feature IDs
+collapse eSet object by non-unique row feature IDs
 }
 

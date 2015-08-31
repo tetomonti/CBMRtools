@@ -47,7 +47,11 @@
         
       </header>
       
-      <h1>geneSetProjection</h1>
+      <h1>map a gene-level dataset to a geneset-level dataset based on control-treatment pairing
+(i.e., the ks score is done with respect to the 'control vs. treatment'
+phenotype).  This function is ideal for 'time-series' data of
+response to treatment, where for each time point there are several
+replicates for both the control and the treated.</h1>
 
 <div class="row">
   <div class="span8">
@@ -86,9 +90,8 @@ an expression set
     <div class="Description">
       <h2>Description</h2>
 
-      <p><code>geneSetProjection</code> map a gene-level dataset to a
-geneset-level dataset based on control-treatment pairing (i.e., the
-ks score is done with respect to the 'control vs. treatment'
+      <p>map a gene-level dataset to a geneset-level dataset based on control-treatment pairing
+(i.e., the ks score is done with respect to the 'control vs. treatment'
 phenotype).  This function is ideal for 'time-series' data of
 response to treatment, where for each time point there are several
 replicates for both the control and the treated.</p>
@@ -149,22 +152,7 @@ GSPdir &lt;- geneSetProjection(dat=DAT1,
 <div class='output'>Projecting 1 groups ..
   &gt; group OSCC .. [ 31 / 315 ]
 	Checking genesets .. done.
-</div>
-<div class='input'>
-gradeID &lt;- &#39;my_grade&#39;
-stageID &lt;- &#39;my_stage&#39;
-p2 &lt;- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
-                      col.lab=c(gradeID,stageID),row.lab=&quot;&quot;,
-                      heatmap.y.text=FALSE, heatmap.x.text=FALSE,
-                      heatmap.colorlegend.name=&quot;RNASeq_expression&quot;,
-                      title.text=&quot;TCGA BRCA log2 gene set projection&quot;,
-                      col.legend.name=c(gradeID,stageID), row.legend.name=&quot;&quot;,
-                      row.scaling=&quot;none&quot;,z.norm=FALSE,
-                      cuttree.col=0, cuttree.row=0,
-                      verbose=FALSE, show=TRUE)
-p2
-</div>
-<p><img src='geneSetProjection-4.png' alt='' width='540' height='400' /></p></pre>
+</div></pre>
   </div>
   <div class="span4">
     <!-- <ul>
