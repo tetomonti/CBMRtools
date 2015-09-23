@@ -142,10 +142,14 @@ row.scaling = &quot;z-score.capped&quot;,
 z.norm = FALSE,
 cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
-p1
 </div>
-<p><img src='heatmap.ggplot2-2.png' alt='' width='540' height='400' /></p>
-<div class='input'>
+<strong class='warning'>Warning message:
+`axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</strong>
+<div class='input'>grid.arrange(p1)
+</div>
+<p><img src='heatmap.ggplot2-4.png' alt='' width='540' height='400' /></p>
+<div class='input'>#ggsave(p1, file = &quot;p1.pdf&quot;)
+
 x&lt;-exprs(eSet1)
 x&lt;-x[rev(1:nrow(x)),]
 hc.row&lt;-hcopt(stats::as.dist(1-cor(t(x))),method=&quot;ward.D&quot;)
@@ -164,10 +168,14 @@ row.scaling = &quot;z-score.capped&quot;,
 z.norm = FALSE,
 cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
-p2
 </div>
-<p><img src='heatmap.ggplot2-4.png' alt='' width='540' height='400' /></p>
-<div class='input'>
+<strong class='warning'>Warning message:
+`axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</strong>
+<div class='input'>grid.arrange(p2)
+</div>
+<p><img src='heatmap.ggplot2-8.png' alt='' width='540' height='400' /></p>
+<div class='input'>##ggsave(p2, file = &quot;p2.pdf&quot;)
+
 #Saving plot in verbose format
 p3 &lt;- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE,
 col.clust.hc = hc.col, row.clust.hc = hc.row,
@@ -181,10 +189,14 @@ row.scaling = &quot;z-score.capped&quot;,
 z.norm = FALSE,
 cuttree.col = 4, cuttree.row = 3,
 verbose = TRUE, show = FALSE)
-p3$heatmap
 </div>
-<p><img src='heatmap.ggplot2-6.png' alt='' width='540' height='400' /></p>
-<div class='input'>
+<strong class='warning'>Warning message:
+`axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</strong>
+<div class='input'>grid.arrange(p3$heatmap)
+</div>
+<p><img src='heatmap.ggplot2-12.png' alt='' width='540' height='400' /></p>
+<div class='input'>##ggsave(p3, file = &quot;p3.pdf&quot;)
+
 meta.c.lab&lt;-levels(unique(p3$meta.c$id))
 meta.c.color.string&lt;-c(&quot;yellow&quot;, &quot;khaki3&quot;, &quot;gold&quot;, &quot;chocolate&quot;, &quot;darkred&quot;, &quot;cyan&quot;, &quot;white&quot;)
 meta.c.color&lt;-as.character(sapply(meta.c.color.string, to.hex))
@@ -209,14 +221,13 @@ row.scaling = &quot;z-score.capped&quot;,
 z.norm = FALSE,
 cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
-p4
 </div>
-<p><img src='heatmap.ggplot2-8.png' alt='' width='540' height='400' /></p>
-<div class='input'>
-#ggsave(p1, file = &quot;p1.pdf&quot;)
-#ggsave(p2, file = &quot;p2.pdf&quot;)
-#ggsave(p3$heatmap, file = &quot;p3.pdf&quot; )
-#ggsave(p4, file = &quot;p4.pdf&quot;)
+<strong class='warning'>Warning message:
+`axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</strong>
+<div class='input'>grid.arrange(p4)
+</div>
+<p><img src='heatmap.ggplot2-16.png' alt='' width='540' height='400' /></p>
+<div class='input'>#ggsave(p4, file = &quot;p4.pdf&quot;)
 </div></pre>
   </div>
   <div class="span4">

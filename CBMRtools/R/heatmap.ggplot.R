@@ -53,7 +53,8 @@
 #' z.norm = FALSE, 
 #' cuttree.col = 4, cuttree.row = 3,
 #' verbose = FALSE, show = FALSE)
-#' grid.draw(p1)
+#' grid.arrange(p1)
+#' #ggsave(p1, file = "p1.pdf")
 #'
 #' x<-exprs(eSet1)
 #' x<-x[rev(1:nrow(x)),]
@@ -73,7 +74,8 @@
 #' z.norm = FALSE, 
 #' cuttree.col = 4, cuttree.row = 3,
 #' verbose = FALSE, show = FALSE)
-#' grid.draw(p2)
+#' grid.arrange(p2)
+#' ##ggsave(p2, file = "p2.pdf")
 #'
 #' #Saving plot in verbose format
 #' p3 <- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE, 
@@ -88,8 +90,9 @@
 #' z.norm = FALSE, 
 #' cuttree.col = 4, cuttree.row = 3,
 #' verbose = TRUE, show = FALSE)
-#' grid.draw(p3$heatmap)
-#' 
+#' grid.arrange(p3$heatmap)
+#' ##ggsave(p3, file = "p3.pdf")
+#'
 #' meta.c.lab<-levels(unique(p3$meta.c$id))
 #' meta.c.color.string<-c("yellow", "khaki3", "gold", "chocolate", "darkred", "cyan", "white")
 #' meta.c.color<-as.character(sapply(meta.c.color.string, to.hex))
@@ -114,12 +117,9 @@
 #' z.norm = FALSE, 
 #' cuttree.col = 4, cuttree.row = 3,
 #' verbose = FALSE, show = FALSE)
-#' grid.draw(p4)
-#'
-#' #ggsave(p1, file = "p1.pdf")
-#' #ggsave(p2, file = "p2.pdf")
-#' #ggsave(p3$heatmap, file = "p3.pdf" )
+#' grid.arrange(p4)
 #' #ggsave(p4, file = "p4.pdf")
+#' 
 #' 
 #' @export 
 
