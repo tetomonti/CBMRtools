@@ -3,29 +3,23 @@
 **Install CBMRtools with install_github**
 ========
 
-You need R 3.0.0 or higher. If on scc4, before starting R, type
+You need R 3.0.0 or higher. If on scc4, before starting R, type:
 module load R/R-3.1.1
+it is also recommended to ssh with X11 forward (ssh -X)
 
 Some dependencies you may need to install first:
 install.packages("devtools")
 require("devtools")
 install_github("hadley/staticdocs")
+install_github("hadley/ggplot2") #only works on R 3.1.2, for lower versions use install.packages("ggplot2")
 install_github("andrie/ggdendro")
 
-
+#installing current tag
 From within R, run the following commands:
 library(devtools)
 PAT <- "04fe676593e46b6bda5a5d09431156e8a500349a"
-
-#old tag
-install_github("montilab/CBMgithub/scripts/R/CBMRtools",
-ref="CBMRtools_v1.2.0", # desired tag
-auth_token = PAT)       # user token
-	#newest version
-	#to be added
-
+install_github("montilab/CBMRtools/CBMRtools",ref="v1.0.0", auth_token = PAT)     
 require(CBMRtools)
-
 
 
 You need to do this only once (or after the package is modified by yourself or others). Thereafter, you will only need to include the ‘require(CBMRtools)’ command in your R code. 
