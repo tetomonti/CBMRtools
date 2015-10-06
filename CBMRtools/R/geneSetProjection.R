@@ -63,6 +63,18 @@
 #'                             min.gset=5,
 #'                             verbose=TRUE)
 #' 
+#' gradeID <- 'my_grade'
+#' stageID <- 'my_stage'
+#' p2 <- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
+#'                       col.lab=c(gradeID,stageID),row.lab="",
+#'                       heatmap.y.text=FALSE, heatmap.x.text=FALSE,
+#'                       heatmap.colorlegend.name="RNASeq_expression",
+#'                       title.text="TCGA BRCA log2 gene set projection",
+#'                       col.legend.name=c(gradeID,stageID), row.legend.name="", 
+#'                       row.scaling="none",z.norm=FALSE, 
+#'                       cuttree.col=0, cuttree.row=0,
+#'                       verbose=FALSE, show=TRUE)
+#' p2
 #'
 #' @export
 
