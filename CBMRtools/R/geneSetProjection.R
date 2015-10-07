@@ -152,14 +152,18 @@ geneSetProjection <- function
     VERBOSE(verbose," done.\n")
   }
   outdat <- NULL
+  TMP <- pData(dat)[as.vector(unlist(sapply(pairing,function(z) z$treatment))),,drop=FALSE]
+  
   if ( collapse ) {
-    outdat <- dat[,as.vector(unlist(sapply(pairing,function(z) z$treatment[1])))]
+    ## *** WARNING: THIS HAS NOT BEEN ADEQUATELY TESTED ***
+    outdat <- ExpressionSet(assayData=PRJ,
+                            phenoData=AnnotatedDataFrame(pData(dat)[as.vector(unlist(sapply(pairing,function(z) z$treatment[1]))),]))
+    #outdat <- dat[,as.vector(unlist(sapply(pairing,function(z) z$treatment[1])))]
     sampleNames(outdat) <- names(pairing)
-    exprs(outdat) <- PRJ
   }
   else {
-    outdat <- dat[,as.vector(unlist(sapply(pairing,function(z) z$treatment)))]
-    exprs(outdat) <- PRJ
+    outdat <- ExpressionSet(assayData=PRJ,
+                            phenoData=AnnotatedDataFrame(pData(dat)[match(colnames(PRJ),sampleNames(dat)),]))
   }
   outdat
 }
@@ -230,7 +234,7 @@ ks.projection <- function
     KS <- ks.project(dat,cls,var.equal=FALSE,absolute=absolute)
     return(KS)
   }
-  ## return as many vectors as replicates
+  ## return as many vectors as 'replicates'
   ##
   else if ( !is.null(cls) ) {
     ctl.idx <- which(cls==0)
@@ -238,8 +242,10 @@ ks.projection <- function
     KSctl <- if (control)
                  sapply(ctl.idx,function(z) ks.project(dat=dat[,c(ctl.idx,z)],cls=c(cls[ctl.idx],1),
                                                        var.equal=TRUE,absolute=absolute))
+    colnames(KSctl) <- colnames(dat)[ctl.idx]
     KStrt <- sapply(trt.idx,function(z) ks.project(dat=dat[,c(ctl.idx,z)],cls=cls[c(ctl.idx,z)],
                                                    var.equal=TRUE,absolute=absolute))
+    colnames(KStrt) <- colnames(dat)[trt.idx]
     return( cbind(KSctl,KStrt) )
   }
   ## no control group provided
