@@ -9,9 +9,15 @@ require(devtools)
 require(staticdocs)
 
 package.dir <- normalizePath("../../../CBMRtools")
+cat("Installing..\n")
+install(package.dir, dependencies = TRUE)
+cat("Documenting...\n")
 document(package.dir) # creates help pages
-check(package.dir)    # package checking
-load_all(package.dir) # building package
+#cat("Checking...\n")
+#check(package.dir)    # package checking
+#cat("Loading...\n")
+#load_all(package.dir) # building package
+#cat("Library...\n")
 library(CBMRtools)
 
 ## the directory 'staticdocs' must exist under CBMRtools/inst/ for the
@@ -20,10 +26,11 @@ library(CBMRtools)
 STATICDIR <- '../staticdocs'
 if ( is.na(file.info(STATICDIR)$isdir) ) system(paste('mkdir',STATICDIR))
 
+cat("Making html pages...\n")
 ## generate html pages
 setwd(package.dir)
 build_site(pkg = package.dir, examples = TRUE, launch = TRUE)
 
+#cat("Installing locally...\n")
 ## install CBMRtools locally
-cat("installing package...\n")
-install.packages(package.dir, repos = NULL, type = "source")
+#install.packages(package.dir, dependencies = TRUE, repos = NULL, type = "source")
