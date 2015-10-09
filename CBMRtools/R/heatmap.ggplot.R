@@ -396,7 +396,24 @@ heatmap.ggplot2<-function(eSet,
 		palette.all.permute<-sample(palette.all, replace = FALSE, size = length(palette.all))
 
 		if (col.legend.brewer[1] != ""){
-			palette.all.permute <-col.legend.brewer
+			metacolunq<-as.character(unique(meta.c$id))
+
+			if(is.null(names(col.legend.brewer))){
+				stop("col.legend.brewer must have names representing ids of color labels")
+			}
+			if (any(duplicated(names(col.legend.brewer)))){
+				stop("duplicated column legend colors in col.lgend.brewer")
+			} 
+			missingcols<-setdiff(names(col.legend.brewer), metacolunq)
+			if (length(missingcols)!= 0){
+				stop(paste("missing column legend colors", 
+					paste(missingcols, collapse = ","), sep = ":"))
+			}
+			col.legend.brewer.ordered<- col.legend.brewer[ match( metacolunq,
+				names(col.legend.brewer))]
+			col.legend.brewer.ordered[which(is.na(col.legend.brewer.ordered))]<- "white"
+			palette.all.permute<-col.legend.brewer.ordered
+			#palette.all.permute <-col.legend.brewer
 		}
 
 		LC<-ggplot(meta.c, aes_string(x = "num", y = "type", fill = "id")) + 
@@ -477,7 +494,25 @@ heatmap.ggplot2<-function(eSet,
 		palette.all.permute<-sample(palette.all, replace = FALSE, size = length(palette.all))
 
 		if (row.legend.brewer[1] != ""){
-			palette.all.permute <-row.legend.brewer
+			metarowunq<-as.character(unique(meta.r$id))
+
+			if(is.null(names(row.legend.brewer))){
+				stop("row.legend.brewer must have names representing ids of color labels")
+			}
+			if (any(duplicated(names(row.legend.brewer)))){
+				stop("duplicated column legend colors in col.lgend.brewer")
+			} 
+			missingrows<-setdiff(names(row.legend.brewer), metarowunq)
+			if (length(missingrows)!= 0){
+				stop(paste("missing column legend colors", 
+					paste(missingrows, collapse = ","), sep = ":"))
+			}
+			row.legend.brewer.ordered<- row.legend.brewer[ match( metarowunq,
+				names(row.legend.brewer))]
+			row.legend.brewer.ordered[which(is.na(row.legend.brewer.ordered))]<- "white"
+			palette.all.permute<-row.legend.brewer.ordered
+
+			#palette.all.permute <-row.legend.brewer
 		}
 
 		LR<-ggplot(meta.r, aes_string(x = "num", y = "type", fill = "id")) + 

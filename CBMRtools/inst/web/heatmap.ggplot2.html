@@ -212,9 +212,11 @@ row.scaling = &quot;z-score.capped&quot;,
 z.norm = FALSE,
 cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
-grid.arrange(p4)
 </div>
-<p><img src='heatmap.ggplot2-8.png' alt='' width='540' height='400' /></p>
+<strong class='error'>Error in heatmap.ggplot2(eSet = eSet1, col.legend.brewer = meta.c.color, : col.legend.brewer must have names representing ids of color labels</strong>
+<div class='input'>grid.arrange(p4)
+</div>
+<strong class='error'>Error in arrangeGrob(...): object &#39;p4&#39; not found</strong>
 <div class='input'>#ggsave(p4, file = &quot;p4.pdf&quot;)
 </div></pre>
   </div>
