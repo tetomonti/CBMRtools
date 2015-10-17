@@ -1,3 +1,4 @@
+#' @export
 VERBOSE <- function( v, ... )
 {
   if ( v ) cat( ... )
@@ -153,7 +154,7 @@ mmatch <- function( x, y )
   unlist(lapply( x, function(z) { tmp <- which(y==z); names(tmp) <- rep(z,length(tmp)); tmp}))
 }
 #' @export
-match.nona <- function( a1, a2, na.rm=F, suppressWarnings=F )
+match.nona <- function( a1, a2, na.rm=FALSE, suppressWarnings=FALSE )
 {
   if ( any(is.na(idx <- match(a1,a2))) )
     if ( na.rm ) {
@@ -166,7 +167,7 @@ match.nona <- function( a1, a2, na.rm=F, suppressWarnings=F )
   idx[!is.na(idx)]
 }
 #' @export
-match.index <- function( key, names, ignore.case=FALSE )
+matchIndex <- function( key, names, ignore.case=FALSE )
 {
   if ( ignore.case ) {
     key <- toupper(key); names <- toupper(names)
@@ -221,6 +222,7 @@ cumineq <- function( prm, obs, dir=1, debug=F )
            else
              fp[o.rnk] )
 }
+#' @export
 pval2fdr <- function( p, monotone=T, nh=length(p), na.rm=F )
 {
   if (length(p)==1)
@@ -272,8 +274,10 @@ list.intersect <- function( X )
 }
 upper.case <- function( X )
 {
-  sapply(X,function(z) gsub("(.*)","\\U\\1",z,perl=T))
+#  sapply(X,function(z) gsub("(.*)","\\U\\1",z,perl=T))
+  toupper(X)
 }
+#' @export
 ## LOAD VAR
 ##
 load.var <- function(file,verbose=F)
@@ -300,27 +304,6 @@ robust.load <- function( file, envir=parent.env(environment()), max.try=100, ver
   }
   warning("robust load attempts exhausted, trying one last time (likely to fail)")
   load(file=file,envir=envir)
-}
-if ( F )
-{
-  DUMMY <- function()
-  {
-    #tmp <- dummy(environment())
-    cat("DUMMY:\n")
-    cat("  1: Parent envir: ");print( parent.env(environment()) )
-    cat("  1: Envir:        "); print(environment())
-    tmp <- dummy()
-    cat( "  Exists(CNVinfo): ", exists("CNVinfo"),"\n")
-  }
-  dummy <- function(envir=parent.env(environment())) {
-    cat("dummy:\n")
-    load(file="/xchip/cancergenome/1chip/montilab/CancerGenomeAnalysis/trunk/SNPpipeline/annot/CNVinfo.Rout",
-         envir=envir)
-    cat("  2: Parent envir: "); print( parent.env(environment()) )
-    cat("  2: Enclosing:    "); print(envir)
-    cat("  2: Envir:        "); print(environment())
-  }
-  
 }
 rjust <- function(x,n)
 {

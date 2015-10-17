@@ -6,6 +6,7 @@
 #' @param transform transform the data before measuring variation
 #' @param ngenes number of top (or bottom) genes to extract
 #' @param do.plot plot the center vs. scale plot with selected genes highlighted
+#' @param do.log indicates whether to log the "x", "y", or "xy" axes, or "" none
 #'
 #' @return the filtered expressionSet object
 #' 
@@ -34,7 +35,7 @@ variationFilter <- function(dat,
                             do.plot=FALSE,
                             pch=".",
                             lgnd.coord=1,
-                            do.log=NULL,
+                            do.log="",
                             qnt.lev=0.5,
                             min.qnt=-Inf,
                             no.affx=FALSE,

@@ -126,10 +126,10 @@ perm.1side <- function( x, y, score, nperm=100, ngenes=NULL, seed=NULL, smooth=0
 }
 p1ss.add <- function( x.prm, x.obs, nperm, smoother=0 )
 {
-  p.idx  <- match.index('p',colnames(x.prm))
-  fp.idx <- match.index('fpr',colnames(x.prm))
-  fd.idx <- match.index('fdr',colnames(x.prm))
-  mt.idx <- match.index('maxT',colnames(x.prm))
+  p.idx  <- matchIndex('p',colnames(x.prm))
+  fp.idx <- matchIndex('fpr',colnames(x.prm))
+  fd.idx <- matchIndex('fdr',colnames(x.prm))
+  mt.idx <- matchIndex('maxT',colnames(x.prm))
   
   x.prm[,-p.idx] <- x.prm[,-p.idx]/nperm
   x.prm[,p.idx]  <- x.prm[,p.idx] + smoother

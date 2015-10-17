@@ -47,16 +47,12 @@
         
       </header>
       
-      <h1>map a gene-level dataset to a geneset-level dataset based on control-treatment pairing
-(i.e., the ks score is done with respect to the 'control vs. treatment'
-phenotype).  This function is ideal for 'time-series' data of
-response to treatment, where for each time point there are several
-replicates for both the control and the treated.</h1>
+      <h1>geneSetProjection</h1>
 
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre><div>geneSetProjection(dat, pairing, GS, method&nbsp;=&nbsp;c("ks", "logistic", "median", "mean"), collapse&nbsp;=&nbsp;T, weighted&nbsp;=&nbsp;T, absolute&nbsp;=&nbsp;F, min.gset&nbsp;=&nbsp;5, verbose&nbsp;=&nbsp;T)</div></pre>
+    <pre><div>geneSetProjection(dat, pairing, GS, method&nbsp;=&nbsp;c("ks", "logistic", "median", "mean"), collapse&nbsp;=&nbsp;TRUE, weighted&nbsp;=&nbsp;TRUE, absolute&nbsp;=&nbsp;FALSE, min.gset&nbsp;=&nbsp;5, verbose&nbsp;=&nbsp;TRUE)</div></pre>
     
     <h2>Arguments</h2>
     <dl>
@@ -90,11 +86,14 @@ an expression set
     <div class="Description">
       <h2>Description</h2>
 
-      <p>map a gene-level dataset to a geneset-level dataset based on control-treatment pairing
-(i.e., the ks score is done with respect to the 'control vs. treatment'
-phenotype).  This function is ideal for 'time-series' data of
-response to treatment, where for each time point there are several
-replicates for both the control and the treated.</p>
+      <p><code>geneSetProjection</code> maps a gene-level dataset to a
+geneset-level dataset based on control-treatment pairing (i.e., the
+ks score is done with respect to the 'control vs. treatment'
+phenotype).  It can be used to carry out 'single sample projection'
+(the average of all samples is used as controls), as well as with
+'time-series' data of response to treatment, where for each time
+point there are several replicates for both the control and the
+treated.</p>
   
     </div>
 
@@ -128,18 +127,20 @@ if (is.null(gsp.eSet)) stop(&quot;is.null(gsp.eSet)&quot;)
 if (is.null(gsp.GeneSet)) stop(&quot;is.null(gsp.GeneSet)&quot;)
 
 ## 2) RENAME the dataset rows (w/ gene symbols)
-##
+
 DAT1 &lt;- gsp.eSet[fData(gsp.eSet)[,&quot;symbol&quot;]!=&quot;&quot;,]
+exprs(DAT1) &lt;- log2(exprs(DAT1)+1)
 featureNames(DAT1) &lt;- toupper(fData(DAT1)[,&quot;symbol&quot;])
 
 ## 3) CREATE the list of lists pairing (one group only)
-##
+
 ANidx &lt;- pData(DAT1)[,&quot;tissue_type&quot;]==&quot;AN&quot;
 PAIRS &lt;- list(OSCC=list(control=sampleNames(DAT1)[ANidx],
                         treatment=sampleNames(DAT1)[!ANidx]))
 
 ## 4) RUN geneSetProjection ..
 ##
+
 GSPdir &lt;- geneSetProjection(dat=DAT1,
                             pairing=PAIRS,
                             GS=gsp.GeneSet,
@@ -152,7 +153,31 @@ GSPdir &lt;- geneSetProjection(dat=DAT1,
 <div class='output'>Projecting 1 groups ..
   &gt; group OSCC .. [ 31 / 315 ]
 	Checking genesets .. done.
-</div></pre>
+</div>
+<div class='input'>
+## shortening pathway names for better visualization
+featureNames(GSPdir) &lt;- c(&quot;WNT_BCATENIN&quot;,&quot;BCATENIN.CSNK1E&quot;,&quot;BCATENIN.CTBP1&quot;,&quot;TGF_BETA&quot;)
+
+gradeID &lt;- &#39;my_grade&#39;
+stageID &lt;- &#39;my_stage&#39;
+p2 &lt;- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
+                      col.lab=c(gradeID,stageID),row.lab=&quot;&quot;,
+                      heatmap.y.text=TRUE, heatmap.x.text=FALSE,
+                      heatmap.colorlegend.name=&quot;RNASeq_expression&quot;,
+                      title.text=&quot;TCGA BRCA log2 gene set projection&quot;,
+                      col.legend.name=c(gradeID,stageID), row.legend.name=&quot;&quot;,
+                      row.scaling=&quot;none&quot;,z.norm=FALSE,
+                      cuttree.col=0, cuttree.row=0,
+                      verbose=FALSE, show=TRUE)
+</div>
+<div class='output'>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name              grob
+1 1 (1-1,1-1) arrange text[GRID.text.2]
+2 2 (2-2,1-1) arrange   gtable[arrange]
+</div>
+<div class='input'>grid.arrange(p2)
+</div>
+<p><img src='geneSetProjection-6.png' alt='' width='540' height='400' /></p></pre>
   </div>
   <div class="span4">
     <!-- <ul>

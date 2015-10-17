@@ -120,37 +120,40 @@ ENSG00000188175 0.3441332 0.000999001 0.001998002 0.003171432    0    HEPACAM2
 <div class='input'>
  ## passing the index (within the matrix) as argument
  ##
- NNout2 &lt;- nnAnalysis(dat=eSet.brca.100,y.i=1,score=&#39;pearson&#39;,nperm=1000,
+ NNout2 &lt;- nnAnalysis(dat=eSet.brca.100,y.i=1,score=&#39;pearson&#39;,nperm=100,
                       seed=123,verbose=TRUE,smooth=1)
 </div>
 <div class='output'>NN analysis based on pearson
   Computing observed scores .. sorting them .. done.
-  Permutation test (1000 iterations) .. 10% 20% 30% 40% 50% 60% 70% 80% 90% 100% 
+  Permutation test (100 iterations) .. 10% 20% 30% 40% 50% 60% 70% 80% 90% 100% 
 </div>
 <div class='input'> head(NNout2$pval)
 </div>
-<div class='output'>                    score          p1          p2         fdr maxT description
-ENSG00000162989 1.0000000 0.000999001 0.001998002 0.003171432    0       KCNJ3
-ENSG00000167619 0.4342640 0.000999001 0.001998002 0.003171432    0     TMEM145
-ENSG00000175985 0.4336144 0.000999001 0.001998002 0.003171432    0     UPF0639
-ENSG00000164756 0.3952662 0.000999001 0.001998002 0.003171432    0     SLC30A8
-ENSG00000162891 0.3569408 0.000999001 0.001998002 0.003171432    0        IL20
-ENSG00000188175 0.3441332 0.000999001 0.001998002 0.003171432    0    HEPACAM2
+<div class='output'>                    score         p1         p2        fdr maxT description
+ENSG00000162989 1.0000000 0.00990099 0.01980198 0.02640264    0       KCNJ3
+ENSG00000167619 0.4342640 0.00990099 0.01980198 0.02640264    0     TMEM145
+ENSG00000175985 0.4336144 0.00990099 0.01980198 0.02640264    0     UPF0639
+ENSG00000164756 0.3952662 0.00990099 0.01980198 0.02640264    0     SLC30A8
+ENSG00000162891 0.3569408 0.00990099 0.01980198 0.02640264    0        IL20
+ENSG00000188175 0.3441332 0.00990099 0.01980198 0.02640264    0    HEPACAM2
 </div>
 <div class='input'> all.equal(NNout1$pval,NNout2$pval) # TRUE
 </div>
-<div class='output'>[1] TRUE
+<div class='output'>[1] &quot;Component \&quot;p1\&quot;: Mean relative difference: 0.04727061&quot;  
+[2] &quot;Component \&quot;p2\&quot;: Mean relative difference: 0.2803007&quot;   
+[3] &quot;Component \&quot;fdr\&quot;: Mean relative difference: 0.30986&quot;    
+[4] &quot;Component \&quot;maxT\&quot;: Mean relative difference: 0.05190281&quot;
 </div>
 <div class='input'>
  ## controlling for a confounder (only discrete)
  ##
  CTL &lt;- pData(eSet.brca.100)[,&#39;ER_status&#39;]
- NNout3 &lt;- nnAnalysis(dat=eSet.brca.100,y.i=1,score=&#39;pearson&#39;,nperm=1000,
+ NNout3 &lt;- nnAnalysis(dat=eSet.brca.100,y.i=1,score=&#39;pearson&#39;,nperm=100,
                       seed=123,control=CTL,verbose=TRUE,smooth=1)
 </div>
 <div class='output'>NN analysis based on pearson
   Computing observed scores .. sorting them .. done.
-  Permutation test (1000 iterations) .. 	controlling for 2-level confounder
+  Permutation test (100 iterations) .. 	controlling for 2-level confounder
   nchoose[1]:   5.998826e+277
   nchoose[2]:   Inf
 nchoose[tot]: Inf 
@@ -158,13 +161,13 @@ nchoose[tot]: Inf
 </div>
 <div class='input'> head(NNout3$pval)
 </div>
-<div class='output'>                    score          p1          p2         fdr  maxT description
-ENSG00000162989 1.0000000 0.000999001 0.001998002 0.003996004 0.000       KCNJ3
-ENSG00000167619 0.4342640 0.000999001 0.001998002 0.003996004 0.000     TMEM145
-ENSG00000175985 0.4336144 0.000999001 0.001998002 0.003996004 0.000     UPF0639
-ENSG00000164756 0.3952662 0.000999001 0.001998002 0.003996004 0.000     SLC30A8
-ENSG00000162891 0.3569408 0.000999001 0.001998002 0.003996004 0.000        IL20
-ENSG00000188175 0.3441332 0.000999001 0.001998002 0.003996004 0.001    HEPACAM2
+<div class='output'>                    score         p1         p2        fdr maxT description
+ENSG00000162989 1.0000000 0.00990099 0.01980198 0.03356268    0       KCNJ3
+ENSG00000167619 0.4342640 0.00990099 0.01980198 0.03356268    0     TMEM145
+ENSG00000175985 0.4336144 0.00990099 0.01980198 0.03356268    0     UPF0639
+ENSG00000164756 0.3952662 0.00990099 0.01980198 0.03356268    0     SLC30A8
+ENSG00000162891 0.3569408 0.00990099 0.01980198 0.03356268    0        IL20
+ENSG00000188175 0.3441332 0.00990099 0.01980198 0.03356268    0    HEPACAM2
 </div></pre>
   </div>
   <div class="span4">
