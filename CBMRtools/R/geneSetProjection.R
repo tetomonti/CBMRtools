@@ -1,8 +1,13 @@
-#' map a gene-level dataset to a geneset-level dataset based on control-treatment pairing 
-#' (i.e., the ks score is done with respect to the 'control vs. treatment'
-#' phenotype).  This function is ideal for 'time-series' data of
-#' response to treatment, where for each time point there are several
-#' replicates for both the control and the treated.
+#' geneSetProjection
+#' 
+#' \code{geneSetProjection} maps a gene-level dataset to a
+#' geneset-level dataset based on control-treatment pairing (i.e., the
+#' ks score is done with respect to the 'control vs. treatment'
+#' phenotype).  It can be used to carry out 'single sample projection'
+#' (the average of all samples is used as controls), as well as with
+#' 'time-series' data of response to treatment, where for each time
+#' point there are several replicates for both the control and the
+#' treated.
 #'
 #' @param dat ExpressionSet data object ( require(biobase) )
 #' @param pairing list with pairing between treatment and control (see format below)
@@ -42,18 +47,20 @@
 #' if (is.null(gsp.GeneSet)) stop("is.null(gsp.GeneSet)")
 #' 
 #' ## 2) RENAME the dataset rows (w/ gene symbols)
-#' ##
+#'
 #' DAT1 <- gsp.eSet[fData(gsp.eSet)[,"symbol"]!="",]
+#' exprs(DAT1) <- log2(exprs(DAT1)+1)
 #' featureNames(DAT1) <- toupper(fData(DAT1)[,"symbol"])
 #' 
 #' ## 3) CREATE the list of lists pairing (one group only)
-#' ##
+#' 
 #' ANidx <- pData(DAT1)[,"tissue_type"]=="AN"
 #' PAIRS <- list(OSCC=list(control=sampleNames(DAT1)[ANidx],
 #'                         treatment=sampleNames(DAT1)[!ANidx]))
 #' 
 #' ## 4) RUN geneSetProjection ..
 #' ##
+#' 
 #' GSPdir <- geneSetProjection(dat=DAT1,
 #'                             pairing=PAIRS,
 #'                             GS=gsp.GeneSet,
@@ -63,18 +70,21 @@
 #'                             min.gset=5,
 #'                             verbose=TRUE)
 #' 
+#' ## shortening pathway names for better visualization
+#' featureNames(GSPdir) <- c("WNT_BCATENIN","BCATENIN.CSNK1E","BCATENIN.CTBP1","TGF_BETA")
+#'
 #' gradeID <- 'my_grade'
 #' stageID <- 'my_stage'
 #' p2 <- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
 #'                       col.lab=c(gradeID,stageID),row.lab="",
-#'                       heatmap.y.text=FALSE, heatmap.x.text=FALSE,
+#'                       heatmap.y.text=TRUE, heatmap.x.text=FALSE,
 #'                       heatmap.colorlegend.name="RNASeq_expression",
 #'                       title.text="TCGA BRCA log2 gene set projection",
 #'                       col.legend.name=c(gradeID,stageID), row.legend.name="", 
 #'                       row.scaling="none",z.norm=FALSE, 
 #'                       cuttree.col=0, cuttree.row=0,
 #'                       verbose=FALSE, show=TRUE)
-#' p2
+#' grid.arrange(p2)
 #'
 #' @export
 
@@ -91,15 +101,15 @@
 ## 
 geneSetProjection <- function
 (
- dat,          # expression data
- pairing,      # list with pairing between treatment and control (see format below)
- GS,           # gene set object
+ dat,           # expression data
+ pairing,       # list with pairing between treatment and control (see format below)
+ GS,            # gene set object
  method=c("ks","logistic","median","mean"), # only ks implemented at the moment
- collapse=T,   # collapse multiple replicates into a single output vector
- weighted=T,   # gsea-like weighting of KS score
- absolute=F,   # use absolute values when calculating the KS score ignoring up and down
- min.gset=5,   # min genes in a geneset allowed
- verbose=T
+ collapse=TRUE, # collapse multiple replicates into a single output vector
+ weighted=TRUE, # gsea-like weighting of KS score
+ absolute=FALSE,# use absolute values when calculating the KS score ignoring up and down
+ min.gset=5,    # min genes in a geneset allowed
+ verbose=TRUE
  )
 {
   ## FORMAT: pairing is a list of lists (of sample names), of the form:

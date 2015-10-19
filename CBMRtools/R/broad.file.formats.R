@@ -138,6 +138,7 @@ read.gct <- function( file, force.read=FALSE, do.save=TRUE, binext=".RData",verb
 }
 ## WRITE GCT
 ##
+#' @export
 write.gct <- function( x, file, binext=".RData", do.save=TRUE, verbose=FALSE )
 {
   if ( is.matrix(x) ) {
@@ -535,6 +536,7 @@ read.cls <- function( file, rowskip=2, do.lbls=(rowskip==2), gc.lbl=FALSE, verbo
 }
 ## WRITE CLS
 ##
+#' @export
 write.cls <- function( cls, filen )
 {
   cat( length(cls), length(levels(cls)), "1\n", file=filen )

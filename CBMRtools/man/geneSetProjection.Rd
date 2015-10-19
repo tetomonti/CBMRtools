@@ -2,15 +2,11 @@
 % Please edit documentation in R/geneSetProjection.R
 \name{geneSetProjection}
 \alias{geneSetProjection}
-\title{map a gene-level dataset to a geneset-level dataset based on control-treatment pairing
-(i.e., the ks score is done with respect to the 'control vs. treatment'
-phenotype).  This function is ideal for 'time-series' data of
-response to treatment, where for each time point there are several
-replicates for both the control and the treated.}
+\title{geneSetProjection}
 \usage{
 geneSetProjection(dat, pairing, GS, method = c("ks", "logistic", "median",
-  "mean"), collapse = T, weighted = T, absolute = F, min.gset = 5,
-  verbose = T)
+  "mean"), collapse = TRUE, weighted = TRUE, absolute = FALSE,
+  min.gset = 5, verbose = TRUE)
 }
 \arguments{
 \item{dat}{ExpressionSet data object ( require(biobase) )}
@@ -33,11 +29,14 @@ geneSetProjection(dat, pairing, GS, method = c("ks", "logistic", "median",
 an expression set
 }
 \description{
-map a gene-level dataset to a geneset-level dataset based on control-treatment pairing
-(i.e., the ks score is done with respect to the 'control vs. treatment'
-phenotype).  This function is ideal for 'time-series' data of
-response to treatment, where for each time point there are several
-replicates for both the control and the treated.
+\code{geneSetProjection} maps a gene-level dataset to a
+geneset-level dataset based on control-treatment pairing (i.e., the
+ks score is done with respect to the 'control vs. treatment'
+phenotype).  It can be used to carry out 'single sample projection'
+(the average of all samples is used as controls), as well as with
+'time-series' data of response to treatment, where for each time
+point there are several replicates for both the control and the
+treated.
 }
 \details{
 The format of 'pairing' is a list of lists (of sample names), of the form:
@@ -65,18 +64,20 @@ if (is.null(gsp.eSet)) stop("is.null(gsp.eSet)")
 if (is.null(gsp.GeneSet)) stop("is.null(gsp.GeneSet)")
 
 ## 2) RENAME the dataset rows (w/ gene symbols)
-##
+
 DAT1 <- gsp.eSet[fData(gsp.eSet)[,"symbol"]!="",]
+exprs(DAT1) <- log2(exprs(DAT1)+1)
 featureNames(DAT1) <- toupper(fData(DAT1)[,"symbol"])
 
 ## 3) CREATE the list of lists pairing (one group only)
-##
+
 ANidx <- pData(DAT1)[,"tissue_type"]=="AN"
 PAIRS <- list(OSCC=list(control=sampleNames(DAT1)[ANidx],
                         treatment=sampleNames(DAT1)[!ANidx]))
 
 ## 4) RUN geneSetProjection ..
 ##
+
 GSPdir <- geneSetProjection(dat=DAT1,
                             pairing=PAIRS,
                             GS=gsp.GeneSet,
@@ -85,5 +86,21 @@ GSPdir <- geneSetProjection(dat=DAT1,
                             absolute=FALSE, # keep sign of enrichment scores
                             min.gset=5,
                             verbose=TRUE)
+
+## shortening pathway names for better visualization
+featureNames(GSPdir) <- c("WNT_BCATENIN","BCATENIN.CSNK1E","BCATENIN.CTBP1","TGF_BETA")
+
+gradeID <- 'my_grade'
+stageID <- 'my_stage'
+p2 <- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
+                      col.lab=c(gradeID,stageID),row.lab="",
+                      heatmap.y.text=TRUE, heatmap.x.text=FALSE,
+                      heatmap.colorlegend.name="RNASeq_expression",
+                      title.text="TCGA BRCA log2 gene set projection",
+                      col.legend.name=c(gradeID,stageID), row.legend.name="",
+                      row.scaling="none",z.norm=FALSE,
+                      cuttree.col=0, cuttree.row=0,
+                      verbose=FALSE, show=TRUE)
+grid.arrange(p2)
 }
 

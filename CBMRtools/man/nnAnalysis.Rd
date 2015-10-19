@@ -47,7 +47,7 @@ data(eSet.brca.100)
 
  ## passing the index (within the matrix) as argument
  ##
- NNout2 <- nnAnalysis(dat=eSet.brca.100,y.i=1,score='pearson',nperm=1000,
+ NNout2 <- nnAnalysis(dat=eSet.brca.100,y.i=1,score='pearson',nperm=100,
                       seed=123,verbose=TRUE,smooth=1)
  head(NNout2$pval)
  all.equal(NNout1$pval,NNout2$pval) # TRUE
@@ -55,7 +55,7 @@ data(eSet.brca.100)
  ## controlling for a confounder (only discrete)
  ##
  CTL <- pData(eSet.brca.100)[,'ER_status']
- NNout3 <- nnAnalysis(dat=eSet.brca.100,y.i=1,score='pearson',nperm=1000,
+ NNout3 <- nnAnalysis(dat=eSet.brca.100,y.i=1,score='pearson',nperm=100,
                       seed=123,control=CTL,verbose=TRUE,smooth=1)
  head(NNout3$pval)
 }
