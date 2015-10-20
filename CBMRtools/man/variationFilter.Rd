@@ -7,7 +7,7 @@
 variationFilter(dat, score = c("mad", "sd", "cv"), dir = c("top", "bottom"),
   transform = c("none", "log2", "exp2", "log", "exp"), ngenes = NULL,
   min.score = NULL, min.log = 1, rnd = 4, do.plot = FALSE, pch = ".",
-  lgnd.coord = 1, do.log = NULL, qnt.lev = 0.5, min.qnt = -Inf,
+  lgnd.coord = 1, do.log = "", qnt.lev = 0.5, min.qnt = -Inf,
   no.affx = FALSE, verbose = TRUE)
 }
 \arguments{
@@ -22,6 +22,8 @@ variationFilter(dat, score = c("mad", "sd", "cv"), dir = c("top", "bottom"),
 \item{ngenes}{number of top (or bottom) genes to extract}
 
 \item{do.plot}{plot the center vs. scale plot with selected genes highlighted}
+
+\item{do.log}{indicates whether to log the "x", "y", or "xy" axes, or "" none}
 }
 \value{
 the filtered expressionSet object

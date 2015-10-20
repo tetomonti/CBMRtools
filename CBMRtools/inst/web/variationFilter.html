@@ -52,7 +52,7 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre><div>variationFilter(dat, score&nbsp;=&nbsp;c("mad", "sd", "cv"), dir&nbsp;=&nbsp;c("top", "bottom"), transform&nbsp;=&nbsp;c("none", "log2", "exp2", "log", "exp"), ngenes&nbsp;=&nbsp;NULL, min.score&nbsp;=&nbsp;NULL, min.log&nbsp;=&nbsp;1, rnd&nbsp;=&nbsp;4, do.plot&nbsp;=&nbsp;FALSE, pch&nbsp;=&nbsp;".", lgnd.coord&nbsp;=&nbsp;1, do.log&nbsp;=&nbsp;NULL, qnt.lev&nbsp;=&nbsp;0.5, min.qnt&nbsp;=&nbsp;-Inf, no.affx&nbsp;=&nbsp;FALSE, verbose&nbsp;=&nbsp;TRUE)</div></pre>
+    <pre><div>variationFilter(dat, score&nbsp;=&nbsp;c("mad", "sd", "cv"), dir&nbsp;=&nbsp;c("top", "bottom"), transform&nbsp;=&nbsp;c("none", "log2", "exp2", "log", "exp"), ngenes&nbsp;=&nbsp;NULL, min.score&nbsp;=&nbsp;NULL, min.log&nbsp;=&nbsp;1, rnd&nbsp;=&nbsp;4, do.plot&nbsp;=&nbsp;FALSE, pch&nbsp;=&nbsp;".", lgnd.coord&nbsp;=&nbsp;1, do.log&nbsp;=&nbsp;"", qnt.lev&nbsp;=&nbsp;0.5, min.qnt&nbsp;=&nbsp;-Inf, no.affx&nbsp;=&nbsp;FALSE, verbose&nbsp;=&nbsp;TRUE)</div></pre>
     
     <h2>Arguments</h2>
     <dl>
@@ -68,6 +68,8 @@
       <dd>number of top (or bottom) genes to extract</dd>
       <dt>do.plot</dt>
       <dd>plot the center vs. scale plot with selected genes highlighted</dd>
+      <dt>do.log</dt>
+      <dd>indicates whether to log the "x", "y", or "xy" axes, or "" none</dd>
     </dl>
     
     <div class="Value">
