@@ -22,6 +22,15 @@ From within R, run the following commands:
 
     library(devtools)
     PAT <- "04fe676593e46b6bda5a5d09431156e8a500349a"
+    install_github("montilab/CBMRtools/CBMRtools",ref="v1.0.1", auth_token = PAT)
+    require(CBMRtools)
+
+
+#installing older tags
+From within R, run the following commands:
+
+    library(devtools)
+    PAT <- "04fe676593e46b6bda5a5d09431156e8a500349a"
     install_github("montilab/CBMRtools/CBMRtools",ref="v1.0.0", auth_token = PAT)     
     require(CBMRtools)
 
