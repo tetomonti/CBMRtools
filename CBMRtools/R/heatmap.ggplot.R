@@ -59,7 +59,7 @@
 #' x<-exprs(eSet1)
 #' x<-x[rev(1:nrow(x)),]
 #' hc.row<-hcopt(stats::as.dist(1-cor(t(x))),method="ward.D")
-#' hc.col <- hcopt(stats::dist(t(x)), method="ward.D") #' 
+#' hc.col <- hcopt(stats::dist(t(x)), method="ward.D") 
 #'
 #' #Adding custom hclust object in col.clust.hc and row.clust.hc
 #' p2 <- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE, 
@@ -74,9 +74,10 @@
 #' z.norm = FALSE, 
 #' cuttree.col = 4, cuttree.row = 3,
 #' verbose = FALSE, show = FALSE)
+#' grid.newpage()
 #' grid.arrange(p2)
 #' ##ggsave(p2, file = "p2.pdf")
-#'
+#' 
 #' #Saving plot in verbose format
 #' p3 <- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE, 
 #' col.clust.hc = hc.col, row.clust.hc = hc.row,
@@ -90,18 +91,20 @@
 #' z.norm = FALSE, 
 #' cuttree.col = 4, cuttree.row = 3,
 #' verbose = TRUE, show = FALSE)
+#' grid.newpage()
 #' grid.arrange(p3$heatmap)
 #' ##ggsave(p3, file = "p3.pdf")
 #'
-#' meta.c.lab<-levels(unique(p3$meta.c$id))
-#' meta.c.color.string<-c("yellow", "khaki3", "gold", "chocolate", "darkred", "cyan", "white")
+#' #Adding custom colors to column and row annotation labels
+#' print(p3$meta.c$id)
+#' meta.c.color.string<-c("yellow", "khaki3", "gold", "chocolate", "darkred", "cyan")
 #' meta.c.color<-as.character(sapply(meta.c.color.string, to.hex))
-#'
-#' meta.r.lab<-levels(unique(p3$meta.r$id))
+#' names(meta.c.color)<-c("Negative", "Positive", "1", "2", "3", "4")
+#' print(p3$meta.r$id)
 #' meta.r.color.string<-c("pink", "azure", "green")
 #' meta.r.color<-as.character(sapply(meta.r.color.string, to.hex))
+#' names(meta.r.color)<-c("1", "2", "3")
 #'
-#' #Adding custom colors to column and row annotation labels
 #' p4<-heatmap.ggplot2(eSet=eSet1, 
 #' col.legend.brewer = meta.c.color,
 #' row.legend.brewer = meta.r.color,
@@ -117,6 +120,7 @@
 #' z.norm = FALSE, 
 #' cuttree.col = 4, cuttree.row = 3,
 #' verbose = FALSE, show = FALSE)
+#' grid.newpage()
 #' grid.arrange(p4)
 #' #ggsave(p4, file = "p4.pdf")
 #' 
@@ -411,7 +415,7 @@ heatmap.ggplot2<-function(eSet,
 			}
 			col.legend.brewer.ordered<- col.legend.brewer[ match( metacolunq,
 				names(col.legend.brewer))]
-			col.legend.brewer.ordered[which(is.na(col.legend.brewer.ordered))]<- "white"
+			col.legend.brewer.ordered[which(is.na(col.legend.brewer.ordered))]<- to.hex("white")
 			palette.all.permute<-col.legend.brewer.ordered
 			#palette.all.permute <-col.legend.brewer
 		}
@@ -509,7 +513,7 @@ heatmap.ggplot2<-function(eSet,
 			}
 			row.legend.brewer.ordered<- row.legend.brewer[ match( metarowunq,
 				names(row.legend.brewer))]
-			row.legend.brewer.ordered[which(is.na(row.legend.brewer.ordered))]<- "white"
+			row.legend.brewer.ordered[which(is.na(row.legend.brewer.ordered))]<- to.hex("white")
 			palette.all.permute<-row.legend.brewer.ordered
 
 			#palette.all.permute <-row.legend.brewer
