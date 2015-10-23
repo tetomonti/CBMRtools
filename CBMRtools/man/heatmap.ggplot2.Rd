@@ -97,12 +97,11 @@ z.norm = FALSE,
 cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
 grid.arrange(p1)
-#ggsave(p1, file = "p1.pdf")
+
 
 x<-exprs(eSet1)
-x<-x[rev(1:nrow(x)),]
 hc.row<-hcopt(stats::as.dist(1-cor(t(x))),method="ward.D")
-hc.col <- hcopt(stats::dist(t(x)), method="ward.D")
+hc.col <- hcopt(stats::dist(t(x), method = "euclidean"), method="ward.D")
 
 #Adding custom hclust object in col.clust.hc and row.clust.hc
 p2 <- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE,
@@ -119,7 +118,7 @@ cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
 grid.newpage()
 grid.arrange(p2)
-##ggsave(p2, file = "p2.pdf")
+
 
 #Saving plot in verbose format
 p3 <- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE,
@@ -136,7 +135,7 @@ cuttree.col = 4, cuttree.row = 3,
 verbose = TRUE, show = FALSE)
 grid.newpage()
 grid.arrange(p3$heatmap)
-##ggsave(p3, file = "p3.pdf")
+
 
 #Adding custom colors to column and row annotation labels
 print(p3$meta.c$id)
@@ -165,6 +164,5 @@ cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
 grid.newpage()
 grid.arrange(p4)
-#ggsave(p4, file = "p4.pdf")
 }
 

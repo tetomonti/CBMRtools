@@ -54,12 +54,11 @@
 #' cuttree.col = 4, cuttree.row = 3,
 #' verbose = FALSE, show = FALSE)
 #' grid.arrange(p1)
-#' #ggsave(p1, file = "p1.pdf")
+#' 
 #'
 #' x<-exprs(eSet1)
-#' x<-x[rev(1:nrow(x)),]
 #' hc.row<-hcopt(stats::as.dist(1-cor(t(x))),method="ward.D")
-#' hc.col <- hcopt(stats::dist(t(x)), method="ward.D") 
+#' hc.col <- hcopt(stats::dist(t(x), method = "euclidean"), method="ward.D") 
 #'
 #' #Adding custom hclust object in col.clust.hc and row.clust.hc
 #' p2 <- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE, 
@@ -76,7 +75,7 @@
 #' verbose = FALSE, show = FALSE)
 #' grid.newpage()
 #' grid.arrange(p2)
-#' ##ggsave(p2, file = "p2.pdf")
+#' 
 #' 
 #' #Saving plot in verbose format
 #' p3 <- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE, 
@@ -93,7 +92,7 @@
 #' verbose = TRUE, show = FALSE)
 #' grid.newpage()
 #' grid.arrange(p3$heatmap)
-#' ##ggsave(p3, file = "p3.pdf")
+#' 
 #'
 #' #Adding custom colors to column and row annotation labels
 #' print(p3$meta.c$id)
@@ -122,7 +121,7 @@
 #' verbose = FALSE, show = FALSE)
 #' grid.newpage()
 #' grid.arrange(p4)
-#' #ggsave(p4, file = "p4.pdf")
+#'
 #' 
 #' 
 #' @export 
@@ -219,9 +218,6 @@ heatmap.ggplot2<-function(eSet,
 	main.title<-textGrob(label=title.text,just=c("center","center"))
 
 	#set default ordering (no clustering)
-
-	#reverse row order, otherwise plot rows read from bottom to top
-	eSet<-eSet[rev(featureNames(eSet)),] 
 	x<-as.matrix(exprs(eSet))
 
 	row.ord<-1:dim(x)[1]
@@ -269,6 +265,9 @@ heatmap.ggplot2<-function(eSet,
   		}
   		
   		row.ord<-order.dendrogram(dd.row)
+
+  		##reverse row ordering
+
 	  	data_row <- dendro_data(dd.row)
 	  	HR <- ggplot(segment(data_row)) + 
 	  	geom_segment(aes_string(x = "x", y = "y", xend = "xend", yend = "yend"))+
