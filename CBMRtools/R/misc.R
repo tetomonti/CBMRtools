@@ -244,7 +244,8 @@ pval2fdr <- function( p, monotone=T, nh=length(p), na.rm=F )
   if (monotone) for ( i in (length(p)-1):1 ) fdr[i] <- min(fdr[i],fdr[i+1])
   fdr[fdr>1] <- 1
   fdr <- fdr[rank(p)]
-
+  names(fdr) <- names(p)
+  
   if ( any(na.idx) ) {
     tmp <- rep(NA,length(na.idx))
     tmp[!na.idx] <- fdr
