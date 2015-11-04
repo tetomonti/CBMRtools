@@ -4,32 +4,46 @@
 ========
 
 You need R 3.0.0 or higher. If on scc4, before starting R, type:
-module load R/R-3.1.1
+
+    module load R/R-3.1.1
+
 it is also recommended to ssh with X11 forward (ssh -X)
 
 Some dependencies you may need to install first:
-install.packages("devtools")
-require("devtools")
-install_github("hadley/staticdocs")
-install_github("hadley/ggplot2") #only works on R 3.1.2, for lower versions use install.packages("ggplot2")
-install_github("andrie/ggdendro")
+
+    install.packages("devtools")
+    require("devtools")
+    install_github("hadley/staticdocs")
+    install_github("hadley/ggplot2") #only works on R 3.1.2, for lower versions use install.packages("ggplot2")
+    install_github("andrie/ggdendro")
 
 #installing current tag
 From within R, run the following commands:
-library(devtools)
-PAT <- "04fe676593e46b6bda5a5d09431156e8a500349a"
-install_github("montilab/CBMRtools/CBMRtools",ref="v1.0.0", auth_token = PAT)     
-require(CBMRtools)
 
+    library(devtools)
+    PAT <- "04fe676593e46b6bda5a5d09431156e8a500349a"
+    install_github("montilab/CBMRtools/CBMRtools",ref="v1.0.1", auth_token = PAT)
+    require(CBMRtools)
+
+
+#installing older tags
+From within R, run the following commands:
+
+    library(devtools)
+    PAT <- "04fe676593e46b6bda5a5d09431156e8a500349a"
+    install_github("montilab/CBMRtools/CBMRtools",ref="v1.0.0", auth_token = PAT)     
+    require(CBMRtools)
 
 You need to do this only once (or after the package is modified by yourself or others). Thereafter, you will only need to include the ‘require(CBMRtools)’ command in your R code. 
 
 See all available functions and datasets:
-require(“CBMRtools”)
-ls("package:CBMRtools")
+
+    require(“CBMRtools”)
+    ls("package:CBMRtools")
 
 See usage for particular functions listed above, e.g.:
-?nnAnalysis
+
+    ?nnAnalysis
 
 for detailed help pages and outputs of example runs: 
 open <path to CBMRtools>/inst/web/index.html
@@ -41,34 +55,34 @@ Note on Installation on PC: on installation on a PC. You may need to install the
 
 Set up git repo for CBMRtools:
 
-git clone https://lia978@github.com/montilab/CBMRtools.git
+    git clone https://lia978@github.com/montilab/CBMRtools.git
+    
 replace lia978 with your username, will prompt for your git password
 
 or, if you already have it, pull the latest version.
 
-CBMRtools is located at /CBMRtools/R
+Within this github, CBMRtools' code is located at /CBMRtools/R
 
-Add your R function to <path to CBMRtools>/R/ **do not add standalone scripts, wrap all R code into functions**
+Add your R function to <code>/CBMRtools/R/</code> **do not add standalone scripts, wrap all R code into functions**
 
-Specify dependencies: within the file CBMRtools/DESCRIPTION, add to the section Depends the list of packages your function depends on (if any)
+Specify dependencies: within the file <code>/CBMRtools/DESCRIPTION</code>, add to the section Depends the list of packages your function depends on (if any)
 
-Add license info to the file and roxygen comments at the top of each function you want to document. You don’t need to write this from scratch, see template at
-	CBMgithub/scripts/R/template.R 
-and an example of how to use this template at 
-	<path to CBMRtools>/R/variationFilter.R. 
+Add license info to the file and roxygen comments at the top of each function you want to document. You don’t need to write this from scratch, see template at	<code>template.R</code> and an example of how to use this template at 
+<code>/CBMRtools/R/variationFilter.R</code>.
 
 You can then build the package as follows:
-	setwd(“<path to CBMRtools>/inst/package_make/”)
-	source(“CBMRtools.build.R”) 
 
-this script does the package checking, compiling, and installation, also generates html page pages. The help pages are be found in CBMRtools/inst/web, see index.html and make sure your page is properly added. 
+    setwd(“<path to CBMRtools>/inst/package_make/”)
+    source(“CBMRtools.build.R”) 
+
+this script does the package checking, compiling, and installation, also generates html page pages. The help pages are be found in <code>CBMRtools/inst/web</code>, see index.html and make sure your page is properly added. 
 
 If the above steps work, sync your changes with the git repo: instructions.
-Notice that these steps need to be performed only once (or after you modify functions within the package). Thereafter, you only need to include ‘require(CBMRtools)’ in your R code.
+Notice that these steps need to be performed only once (or after you modify functions within the package). Thereafter, you only need to include <code>require(CBMRtools)</code> in your R code.
 
 Notes: 
-This will only work if you run it within the package_make folder as the compilation takes place in the CBMRtools subfolder relative to this folder.  
-Make sure there is a folder under package_make called staticdocs within the inst folder or the build will return an error while trying to write the html documentation pages.
-All R objects that are used to illustrate example usage must be added to the CBMRtools/R/data.R script. Avoid using rds objects that need pointing to absolute paths to load/read specific files. This way, your data object can be directly recognized and loaded using the data() function.
-Any commands within @examples that calls on helper functions need to have the helper functions be exported with @export, e.g. see heatmap.ggplot.R‘s @examples, which uses hcopt.R and to.hex.R
+- This will only work if you run it within the package_make folder as the compilation takes place in the CBMRtools subfolder relative to this folder.  
+- Make sure there is a folder under <code>package_make</code> called <code>staticdocs</code> within the inst folder or the build will return an error while trying to write the html documentation pages.
+- All R objects that are used to illustrate example usage must be added to the <code>CBMRtools/R/data.R</code> script. Avoid using rds objects that need pointing to absolute paths to load/read specific files. This way, your data object can be directly recognized and loaded using the data() function.
+- Any commands within @examples that calls on helper functions need to have the helper functions be exported with @export, e.g. see <code>heatmap.ggplot.R</code>‘s @examples, which uses <code>hcopt.R</code> and <code>to.hex.R</code>.
 

@@ -97,12 +97,11 @@ z.norm = FALSE,
 cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
 grid.arrange(p1)
-#ggsave(p1, file = "p1.pdf")
+
 
 x<-exprs(eSet1)
-x<-x[rev(1:nrow(x)),]
 hc.row<-hcopt(stats::as.dist(1-cor(t(x))),method="ward.D")
-hc.col <- hcopt(stats::dist(t(x)), method="ward.D") #'
+hc.col <- hcopt(stats::dist(t(x), method = "euclidean"), method="ward.D")
 
 #Adding custom hclust object in col.clust.hc and row.clust.hc
 p2 <- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE,
@@ -117,8 +116,9 @@ row.scaling = "z-score.capped",
 z.norm = FALSE,
 cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
+grid.newpage()
 grid.arrange(p2)
-##ggsave(p2, file = "p2.pdf")
+
 
 #Saving plot in verbose format
 p3 <- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE,
@@ -133,18 +133,20 @@ row.scaling = "z-score.capped",
 z.norm = FALSE,
 cuttree.col = 4, cuttree.row = 3,
 verbose = TRUE, show = FALSE)
+grid.newpage()
 grid.arrange(p3$heatmap)
-##ggsave(p3, file = "p3.pdf")
 
-meta.c.lab<-levels(unique(p3$meta.c$id))
-meta.c.color.string<-c("yellow", "khaki3", "gold", "chocolate", "darkred", "cyan", "white")
-meta.c.color<-as.character(sapply(meta.c.color.string, to.hex))
-
-meta.r.lab<-levels(unique(p3$meta.r$id))
-meta.r.color.string<-c("pink", "azure", "green")
-meta.r.color<-as.character(sapply(meta.r.color.string, to.hex))
 
 #Adding custom colors to column and row annotation labels
+print(p3$meta.c$id)
+meta.c.color.string<-c("yellow", "khaki3", "gold", "chocolate", "darkred", "cyan")
+meta.c.color<-as.character(sapply(meta.c.color.string, to.hex))
+names(meta.c.color)<-c("Negative", "Positive", "1", "2", "3", "4")
+print(p3$meta.r$id)
+meta.r.color.string<-c("pink", "azure", "green")
+meta.r.color<-as.character(sapply(meta.r.color.string, to.hex))
+names(meta.r.color)<-c("1", "2", "3")
+
 p4<-heatmap.ggplot2(eSet=eSet1,
 col.legend.brewer = meta.c.color,
 row.legend.brewer = meta.r.color,
@@ -160,7 +162,7 @@ row.scaling = "z-score.capped",
 z.norm = FALSE,
 cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
+grid.newpage()
 grid.arrange(p4)
-#ggsave(p4, file = "p4.pdf")
 }
 

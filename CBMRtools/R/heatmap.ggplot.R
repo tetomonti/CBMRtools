@@ -54,12 +54,11 @@
 #' cuttree.col = 4, cuttree.row = 3,
 #' verbose = FALSE, show = FALSE)
 #' grid.arrange(p1)
-#' #ggsave(p1, file = "p1.pdf")
+#' 
 #'
 #' x<-exprs(eSet1)
-#' x<-x[rev(1:nrow(x)),]
 #' hc.row<-hcopt(stats::as.dist(1-cor(t(x))),method="ward.D")
-#' hc.col <- hcopt(stats::dist(t(x)), method="ward.D") #' 
+#' hc.col <- hcopt(stats::dist(t(x), method = "euclidean"), method="ward.D") 
 #'
 #' #Adding custom hclust object in col.clust.hc and row.clust.hc
 #' p2 <- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE, 
@@ -74,9 +73,10 @@
 #' z.norm = FALSE, 
 #' cuttree.col = 4, cuttree.row = 3,
 #' verbose = FALSE, show = FALSE)
+#' grid.newpage()
 #' grid.arrange(p2)
-#' ##ggsave(p2, file = "p2.pdf")
-#'
+#' 
+#' 
 #' #Saving plot in verbose format
 #' p3 <- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE, 
 #' col.clust.hc = hc.col, row.clust.hc = hc.row,
@@ -90,18 +90,20 @@
 #' z.norm = FALSE, 
 #' cuttree.col = 4, cuttree.row = 3,
 #' verbose = TRUE, show = FALSE)
+#' grid.newpage()
 #' grid.arrange(p3$heatmap)
-#' ##ggsave(p3, file = "p3.pdf")
-#'
-#' meta.c.lab<-levels(unique(p3$meta.c$id))
-#' meta.c.color.string<-c("yellow", "khaki3", "gold", "chocolate", "darkred", "cyan", "white")
-#' meta.c.color<-as.character(sapply(meta.c.color.string, to.hex))
-#'
-#' meta.r.lab<-levels(unique(p3$meta.r$id))
-#' meta.r.color.string<-c("pink", "azure", "green")
-#' meta.r.color<-as.character(sapply(meta.r.color.string, to.hex))
+#' 
 #'
 #' #Adding custom colors to column and row annotation labels
+#' print(p3$meta.c$id)
+#' meta.c.color.string<-c("yellow", "khaki3", "gold", "chocolate", "darkred", "cyan")
+#' meta.c.color<-as.character(sapply(meta.c.color.string, to.hex))
+#' names(meta.c.color)<-c("Negative", "Positive", "1", "2", "3", "4")
+#' print(p3$meta.r$id)
+#' meta.r.color.string<-c("pink", "azure", "green")
+#' meta.r.color<-as.character(sapply(meta.r.color.string, to.hex))
+#' names(meta.r.color)<-c("1", "2", "3")
+#'
 #' p4<-heatmap.ggplot2(eSet=eSet1, 
 #' col.legend.brewer = meta.c.color,
 #' row.legend.brewer = meta.r.color,
@@ -117,8 +119,9 @@
 #' z.norm = FALSE, 
 #' cuttree.col = 4, cuttree.row = 3,
 #' verbose = FALSE, show = FALSE)
+#' grid.newpage()
 #' grid.arrange(p4)
-#' #ggsave(p4, file = "p4.pdf")
+#'
 #' 
 #' 
 #' @export 
@@ -215,9 +218,6 @@ heatmap.ggplot2<-function(eSet,
 	main.title<-textGrob(label=title.text,just=c("center","center"))
 
 	#set default ordering (no clustering)
-
-	#reverse row order, otherwise plot rows read from bottom to top
-	eSet<-eSet[rev(featureNames(eSet)),] 
 	x<-as.matrix(exprs(eSet))
 
 	row.ord<-1:dim(x)[1]
@@ -265,6 +265,9 @@ heatmap.ggplot2<-function(eSet,
   		}
   		
   		row.ord<-order.dendrogram(dd.row)
+
+  		##reverse row ordering
+
 	  	data_row <- dendro_data(dd.row)
 	  	HR <- ggplot(segment(data_row)) + 
 	  	geom_segment(aes_string(x = "x", y = "y", xend = "xend", yend = "yend"))+
@@ -396,7 +399,24 @@ heatmap.ggplot2<-function(eSet,
 		palette.all.permute<-sample(palette.all, replace = FALSE, size = length(palette.all))
 
 		if (col.legend.brewer[1] != ""){
-			palette.all.permute <-col.legend.brewer
+			metacolunq<-as.character(unique(meta.c$id))
+
+			if(is.null(names(col.legend.brewer))){
+				stop("col.legend.brewer must have names representing ids of color labels")
+			}
+			if (any(duplicated(names(col.legend.brewer)))){
+				stop("duplicated column legend colors in col.lgend.brewer")
+			} 
+			missingcols<-setdiff(names(col.legend.brewer), metacolunq)
+			if (length(missingcols)!= 0){
+				stop(paste("missing column legend colors", 
+					paste(missingcols, collapse = ","), sep = ":"))
+			}
+			col.legend.brewer.ordered<- col.legend.brewer[ match( metacolunq,
+				names(col.legend.brewer))]
+			col.legend.brewer.ordered[which(is.na(col.legend.brewer.ordered))]<- to.hex("white")
+			palette.all.permute<-col.legend.brewer.ordered
+			#palette.all.permute <-col.legend.brewer
 		}
 
 		LC<-ggplot(meta.c, aes_string(x = "num", y = "type", fill = "id")) + 
@@ -477,7 +497,25 @@ heatmap.ggplot2<-function(eSet,
 		palette.all.permute<-sample(palette.all, replace = FALSE, size = length(palette.all))
 
 		if (row.legend.brewer[1] != ""){
-			palette.all.permute <-row.legend.brewer
+			metarowunq<-as.character(unique(meta.r$id))
+
+			if(is.null(names(row.legend.brewer))){
+				stop("row.legend.brewer must have names representing ids of color labels")
+			}
+			if (any(duplicated(names(row.legend.brewer)))){
+				stop("duplicated column legend colors in col.lgend.brewer")
+			} 
+			missingrows<-setdiff(names(row.legend.brewer), metarowunq)
+			if (length(missingrows)!= 0){
+				stop(paste("missing column legend colors", 
+					paste(missingrows, collapse = ","), sep = ":"))
+			}
+			row.legend.brewer.ordered<- row.legend.brewer[ match( metarowunq,
+				names(row.legend.brewer))]
+			row.legend.brewer.ordered[which(is.na(row.legend.brewer.ordered))]<- to.hex("white")
+			palette.all.permute<-row.legend.brewer.ordered
+
+			#palette.all.permute <-row.legend.brewer
 		}
 
 		LR<-ggplot(meta.r, aes_string(x = "num", y = "type", fill = "id")) + 
