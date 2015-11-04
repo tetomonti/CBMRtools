@@ -182,7 +182,7 @@ geneSetProjection <- function
 ## project one or more samples from gene space onto geneset ks-score space
 ## the function can either:
 ## - turn many-cases vs. many-controls into a single ks-score vector (collapse=T, cls!=NULL)
-## - turn many-cases vs. many-controls into many ks-score vectors (collapse=F, cls!=NULL)
+## - turn many-cases vs. many-controls into many ks-score vectors (collapse=FALSE, cls!=NULL)
 ## - turn many-cases into many ks-score vectors (cls==NULL)
 ##
 ks.projection <- function
@@ -192,11 +192,11 @@ ks.projection <- function
     gsets,            # list of (named) genesets
     collapse=FALSE,   # collapse multiple replicates
     control=!collapse,# include normals (only when collapse==FALSE)
-    weighted=T,
+    weighted=TRUE,
     do.check=TRUE,
     min.gset=10,
-    verbose=T,
-    absolute=F
+    verbose=TRUE,
+    absolute=FALSE
 )
 {
   ## CHECKS ON INPUTS
@@ -227,7 +227,7 @@ ks.projection <- function
   ## map from gene names to gene positions within dataset
   ## (for max efficiency, this could ideally be brought out of the function)
   ##
-  gidx <- lapply( gsets, function(Z) sort(match.nona(Z,rownames(dat))) )
+  gidx <- lapply( gsets, function(Z) sort(match.nona(Z,toupper(rownames(dat)))) )
   
   ks.project <- function( dat, cls, var.equal=FALSE,absolute=FALSE)
   {
