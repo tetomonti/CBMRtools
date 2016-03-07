@@ -119,74 +119,84 @@
     <div class="Description">
       <h2>Description</h2>
 
-      <p><code>heatmap.ggplot2</code> is the main function to draw and/or save the heatmap from an
+      <p><code>heatmap.ggplot2</code> is the main function to draw and/or save the heatmap from an 
 expression set object</p>
   
     </div>
     
     <h2 id="examples">Examples</h2>
-    <pre class="examples"><div class='input'>#Use example data #1, for data set information: ?eSet1
+    <pre class="examples"><div class='input'>
+#Use example data #1, for data set information: ?eSet1
 data(eSet.brca.100)
 eSet1&lt;-eSet.brca.100
 eSet1&lt;-eSet1[1:10,1:25]
 
-p1&lt;-heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE,
+p1&lt;-heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE, 
 col.clust.hc = NA, row.clust.hc = NA,
-col.lab = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;), row.lab = &quot;&quot;,
+col.lab = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;), row.lab = &quot;&quot;, 
 heatmap.y.text = TRUE, heatmap.x.text = TRUE,
 heatmap.colorlegend.name = &quot;RNASeq_expression&quot;,
 title.text = &quot;TCGA BRCA log2 RNA-seq expression, z-score row normalized&quot;,
-col.legend.name = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;),
-row.legend.name = &quot;&quot;,
-row.scaling = &quot;z-score.capped&quot;,
-z.norm = FALSE,
+col.legend.name = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;), 
+row.legend.name = &quot;&quot;, 
+row.scaling = &quot;z-score.capped&quot;, 
+z.norm = FALSE, 
 cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
-grid.arrange(p1)
 </div>
-<p><img src='heatmap.ggplot2-2.png' alt='' width='540' height='400' /></p>
-<div class='input'>
-
-x&lt;-exprs(eSet1)
-hc.row&lt;-hcopt(stats::as.dist(1-cor(t(x))),method=&quot;ward.D&quot;)
-hc.col &lt;- hcopt(stats::dist(t(x), method = &quot;euclidean&quot;), method=&quot;ward.D&quot;)
-
-#Adding custom hclust object in col.clust.hc and row.clust.hc
-p2 &lt;- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE,
-col.clust.hc = hc.col, row.clust.hc = hc.row,
-col.lab = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;), row.lab = &quot;&quot;,
-heatmap.y.text = TRUE, heatmap.x.text = TRUE,
-heatmap.colorlegend.name = &quot;RNASeq_expression&quot;,
-title.text = &quot;TCGA BRCA log2 RNA-seq expression, z-score row normalized&quot;,
-col.legend.name = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;),
-row.legend.name = &quot;&quot;,
-row.scaling = &quot;z-score.capped&quot;,
-z.norm = FALSE,
-cuttree.col = 4, cuttree.row = 3,
-verbose = FALSE, show = FALSE)
-grid.newpage()
-grid.arrange(p2)
+<strong class='warning'>Warning message:
+`axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</strong>
+<div class='input'>grid.arrange(p1)
 </div>
 <p><img src='heatmap.ggplot2-4.png' alt='' width='540' height='400' /></p>
 <div class='input'>
 
-#Saving plot in verbose format
-p3 &lt;- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE,
+x&lt;-exprs(eSet1)
+hc.row&lt;-hcopt(stats::as.dist(1-cor(t(x))),method=&quot;ward.D&quot;)
+hc.col &lt;- hcopt(stats::dist(t(x), method = &quot;euclidean&quot;), method=&quot;ward.D&quot;) 
+
+#Adding custom hclust object in col.clust.hc and row.clust.hc
+p2 &lt;- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE, 
 col.clust.hc = hc.col, row.clust.hc = hc.row,
-col.lab = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;), row.lab = &quot;&quot;,
+col.lab = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;), row.lab = &quot;&quot;, 
 heatmap.y.text = TRUE, heatmap.x.text = TRUE,
 heatmap.colorlegend.name = &quot;RNASeq_expression&quot;,
 title.text = &quot;TCGA BRCA log2 RNA-seq expression, z-score row normalized&quot;,
-col.legend.name = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;),
-row.legend.name = &quot;&quot;,
-row.scaling = &quot;z-score.capped&quot;,
-z.norm = FALSE,
+col.legend.name = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;), 
+row.legend.name = &quot;&quot;, 
+row.scaling = &quot;z-score.capped&quot;, 
+z.norm = FALSE, 
+cuttree.col = 4, cuttree.row = 3,
+verbose = FALSE, show = FALSE)
+</div>
+<strong class='warning'>Warning message:
+`axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</strong>
+<div class='input'>grid.newpage()
+grid.arrange(p2)
+</div>
+<p><img src='heatmap.ggplot2-8.png' alt='' width='540' height='400' /></p>
+<div class='input'>
+
+#Saving plot in verbose format
+p3 &lt;- heatmap.ggplot2(eSet=eSet1, col.clust = TRUE, row.clust = TRUE, 
+col.clust.hc = hc.col, row.clust.hc = hc.row,
+col.lab = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;), row.lab = &quot;&quot;, 
+heatmap.y.text = TRUE, heatmap.x.text = TRUE,
+heatmap.colorlegend.name = &quot;RNASeq_expression&quot;,
+title.text = &quot;TCGA BRCA log2 RNA-seq expression, z-score row normalized&quot;,
+col.legend.name = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;), 
+row.legend.name = &quot;&quot;, 
+row.scaling = &quot;z-score.capped&quot;, 
+z.norm = FALSE, 
 cuttree.col = 4, cuttree.row = 3,
 verbose = TRUE, show = FALSE)
-grid.newpage()
+</div>
+<strong class='warning'>Warning message:
+`axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</strong>
+<div class='input'>grid.newpage()
 grid.arrange(p3$heatmap)
 </div>
-<p><img src='heatmap.ggplot2-6.png' alt='' width='540' height='400' /></p>
+<p><img src='heatmap.ggplot2-12.png' alt='' width='540' height='400' /></p>
 <div class='input'>
 
 #Adding custom colors to column and row annotation labels
@@ -222,25 +232,29 @@ Levels: 3 1 2
 meta.r.color&lt;-as.character(sapply(meta.r.color.string, to.hex))
 names(meta.r.color)&lt;-c(&quot;1&quot;, &quot;2&quot;, &quot;3&quot;)
 
-p4&lt;-heatmap.ggplot2(eSet=eSet1,
+p4&lt;-heatmap.ggplot2(eSet=eSet1, 
 col.legend.brewer = meta.c.color,
 row.legend.brewer = meta.r.color,
-col.clust = TRUE, row.clust = TRUE,
+col.clust = TRUE, row.clust = TRUE, 
 col.clust.hc = hc.col, row.clust.hc = hc.row,
-col.lab = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;), row.lab = &quot;cluster.row&quot;,
+col.lab = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;), row.lab = &quot;cluster.row&quot;, 
 heatmap.y.text = TRUE, heatmap.x.text = TRUE,
 heatmap.colorlegend.name = &quot;RNASeq_expression&quot;,
 title.text = &quot;TCGA BRCA log2 RNA-seq expression, z-score row normalized&quot;,
-col.legend.name = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;, &quot;cluster.col&quot;),
-row.legend.name = &quot;cluster.row&quot;,
-row.scaling = &quot;z-score.capped&quot;,
-z.norm = FALSE,
+col.legend.name = c(&quot;HER2_status&quot;, &quot;ER_status&quot;, &quot;PR_status&quot;, &quot;TN_status&quot;, &quot;cluster.col&quot;), 
+row.legend.name = &quot;cluster.row&quot;, 
+row.scaling = &quot;z-score.capped&quot;, 
+z.norm = FALSE, 
 cuttree.col = 4, cuttree.row = 3,
 verbose = FALSE, show = FALSE)
-grid.newpage()
+</div>
+<strong class='warning'>Warning message:
+`axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</strong>
+<div class='input'>grid.newpage()
 grid.arrange(p4)
 </div>
-<p><img src='heatmap.ggplot2-12.png' alt='' width='540' height='400' /></p></pre>
+<p><img src='heatmap.ggplot2-20.png' alt='' width='540' height='400' /></p>
+<div class='input'></div></pre>
   </div>
   <div class="span4">
     <!-- <ul>

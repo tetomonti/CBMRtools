@@ -165,11 +165,13 @@ p2 &lt;- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
                       heatmap.y.text=TRUE, heatmap.x.text=FALSE,
                       heatmap.colorlegend.name=&quot;RNASeq_expression&quot;,
                       title.text=&quot;TCGA BRCA log2 gene set projection&quot;,
-                      col.legend.name=c(gradeID,stageID), row.legend.name=&quot;&quot;,
-                      row.scaling=&quot;none&quot;,z.norm=FALSE,
+                      col.legend.name=c(gradeID,stageID), row.legend.name=&quot;&quot;, 
+                      row.scaling=&quot;none&quot;,z.norm=FALSE, 
                       cuttree.col=0, cuttree.row=0,
                       verbose=FALSE, show=TRUE)
 </div>
+<strong class='warning'>Warning message:
+`axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</strong>
 <div class='output'>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
   z     cells    name              grob
 1 1 (1-1,1-1) arrange text[GRID.text.2]
@@ -177,7 +179,8 @@ p2 &lt;- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
 </div>
 <div class='input'>grid.arrange(p2)
 </div>
-<p><img src='geneSetProjection-6.png' alt='' width='540' height='400' /></p></pre>
+<p><img src='geneSetProjection-7.png' alt='' width='540' height='400' /></p>
+<div class='input'></div></pre>
   </div>
   <div class="span4">
     <!-- <ul>

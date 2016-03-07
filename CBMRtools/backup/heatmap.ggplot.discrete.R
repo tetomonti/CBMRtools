@@ -137,12 +137,16 @@
 # 3) make sure LOCAL_R_DIR is included in R package path: .libPaths( c( .libPaths(), "/path/to/LOCAL_R_DIR") )
 #####
 
-heatmap.ggplot2<-function(eSet, 
-	brewer.pal.name = "RdBu",#color gradient, see options at RColorBrewer::display.brewer.all()
-	brewer.pal.rev = TRUE, #reverse color gradient
-	brewer.numColors = 11,
+heatmap.ggplot2.discrete<-function(eSet, 
+	
 	col.legend.brewer = "",
 	row.legend.brewer = "",
+
+	discrete.colors = TRUE,
+	discrete.colors.breaks = NA,
+	discrete.colors.values = NA,
+	discrete.colors.labels = NA,
+
 	col.clust = TRUE, #column clustering
 	row.clust = TRUE, #row clustering
 	col.clust.hc = NA, #hc object to be passed to as.dendrogram, available when col.clust = TRUE, default NA: hc = hcopt(stats::dist(t(x)), method="ward.D")
@@ -158,9 +162,7 @@ heatmap.ggplot2<-function(eSet,
 	col.legend.name = "", #character vector for colname to plot as col.lab legend
 	row.legend.name = "", #character vector for colname to plot as row.lab legend
 	legend.lab.max.char = 15, #number of characters limit for legend labels
-	row.scaling = "none", #one of c("none", "quantile", "z-score.all", "z-score.capped") 
-	z.norm = FALSE, #heatmap colors reflect z-scores rather than original values
-					#only can be TRUE if row.scaling == "none" 
+
 	cuttree.col = 0, #TO BE IMPLEMENTED: shows cluster assignment color label for columns
 					#number of clusters for columns, default 0: do not show cluster assignment
 	cuttree.row = 0, #TO BE IMPLEMENTED: shows cluster assignment color label for rows
@@ -172,16 +174,7 @@ heatmap.ggplot2<-function(eSet,
 	){
   
   
- # require(Biobase)
-#  require(ggplot2)
-#  require(reshape2)
-#  require(ggdendro)
-#  require(grid)
-#  require(gridExtra)
-#  require(gtable)
-#  require(RColorBrewer)
-#  require(scales)
- # require(stats)
+
 
   #make blank ggplot2 theme
 	theme_none <- theme(
@@ -285,24 +278,6 @@ heatmap.ggplot2<-function(eSet,
   	
   	x.ordered <- x[row.ord, col.ord]
 
-  	if (row.scaling == "quantile"){
-		  x.ordered.scaled<-t(apply(x.ordered, 1, function(z) 
-			cut(z, 
-          breaks = quantile(z, (0:11)/11 ), 
-          dig.lab =10, 
-          include.lowest=T, 
-          labels =F))) - 6
-		  rownames(x.ordered.scaled)<-rownames(x.ordered)
-		  colnames(x.ordered.scaled)<-colnames(x.ordered)
-		  x.ordered<-x.ordered.scaled
-	  } else if (row.scaling == "z-score.all" || row.scaling == "z-score.capped"){
-		  x.ordered.scaled<-t(apply(x.ordered, 1, function(z) 
-			scale(z))) 
-		  rownames(x.ordered.scaled)<-rownames(x.ordered)
-		  colnames(x.ordered.scaled)<-colnames(x.ordered)
-		  x.ordered<-x.ordered.scaled
-	  } 
-
 	df<-as.data.frame(x.ordered)
 	df$gene<-rownames(x.ordered)
 	df$gene<-factor(df$gene, levels=unique(df$gene))
@@ -310,35 +285,34 @@ heatmap.ggplot2<-function(eSet,
 	dfm <- melt(df, id.vars = "gene")
 	colnames(dfm) <- c("gene", "sample", heatmap.colorlegend.name)
 
-	if (row.scaling =="none" & z.norm == TRUE){
-    dfm[,heatmap.colorlegend.name]<-scale(dfm[,heatmap.colorlegend.name])
-  }
+	###discrete colors
 
- 	if (brewer.pal.rev == TRUE)
-	heatmap_color_scale<-scale_fill_gradientn(colours=rev(brewer.pal(brewer.numColors,brewer.pal.name)))
-	else 
-	heatmap_color_scale<-scale_fill_gradientn(colours=brewer.pal(brewer.numColors,brewer.pal.name))
-
-
-
-	if (row.scaling == "z-score.capped"){
-		if (brewer.pal.rev == TRUE)
-		heatmap_color_scale<-scale_fill_gradientn(colours=rev(brewer.pal(brewer.numColors,brewer.pal.name)), limits=c(-3,3), oob=squish)
-		else 
-		heatmap_color_scale<-scale_fill_gradientn(colours=brewer.pal(brewer.numColors,brewer.pal.name), limits=c(-3,3), oob=squish)
+	if(discrete.colors == TRUE){
+		dfm[,heatmap.colorlegend.name] <- cut(as.numeric(dfm[, heatmap.colorlegend.name]),
+			breaks = discrete.colors.breaks,right = FALSE)
 	}
 
+
 	M <- ggplot(dfm, aes_string(x="gene", y="sample")) + 
+
   	geom_tile(aes_string(fill=heatmap.colorlegend.name)) + 
-  	heatmap_color_scale +
+  	scale_fill_manual(breaks=levels(dfm[,heatmap.colorlegend.name]),
+                       values =  discrete.colors.values,
+                       guide=guide_legend(label.hjust=-2, label.position="bottom"),
+                       labels = discrete.colors.labels, drop = FALSE) +
   	theme_none +
-  	theme(legend.position="bottom") +
+  	theme(legend.position="bottom", 
+  		#legend.key.width =unit(0.1, "in"),
+  		legend.text = element_text(size=5)) +
   	coord_flip() + 
   	theme(axis.text.x = element_text(angle = 90, hjust = 1, size = heatmap.x.text.size), 
 	  			axis.text.y=element_text(hjust = 1, size =heatmap.y.text.size) ) 
 
+  
   	#--color legend for heatmap--
   	ML <- gtable_filter(ggplot_gtable(ggplot_build(M)), "guide-box")
+  	#ML<-grid.rect(gp=gpar(col="white"), draw = F)
+
 
   	#--heatmap y axis label text
   	if(heatmap.y.text == TRUE){
@@ -431,8 +405,11 @@ heatmap.ggplot2<-function(eSet,
 	  	if (col.legend.name[1] != ""){
 	  		SLC <-list()
 	  		for (ind in rev(col.legend.name)){
-	  			LC.temp<-LC + scale_fill_manual(name = ind, 
-	  					breaks = levels(factor(col.meta[, ind])),
+	  			
+	  			LC.temp<-LC + scale_fill_manual(name = ind,
+	  					breaks = union(levels(pData(eSet)[, ind]), unique(col.meta[, ind])), 
+	  					#breaks = unique(col.meta[, ind]),
+	  					#breaks = levels(factor(col.meta[, ind])),
 	                    values = palette.all.permute, 
 	                    guide = guide_legend(direction = "vertical", 
                                            title.position = "top", 
@@ -586,7 +563,7 @@ heatmap.ggplot2<-function(eSet,
 	}
 
 	if (length(grid.widths)<4){
-		dy<-c( (1- dy4) * c(2/12, 8/12, dy3), dy4)
+		dy<-c( (1- dy4) * c(2.2/12, 8/12, dy3), dy4)
 	} else{
 		dy<-grid.widths
 	}
@@ -622,6 +599,7 @@ heatmap.ggplot2<-function(eSet,
   		res<-list(heatmap = g, meta.c = meta.c, meta.r = meta.r, col.meta = col.meta, row.meta = row.meta)
   		return(res)
   	}
+  
   
 }
 

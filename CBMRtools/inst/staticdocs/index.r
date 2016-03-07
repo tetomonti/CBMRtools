@@ -7,7 +7,7 @@ sd_section(
 sd_section(
 	"Algorithms for gene expression based analysis",
 	"These functions perform gene expression based statistical analysis",
-	c("hyperEnrichment", "nnAnalysis", "oligo_wrapper", "geneSetProjection")
+	c("hyperEnrichment", "nnAnalysis", "oligo_wrapper", "geneSetProjection", "run_limma")
 )
 
 sd_section(
@@ -25,5 +25,11 @@ sd_section(
 	"Documentation related pages",
 	"These are pages purely associated with documentation",
 	c("CBMRtools", "data")
+	)
+
+sd_section(
+	"Visualization tools",
+	"Tools for visualizing data",
+	c("heatmap.ggplot2")
 	)
 

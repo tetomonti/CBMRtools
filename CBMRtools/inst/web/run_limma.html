@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>oligo_wrapper. CBMRtools 0.1</title>
+<title>run_limma. CBMRtools 0.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="">
 
@@ -47,51 +47,55 @@
         
       </header>
       
-      <h1>wrapper script for microarray gene ST chips processing into expression set object</h1>
+      <h1>wrapper for running limma with additional columns attached</h1>
 
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre><div>oligo_wrapper(indir, outdir, header)</div></pre>
+    <pre><div>run_limma(eset, treatment, cond, control, verbose&nbsp;=&nbsp;TRUE, sort.by&nbsp;=&nbsp;"adj.P.Val", decreasing&nbsp;=&nbsp;FALSE, cutoff&nbsp;=&nbsp;NA)</div></pre>
     
     <h2>Arguments</h2>
     <dl>
-      <dt>indir</dt>
-      <dd>input directory</dd>
-      <dt>outdir</dt>
-      <dd>output directory</dd>
-      <dt>header</dt>
-      <dd>of outfile</dd>
+      <dt>eset</dt>
+      <dd>expression set object with gene expression</dd>
+      <dt>treatment</dt>
+      <dd>column name in pData(eset) specifying the conditions for differential expression</dd>
+      <dt>cond</dt>
+      <dd>value in treatment specifying the positive condition</dd>
+      <dt>control</dt>
+      <dd>value in treatment specifying the control condition</dd>
+      <dt>verbose</dt>
+      <dd>whether to display additional columns in report table</dd>
+      <dt>sort.by</dt>
+      <dd>column to sort by</dd>
+      <dt>decreasing</dt>
+      <dd>direction for sorting</dd>
+      <dt>cutoff</dt>
+      <dd>threshold value for keeping results</dd>
     </dl>
     
-    <div class="Value">
-      <h2>Value</h2>
-
-      <p><dl>
-the normalized expressionSet object
-</dl></p>
-  
-    </div>
-
     <div class="Description">
       <h2>Description</h2>
 
-      <p>wrapper script for microarray gene ST chips processing into expression set object</p>
+      <p>wrapper for running limma with additional columns attached</p>
   
     </div>
     
     <h2 id="examples">Examples</h2>
-    <pre class="examples"><div class='input'>#running example
-#indir&lt;-&quot;/Users/amyli/Desktop/temp_dir/example_script/raw&quot;
-#outdir&lt;-&quot;/Users/amyli/Desktop/temp_dir/example_script/processed&quot;
-#dat&lt;-oligo_wrapper(indir = indir, outdir = outdir, header = &quot;my_eset&quot;)
-
-
+    <pre class="examples"><div class='input'>data(eSet.brca.100)
+eset&lt;-eSet.brca.100
+eset&lt;-eset[, eset$ER_status %in% c(&quot;Positive&quot;, &quot;Negative&quot;)]
+res&lt;-run_limma(eset = eset, treatment = &quot;ER_status&quot;, cond = &quot;Positive&quot;, 
+	control = &quot;Negative&quot;, verbose = TRUE, sort.by = &quot;adj.P.Val&quot;, decreasing = FALSE, cutoff = 0.05)
+</div>
+<div class='output'>running limma
+running accessory function
+joining table
 </div></pre>
   </div>
   <div class="span4">
     <!-- <ul>
-      <li>oligo_wrapper</li>
+      <li>run_limma</li>
     </ul>
     <ul>
       

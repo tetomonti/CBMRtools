@@ -77,7 +77,8 @@ gene has the same mean/sd in two datasets</p>
     </div>
     
     <h2 id="examples">Examples</h2>
-    <pre class="examples"><div class='input'>data(eSet.brca.100)
+    <pre class="examples"><div class='input'>
+data(eSet.brca.100)
 set.seed(123) # for reproducible results
 dat.idx &lt;- sort(sample(ncol(eSet.brca.100),ncol(eSet.brca.100)/2))
 
@@ -97,7 +98,7 @@ plot(apply(exprs(B),1,mean),apply(NORMall,1,mean),xlab=&quot;base&quot;,ylab=&qu
 </div>
 <div class='output'>[1] TRUE
 </div>
-<div class='input'>
+<div class='input'> 
 # normalize using a subset of samples in both datasets
 NORMsub &lt;- geneNormalization(exprs(N),exprs(B),norm.sub=N.sub,base.sub=B.sub)
 
@@ -119,7 +120,8 @@ plot(apply(exprs(B[,B.sub]),1,mean),apply(NORMsub[,N.sub],1,mean),
 <div class='input'>all.equal(apply(exprs(B[,B.sub]),1,mean),apply(NORMsub[,N.sub],1,mean)) # TRUE
 </div>
 <div class='output'>[1] TRUE
-</div></pre>
+</div>
+<div class='input'></div></pre>
   </div>
   <div class="span4">
     <!-- <ul>
