@@ -1,4 +1,4 @@
-#' @export
+' @export
 VERBOSE <- function( v, ... )
 {
   if ( v ) cat( ... )
@@ -189,6 +189,17 @@ plot.norm <- function( n=1000, mean=0, sd=1, add=F, lty="solid", ...)
   else {
     plot( qnorm(p,mean=mean,sd=sd), dnorm( qnorm(p,mean=mean,sd=sd),mean=mean,sd=sd ),type="l", lty=lty, ...)
   }
+}
+#' @export
+plot.distn <- function( qfun, dfun, n, lty=1, add=FALSE, xlab=NULL, ylab=NULL, main=NULL, ... )
+{
+  p <- (1:(n-1))/n
+  q <- qfun(p,...)
+  
+  if ( add )
+    lines( q, dfun(q,...), lty=lty )
+  else
+    plot( q, dfun(q,...), type="l", lty=lty, xlab=xlab,ylab=ylab,main=main )
 }
 #' @export
 cumineq <- function( prm, obs, dir=1, debug=F )
