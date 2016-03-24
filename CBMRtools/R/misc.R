@@ -1,4 +1,4 @@
-' @export
+#' @export
 VERBOSE <- function( v, ... )
 {
   if ( v ) cat( ... )
@@ -191,7 +191,7 @@ plot.norm <- function( n=1000, mean=0, sd=1, add=F, lty="solid", ...)
   }
 }
 #' @export
-plot.distn <- function( qfun, dfun, n, lty=1, add=FALSE, xlab=NULL, ylab=NULL, main=NULL, ... )
+plot.distn <- function( qfun, dfun, n, lty=1, add=FALSE, xlab=NULL, ylab=NULL, main=NULL, ... ) 
 {
   p <- (1:(n-1))/n
   q <- qfun(p,...)
