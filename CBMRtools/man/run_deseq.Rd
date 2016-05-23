@@ -8,21 +8,19 @@ run_deseq(eset, class_id, control, treatment, verbose = TRUE,
   sortByPValue = TRUE, FDRcutoff = NULL)
 }
 \arguments{
-\item{eset}{expression set object with gene expression}
+\item{eset}{expression set object with raw count data}
 
 \item{class_id}{column name in pData(eset) specifying the conditions for differential expression}
 
-\item{control}{value in treatment specifying the control condition}
+\item{control}{value in class_id specifying the control condition}
 
-\item{treatment}{value in treatment specifying the positive condition}
+\item{treatment}{value in class_id specifying the treatment condition}
 
-\item{verbose}{add additional information and perform filtering}
+\item{verbose}{add additional information and perform significance filtering}
 
 \item{sortByPValue}{whether to sort results by nominal p-value, if verbose = TRUE}
 
 \item{FDRcutoff}{FDR threshold for filtering results, if verbose = TRUE}
-
-\item{control}{value in treatment specifying the control condition}
 }
 \description{
 Run DESeq2 on eset object

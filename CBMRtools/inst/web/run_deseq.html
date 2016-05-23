@@ -57,21 +57,19 @@
     <h2>Arguments</h2>
     <dl>
       <dt>eset</dt>
-      <dd>expression set object with gene expression</dd>
+      <dd>expression set object with raw count data</dd>
       <dt>class_id</dt>
       <dd>column name in pData(eset) specifying the conditions for differential expression</dd>
       <dt>control</dt>
-      <dd>value in treatment specifying the control condition</dd>
+      <dd>value in class_id specifying the control condition</dd>
       <dt>treatment</dt>
-      <dd>value in treatment specifying the positive condition</dd>
+      <dd>value in class_id specifying the treatment condition</dd>
       <dt>verbose</dt>
-      <dd>add additional information and perform filtering</dd>
+      <dd>add additional information and perform significance filtering</dd>
       <dt>sortByPValue</dt>
       <dd>whether to sort results by nominal p-value, if verbose = TRUE</dd>
       <dt>FDRcutoff</dt>
       <dd>FDR threshold for filtering results, if verbose = TRUE</dd>
-      <dt>control</dt>
-      <dd>value in treatment specifying the control condition</dd>
     </dl>
     
     <div class="Description">

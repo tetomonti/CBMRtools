@@ -4,7 +4,7 @@
 #' @param class_id column name in pData(eset) specifying the conditions for differential expression
 #' @param treatment value in class_id specifying the treatment condition
 #' @param control value in class_id specifying the control condition
-#' @param verbose add additional information and perform filtering
+#' @param verbose add additional information and perform significance filtering
 #' @param sortByPValue whether to sort results by nominal p-value, if verbose = TRUE
 #' @param FDRcutoff FDR threshold for filtering results, if verbose = TRUE
 #' @export
