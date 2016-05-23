@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>run_limma. CBMRtools 0.1</title>
+<title>run_edgeR. CBMRtools 0.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="">
 
@@ -47,52 +47,41 @@
         
       </header>
       
-      <h1>wrapper for running limma with additional columns attached</h1>
+      <h1>Run edgeR on eset object</h1>
 
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre><div>run_limma(eset, treatment, cond, control, verbose&nbsp;=&nbsp;TRUE, sort.by&nbsp;=&nbsp;"adj.P.Val", decreasing&nbsp;=&nbsp;FALSE, cutoff&nbsp;=&nbsp;NA)</div></pre>
+    <pre><div>run_edgeR(eset, class_id, control, treatment, verbose&nbsp;=&nbsp;TRUE, sortByPValue&nbsp;=&nbsp;TRUE, FDRcutoff&nbsp;=&nbsp;NULL)</div></pre>
     
     <h2>Arguments</h2>
     <dl>
       <dt>eset</dt>
-      <dd>expression set object with gene expression</dd>
-      <dt>treatment</dt>
+      <dd>expression set object with raw count data</dd>
+      <dt>class_id</dt>
       <dd>column name in pData(eset) specifying the conditions for differential expression</dd>
-      <dt>cond</dt>
-      <dd>value in treatment specifying the positive condition</dd>
       <dt>control</dt>
-      <dd>value in treatment specifying the control condition</dd>
+      <dd>value in class_id specifying the control condition</dd>
+      <dt>treatment</dt>
+      <dd>value in class_id specifying the treatment condition</dd>
       <dt>verbose</dt>
-      <dd>whether to display additional columns in report table</dd>
-      <dt>sort.by</dt>
-      <dd>column to sort by</dd>
-      <dt>decreasing</dt>
-      <dd>direction for sorting</dd>
-      <dt>cutoff</dt>
-      <dd>threshold value for keeping results</dd>
+      <dd>add additional information and perform significance filtering</dd>
+      <dt>sortByPValue</dt>
+      <dd>whether to sort results by nominal p-value, if verbose = TRUE</dd>
+      <dt>FDRcutoff</dt>
+      <dd>FDR threshold for filtering results, if verbose = TRUE</dd>
     </dl>
     
     <div class="Description">
       <h2>Description</h2>
 
-      <p>wrapper for running limma with additional columns attached</p>
+      <p>Run edgeR on eset object</p>
   
     </div>
-    
-    <h2 id="examples">Examples</h2>
-    <pre class="examples"><div class='input'>data(eSet.brca.100)
-eset&lt;-eSet.brca.100
-eset&lt;-eset[, eset$ER_status %in% c(&quot;Positive&quot;, &quot;Negative&quot;)]
-res&lt;-run_limma(eset = eset, treatment = &quot;ER_status&quot;, cond = &quot;Positive&quot;, 
-	control = &quot;Negative&quot;, verbose = TRUE, sort.by = &quot;adj.P.Val&quot;, decreasing = FALSE, cutoff = 0.05)
-</div>
-<strong class='error'>Error in run_limma(eset = eset, treatment = &quot;ER_status&quot;, cond = &quot;Positive&quot;,     control = &quot;Negative&quot;, verbose = TRUE, sort.by = &quot;adj.P.Val&quot;,     decreasing = FALSE, cutoff = 0.05): unused arguments (cond = &quot;Positive&quot;, verbose = TRUE, sort.by = &quot;adj.P.Val&quot;, decreasing = FALSE, cutoff = 0.05)</strong></pre>
-  </div>
+      </div>
   <div class="span4">
     <!-- <ul>
-      <li>run_limma</li>
+      <li>run_edgeR</li>
     </ul>
     <ul>
       

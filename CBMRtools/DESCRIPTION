@@ -19,7 +19,8 @@ Depends:
     RColorBrewer,
     scales,
     survival,
-    DESeq2
+    DESeq2,
+    edgeR
 Imports:
     XLConnect,
     data.table,
