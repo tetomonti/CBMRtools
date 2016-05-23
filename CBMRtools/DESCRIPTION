@@ -18,7 +18,8 @@ Depends:
     gtable,
     RColorBrewer,
     scales,
-    survival
+    survival,
+    DESeq2
 Imports:
     XLConnect,
     data.table,
