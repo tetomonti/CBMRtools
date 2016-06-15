@@ -57,13 +57,16 @@ run_limma<-function(eset, treatment, cond, control, verbose = TRUE,
 
 		fit2.table$limma.fold.change<-2^fit2.table$logFC
 		colnames(fit2.table)[which(colnames(fit2.table) == "logFC")]<-"limma.logFC"
-		ordered.names<-c(fdat.colnames,"limma.logFC", "limma.fold.change","t", "P.Value","adj.P.Val",
-			"actual.mean0","actual.mean1","high.class",
-			"actual.fold.change","actual.sd0","actual.sd1","n0","n1","actual.logFC")
+#		ordered.names<-c(fdat.colnames,"limma.logFC", "limma.fold.change","t", "P.Value","adj.P.Val",
+#			"actual.mean0","actual.mean1","high.class",
+#			"actual.fold.change","actual.sd0","actual.sd1","n0","n1","actual.logFC")
+		ordered.names<-c(fdat.colnames,
+                                 "high.class","t", "P.Value","adj.P.Val","actual.fold.change","limma.fold.change",
+                                 "actual.mean0","actual.mean1","actual.sd0","actual.sd1","n0","n1",
+                                 "limma.logFC", "actual.logFC")
 		fit2.table<-fit2.table[, ordered.names]	
 	#	fit2.table<-fit2.table[order(fit2.table$adj.P.Val, decreasing = FALSE),]
 	}
-
 	if(!is.na(sort.by)){
 		if(!(sort.by %in% colnames(fit2.table))){
 			stop(paste(sort.by, " is not in colnames of output table\n", sep =""))
