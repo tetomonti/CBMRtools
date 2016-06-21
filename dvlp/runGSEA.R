@@ -54,8 +54,8 @@ runGSEA <- function
                 " -permute gene_set -rnd_type no_balance -scoring_scheme weighted -rpt_label ", testname, 
                 " -metric Signal2Noise -sort real -order descending -include_only_symbols false",
                 " -make_sets true -median false -num 100 -plot_top_x ", topX,
-                " -rnd_seed timestamp -save_rnd_lists false -set_max ", maxG,
-                "-set_min 5 -zip_report false -out htmls -gui false",sep=""))
+                " -rnd_seed timestamp -save_rnd_lists false -set_max ", maxG, " -set_min ", minG, 
+                " -zip_report false -out htmls -gui false", sep=""))
    unlink(c("pheno.cls","expr.txt"))
    
 }
