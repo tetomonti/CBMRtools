@@ -67,9 +67,9 @@ runGSEApreranked <- function
     rptLabel,                # prefix label for the output directory
     nperm=1000,              # number of permutation iterations
     topX=20,                 # generate gsea plots for tox X genesets in each direction
-    rnkFile=".RANKfile.rnk", # temp file where to write the input ranking needed by gsea
     maxG=500,                # max geneset size
     minG=15,                 # min geneset size
+    rnkFile=".RANKfile.rnk", # temp file where to write the input ranking needed by gsea
     jarFile="~/Research/Tools/java/gsea2-2.2.2.jar",
     chip="gseaftp.broadinstitute.org://pub/gsea/annotations/GENE_SYMBOL.chip",
     verbose=TRUE
