@@ -49,7 +49,7 @@ runGSEA <- function
    
    ## call java gsea version
    system(paste("java -Xmx3072m -cp ", jarFile,
-                " xtools.gsea.Gsea -res expr.txt -cls pheno.cls#", test, "_versus_",c ontrol," -gmx ", gmtFile,
+                " xtools.gsea.Gsea -res expr.txt -cls pheno.cls#", test, "_versus_", control," -gmx ", gmtFile,
                 " -collapse false -nperm ", nperm,
                 " -permute gene_set -rnd_type no_balance -scoring_scheme weighted -rpt_label ", testname, 
                 " -metric Signal2Noise -sort real -order descending -include_only_symbols false",
