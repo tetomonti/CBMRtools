@@ -81,7 +81,8 @@ runGSEApreranked <- function
     my.write.table(ranking,rnkFile,row.names=FALSE)
 
     ## keep track of the directory content (will see why below)
-    lsBefore <- if ( dir.exists(outdir) ) system(paste("ls",outdir),intern=TRUE)
+    #lsBefore <- if ( dir.exists(outdir) ) system(paste("ls",outdir),intern=TRUE)
+    lsBefore <- if ( dir.exists(outdir) ) list.files(outdir)
 
     ## run gsea
     CMD <- paste("java -Xmx3072m  -cp", jarFile,
@@ -99,7 +100,8 @@ runGSEApreranked <- function
     file.remove(rnkFile)
 
     ## determine the name of the generated directory
-    lsAfter <- system(paste("ls",outdir),intern=TRUE)
+    #lsAfter <- system(paste("ls",outdir),intern=TRUE)
+    lsAfter <- list.files(outdir)
     OUT <- setdiff(lsAfter,lsBefore)
     VERBOSE(verbose,"output saved to:",OUT,"\n")
 
