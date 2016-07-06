@@ -270,10 +270,10 @@ gsea2matrix <- function
 #######################################################################
 ## function: FDR MATRIX 2 HEATMAP
 ##
+## (Function called by both gsea2matrix and cbmGSEA2matrix)
 ## Take a geneset-by-signature matrix of q-values, and generate:
 ## 1) a 'discretized' matrix based on the input threshold(s)
 ## 2) (optionally) a color-coded heatmap
-##
 #######################################################################
 fdrMatrix2heatmap <- function
 (
