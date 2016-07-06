@@ -8,7 +8,7 @@ run_deseq(eset, class_id, control, treatment, verbose = TRUE,
   sortByPValue = TRUE, FDRcutoff = NULL)
 }
 \arguments{
-\item{eset}{expression set object with gene expression}
+\item{eset}{expression set object with raw count data}
 
 \item{class_id}{column name in pData(eset) specifying the conditions for differential expression}
 

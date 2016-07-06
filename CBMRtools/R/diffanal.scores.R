@@ -6,8 +6,10 @@
 
 # function: T.SCORE
 #
+#' @export 
+#
 t.score <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalized=FALSE,
-                     do.test=F, verbose=F, var.equal=F, min.sd=NULL, 
+                     do.test=FALSE, verbose=FALSE, var.equal=FALSE, min.sd=NULL, 
                      alternative=c("two.sided","greater","less") )
 {
   # INPUT:
@@ -25,7 +27,7 @@ t.score <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalize
   #
   alternative <- match.arg(alternative)
 
-  if ( is.null(y) & is.null(cls) )
+  if ( !xor(is.null(y),is.null(cls)) )
     stop( "must specify either y or cls" )
 
   if ( is.null(y) )
@@ -35,12 +37,12 @@ t.score <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalize
       stop( "ncol(x) must be same as length(cls)" )
     if ( length(lev)>2 )
       stop( "cls must be binary" )
-    y <- x[,cls==lev[2],drop=F]
-    x <- x[,cls==lev[1],drop=F]
+    y <- x[,cls==lev[2],drop=FALSE]
+    x <- x[,cls==lev[1],drop=FALSE]
   }  
   if ( nrow(x)!=nrow(y) ) stop( "x and y must be of same length\n" )
-  if ( ncol(x)<4 ) warning( "x has less than 4 observations\n" )
-  if ( ncol(y)<4 ) warning( "y has less than 4 observations\n" )
+  if ( ncol(x)<3 ) warning( "x has less than 3 observations\n" )
+  if ( ncol(y)<3 ) warning( "y has less than 3 observations\n" )
 
   score <- NULL
   
@@ -61,14 +63,14 @@ t.score <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalize
           idx <- (i*ncol(y)+1):((i+1)*ncol(y))
           VERBOSE(verbose, "comparing x[:",idx[1],":",idx[length(idx)],
                   "] to y[1:",ncol(y),"]","\n",sep="")
-          d <- cbind( d, x[,idx,drop=F]-y )
+          d <- cbind( d, x[,idx,drop=FALSE]-y )
         }
       else if ( ncol(y)>ncol(x) )
         for ( i in 0:(ncol(y)/ncol(x)-1) ) {
           idx <- (i*ncol(x)+1):((i+1)*ncol(x))
           VERBOSE(verbose, "comparing x[1:",ncol(x),"] to y[",
                   idx[1],":",idx[length(idx)],"]","\n",sep="")
-          d <- cbind( d, x-y[,idx,drop=F] )
+          d <- cbind( d, x-y[,idx,drop=FALSE] )
         }
       else
         d <- x-y
@@ -150,7 +152,7 @@ t.score <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalize
       pt(score, df=df)
     }
     else if (alternative == "greater") {
-      pt(score, df=df, lower.tail=F)
+      pt(score, df=df, lower.tail=FALSE)
     }
     else {
       2 * pt(-abs(score), df=df)
@@ -222,8 +224,8 @@ snr <- function( x, cls=NULL, y=NULL, robust=FALSE, fix=TRUE, gc=fix, min.sd=0.0
     x <- x[,cls==lev[1],drop=FALSE]
   }  
   if ( nrow(x)!=nrow(y) ) stop( "x and y must be of same length\n" )
-  if ( ncol(x)<4 ) warning( "x has less than 4 observations\n" )
-  if ( ncol(y)<4 ) warning( "y has less than 4 observations\n" )
+  if ( ncol(x)<3 ) warning( "x has less than 3 observations\n" )
+  if ( ncol(y)<3 ) warning( "y has less than 3 observations\n" )
 
   # paired SNR
   #

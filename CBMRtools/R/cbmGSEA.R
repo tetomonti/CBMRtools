@@ -30,29 +30,41 @@
 #' @param exhaustive           generate all possible permutations
 #' @param do.plot              generate ks plots 
 #' @param plot.name            file stub where to save ks plots
-#' @param plot.dev
+#' @param plot.dev             display device
 #' @param topG                 number of genesets to display per direction
-#' @param verbose
+#' @param verbose              verbosity TRUE/FALSE
+#'
+#' @return a data.frame with one geneset per row and columns reporting KS score, p-value, q-value, etc.
 #'
 #' @examples
 #'
-#' ## not included yet, see "if (FALSE) {}" at the end of the file for an example
-#' ## but basically, one of three ways can be used to run cbmGSEA:
-#' ##
-#' ## 1) phenotype shuffling
-#' ##
-#' ## CP <- getGeneSet( new( "GeneSet", ""))
-#' ## OUT <- cbmGSEA( eSet=BRCA, pheno="ER status", cond="positive", control="negative", gSet=CP, ...)
-#' ##
-#' ## 2) with gene tag
-#' ##
-#' ## OUT <- cbmGSEA( eSet=BRCA, tag="P53", gSet=CP, ...)
-#' ##
-#' ## 3) with ranking shuffling (based on pre-computed ranked list)
-#' ##
-#' ## DIF <- readRDS( "result of run_limma" )
-#' ## RNK <- DIF[,"t"]; names(RNK) <- DIF[,"hgnc_symbol"]
-#' ## OUT <- cbmGSEA( rnkScore=RNK, gSet=CP, ...)
+#' data(cbmGSEAdata)
+#' if ( is.null(cbmGSEA.eSet) || is.null(cbmGSEA.gSet) ) stop( "missing objects" )
+#'
+#' table(pData(cbmGSEA.eSet)$tissue_type) # expecting 8 AN's + 8 Tumor's
+#'
+#' # carry out a simple t-score calculation (notice the '-', to achieve a decreasing=TRUE sort)
+#' rnkS <- -t.score(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
+#'
+#' # 1) phenotype shuffling
+#'
+#' set.seed(123)
+#' OUT1 <- cbmGSEA(eSet=cbmGSEA.eSet,gSet=cbmGSEA.gSet,pheno="tissue_type",cond="Tumor",control="AN",
+#'                 nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)
+#' print(OUT1[,1:5])
+#' 
+#' # 2) rank shuffling (based on pre-computed ranked list)
+#'
+#' set.seed(123)
+#' OUT2 <- cbmGSEA(rnkScore=rnkS,gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)
+#' print(OUT2[,1:5])
+#' all.equal(OUT1[,"score"],OUT2[,"score"]) # same results expected
+#'
+#' # 3) gene tag shuffling (ranking by nearest neighbor)
+#'
+#' set.seed(123)
+#' OUT3 <- cbmGSEA(eSet=cbmGSEA.eSet,tag="MAML2",gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)
+#' print(OUT3[,1:5])
 #' 
 #' @export
 #' 
@@ -78,12 +90,12 @@ cbmGSEA <- function
  weighted=FALSE,             # use weighted KS score as in GSEA
  weight.p=1,                 # weight's exponent
  smoother=1,                 # smooth p-values
- clsLev=c("pos","neg"),      # phenotype labels (e.g., c('normal','tumor'))
+ clsLev=c("neg","pos"),      # phenotype labels (e.g., c('normal','tumor'))
  confound=NULL,              # confounder variable (must be categorical)
  seed=NULL,                  # random seed (for reproducible results)
  do.pval=!weighted,          # compute asymptotic p-values
  exhaustive=FALSE,           # generate all possible permutations
- do.plot=FALSE,              # generate ks plots 
+ do.plot=!is.null(plot.name),# generate ks plots 
  plot.name=NULL,             # file stub where to save ks plots
  plot.dev=pdf,
  topG=20,                    # max number of genesets to display per direction
@@ -104,12 +116,15 @@ cbmGSEA <- function
             stop( "geneId must be a valid column name in fData(eSet)" )
         if ( !is.null(pheno) && (is.null(cond) || is.null(control)) )
             stop( "must specify cond and control when using pheno" )
+        if ( nrow(eSet)<100 )
+            warning( "less than 100 genes in the eSet:", nrow(eSet) )
     }
     else {
         if ( is.null(names(rnkScore)) ) stop( "rnkScore must be annotated with gene symbols" )
     }
     score <- match.arg(score)
     alternative <- match.arg(alternative)
+    method <- match.arg(method)
     ##
     ## END checks
 
@@ -125,32 +140,40 @@ cbmGSEA <- function
             if ( is.null(tag) )
                 match.fun(score)
             else
-                switch( method,
+                switch(method,
                        euclidean = function(x,y){sqrt(sum((x-y)^2))},
                        pearson =   function(x,y){1 - cor(x,y)},
-                       spearman =  function(x,y){1 - cor(rank(x),rank(y))} )
+                       spearman =  function(x,y){1 - cor(rank(x),rank(y))})
         }
-        eDat <- exprs(eSet)
         if ( !is.null(pheno) ) {
             condIdx <- which(pData(eSet)[,pheno]==cond);
             if (length(condIdx)<1) stop( sprintf("no '%s' samples",condition) )
             cntlIdx <- which(pData(eSet)[,pheno]==control);
             if (length(cntlIdx)<1) stop( sprintf("no '%s' samples",control) )
-            eDat <- eDat[,c(cntlIdx,condIdx)]
+            #eDat <- eDat[,c(cntlIdx,condIdx)]
+            eSet <- eSet[,c(cntlIdx,condIdx)]
             cls <- factor(pData(eSet)[c(cntlIdx,condIdx),pheno],levels=c(control,cond))
             clsLev <- levels(cls)
         }
+        else if ( !is.null(tag) ) {
+            tagI <- matchIndex(tag,featureNames(eSet))
+            tag <- exprs(eSet)[tagI,]
+            eSet <- eSet[-tagI,]
+        }
+        eDat <- exprs(eSet)
+
         ## compute observed ranking scores
         ##
         VERBOSE( verbose, "  computing observed scores .. " )
         rnkScore <- {
             if ( is.null(pheno) ) {
                 VERBOSE( verbose, "(based on NN) .. ")
-                apply(eDat,1,SCORE,y=x[match(tag,rownames(eDat)),])
+                apply(eDat,1,SCORE,y=tag)
             }
             else {
                 VERBOSE( verbose, "(based on class template) .. ")
-                SCORE(eDat, cls=cls, robust=robust, paired=paired)
+                # this is to have t.score and similar agree with run_limma
+                -SCORE(eDat, cls=cls, robust=robust)
             }
         }
         VERBOSE( verbose, "done.\n" )
@@ -171,8 +194,8 @@ cbmGSEA <- function
     gsetLen <- sapply( gSet[match(names(gsetIdx),names(gSet))], length )
     ngset <- if (is.list(gSet)) length(gSet) else 1
 
-    ## rank genes by scores
-    geneRanks <- rank(rnkScore,ties.method="first")
+    ## rank genes by scores (decreasing==TRUE is achieved by taking -score)
+    geneRanks <- rank(-rnkScore,ties.method="first")
 
     ## compute observed KS scores
     VERBOSE( verbose, "  computing observed enrichment score(s) .." )
@@ -224,8 +247,7 @@ cbmGSEA <- function
     ## 2) by shuffling the reference gene tag
     ##
     else if ( !is.null(eSet) && !is.null(tag) ) {
-        y <- x[match(tag,rownames(eDat)),]
-        clsPerm <- sapply(1:nperm, function(z) sample(y))
+        clsPerm <- sapply(1:nperm, function(z) sample(tag))
         permScores <- apply(clsPerm, 2, function(y) t(apply(eDat,1,SCORE,y=y)))
         VERBOSE( verbose, "(by tag shuffling):\n" )
     }
@@ -300,7 +322,9 @@ glist2idx <- function( glist, gnames, minGset, verbose=TRUE )
 
   return( glistIdx )
 }
-##
+##################################################################
+## code to create and test the data objects used in the examples #
+##################################################################
 if ( FALSE )
 {
     require(Biobase)
@@ -311,50 +335,45 @@ if ( FALSE )
     source(paste(CBMRtools,"CBMRtools/R/misc.R",sep="/"))
     source(paste(CBMRtools,"CBMRtools/R/perm.2side.R",sep="/"))
     source(paste(CBMRtools,"CBMRtools/R/permute.array.R",sep="/"))
-    source(paste(CBMRtools,"dvlp/cbmGSEA.R",sep="/"))
-    setwd("~/Research/Projects/AhR/AHR_CYP1B1_CB799_microarrays2016/processed.data/")
-    eSet <- readRDS("AHR_rma_normalized.fData.RDS")
-    gSet <- new("GeneSet","~/Research/CancerGenomeAnalysisData/annot/h.all.v5.1.symbols.gmt")
-
-    eSet <- eSet[,pData(eSet)$cellline=="Sum149"]
-    pheno <- "treatment"
-    cond <- "AhR"
-    control <- "CN"
-
-    eDat <- exprs(eSet)
-    condIdx <- which(pData(eSet)[,pheno]==cond); if (length(condIdx)<1) stop( "no 'condition' samples" )
-    cntlIdx <- which(pData(eSet)[,pheno]==control); if (length(cntlIdx)<1) stop( "no 'control' samples" )
-    eDat <- eDat[,c(cntlIdx,condIdx)]
-    cls <- factor(pData(eSet)[c(cntlIdx,condIdx),pheno],levels=c(control,cond))
-
-    DIF <- readRDS("../results/diffanalALL/rds/DIF2scores.RDS")[,c("hgnc_symbol","SUM.AhR")]
-    DIF <- DIF[match.nona(fData(eSet)[,"hgnc_symbol"],DIF[,"hgnc_symbol"]),]
-    lim <- -DIF[,2]; names(lim) <- DIF[,1]
-    all(fData(eSet)[,"hgnc_symbol"]==DIF[,"hgnc_symbol"])
+    source(paste(CBMRtools,"CBMRtools/R/cbmGSEA.R",sep="/"))
     
-    scr <- t.score(eDat,cls=cls); names(scr) <- fData(eSet)[,"hgnc_symbol"]
-    plot(scr,lim,pch=19)
+    gSet <- getGeneSet(new("GeneSet","~/Research/CancerGenomeAnalysisData/annot/h.all.v5.1.symbols.gmt"))
+    brca <- readRDS("~/Research/Projects/tcga/brca/BRCA_2015_02_04_ES.rds")
+    exprs(brca) <- log2(exprs(brca)+1)
     
-    tmp <- cbind(cbind(fData(eSet)[,1:3],score=scr)[order(scr,decreasing=TRUE),],rank=1:nrow(eSet))
-    tmp[tmp[,3] %in% c("AHR","CYP1B1"),]
-#                 ensembl_gene_id entrezgene hgnc_symbol    score rank
-# ENSG00000138061 ENSG00000138061       1545      CYP1B1 28.72924   75
-# ENSG00000106546 ENSG00000106546        196         AHR 20.38744  182
-
-    pdf("TMP.pdf")
-    OUT1 <- cbmGSEA( eSet=eSet, gSet=getGeneSet(gSet), pheno="treatment",cond="AhR",control="CN",geneId="hgnc_symbol",do.plot=FALSE,verbose=TRUE,nperm=0,weighted=TRUE)
-    OUT2 <- cbmGSEA( rnkScore=scr, gSet=getGeneSet(gSet), pheno="treatment",cond="AhR",control="CN",geneId="hgnc_symbol",do.plot=FALSE,verbose=TRUE,nperm=0,weighted=TRUE)
-    OUT3 <- cbmGSEA( rnkScore=lim, gSet=getGeneSet(gSet), pheno="treatment",cond="AhR",control="CN",geneId="hgnc_symbol",do.plot=FALSE,verbose=TRUE,nperm=0,weighted=TRUE)
-    dev.off()
-
+    ## prepare GEP data (extract small subset of samples and subset of genes)
+    
+    brca <- brca[!is.na(fData(brca)$gene_symbol),]
+    featureNames(brca) <- fData(brca)$gene_symbol
+    gSet <- gSet[order(sapply(gSet,length))[1:3]]
     set.seed(123)
-    gset3 <- list(dn=names(scr[order(scr,decreasing=FALSE)][1:50]),
-                  up=names(scr[order(scr,decreasing=TRUE)][1:50]),
-                  random=names(scr[sample(1:length(scr),size=50)]))
-
-
-    OUT4 <- cbmGSEA( rnkScore=scr, gSet=gset3, do.plot=FALSE,verbose=TRUE,nperm=0,weighted=TRUE)
-    OUT5 <- cbmGSEA( eSet=eSet, gSet=gset3, pheno="treatment",cond="AhR",control="CN",geneId="hgnc_symbol",do.plot=FALSE,verbose=TRUE,nperm=100,weighted=TRUE)
-
-    OUT6 <- cbmGSEA( rnkScore=scr, gSet=getGeneSet(gSet), pheno="treatment",cond="AhR",control="CN",geneId="hgnc_symbol",do.plot=FALSE,verbose=TRUE,nperm=100,weighted=TRUE)
+    brca <- brca[,c(sample(which(pData(brca)$my_stage=="AN"),size=8),
+                    sample(which(pData(brca)$my_stage=="stage i"),size=8))]
+    brca <- brca[!apply(exprs(brca)==0,1,all),]
+    brca1 <- brca[c(unique(unlist(gSet)),
+                    sample(setdiff(featureNames(brca),unique(unlist(gSet))),size=100)),]
+    pData(brca1) <- pData(brca1)[,"tissue_type",drop=FALSE]
+    
+    ## t.score returns negative scores for the cond class and positive for the control class (opposite run_limma)
+    rnkS <- -t.score(x=exprs(brca1),cls=factor(pData(brca1)$tissue_type))
+    
+    ## add two custom "true positive" genesets 
+    gSet <- c(list(tumor50=names(rnkS)[order(rnkS,decreasing=TRUE)[1:50]],
+                   normal50=names(rnkS)[order(rnkS,decreasing=FALSE)[1:50]]),
+              gSet)
+    
+    set.seed(123)
+    OUT1 <- cbmGSEA(eSet=brca1,gSet=gSet,pheno="tissue_type",cond="Tumor",control="AN",nperm=100,verbose=TRUE,plot.name="cbmGSEA.plots1.pdf")
+    
+    set.seed(123)
+    OUT2 <- cbmGSEA(rnkScore=rnkS,gSet=gSet,nperm=100,verbose=TRUE,plot.name="cbmGSEA.plots2.pdf")
+    
+    all.equal(OUT1[,"score"],OUT2[,"score"])
+    
+    set.seed(123)
+    OUT3 <- cbmGSEA(eSet=brca1,tag="MAML2",gSet=gSet,nperm=100,verbose=TRUE,plot.name="cbmGSEA.plots3.pdf")
+    
+    cbmGSEA.eSet <- brca1
+    cbmGSEA.gSet <- gSet
+    save(cbmGSEA.eSet,cbmGSEA.gSet,file=file.path(CBMRtools, "CBMRtools/data/cbmGSEAdata.rda"))
 }

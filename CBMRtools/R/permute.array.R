@@ -17,7 +17,8 @@ join.crossprod <- function( mx1, mx2 )
 }
 # function PERMUTE PAIRED
 #
-permute.paired <- function( cls, nperm=1, balanced=F, exhaustive=F, control=NULL, verbose=F, seed=NULL )
+permute.paired <- function(cls, nperm=1, balanced=FALSE, exhaustive=FALSE, control=NULL,
+                           verbose=FALSE, seed=NULL )
 {
   # return matrix whereby each row represents the indeces for a paired
   # rearrangement of columns. It assumes cls to have binary and
@@ -63,12 +64,12 @@ permute.paired <- function( cls, nperm=1, balanced=F, exhaustive=F, control=NULL
   
   if ( exhaustive && ntot>nperm) {
     VERBOSE(T, "Number of exhaustive permutations is too large:", ntot, "(ignored)\n")
-    exhaustive <- F
+    exhaustive <- FALSE
   }
   else if ( !exhaustive && nperm>ntot ) {
     VERBOSE(T, "Number of possible permutations less than needed:", ntot, "(reduced)\n")
     nperm <- ntot
-    exhaustive <- T
+    exhaustive <- TRUE
   }
   # EXHAUSTIVE set of permutations
   #
@@ -122,8 +123,8 @@ permute.paired <- function( cls, nperm=1, balanced=F, exhaustive=F, control=NULL
   }
   return( lbl )
 }
-permute.binarray <- function(cls, nperm=1, balanced=F, equalized=F, seed=NULL,
-                             exhaustive=F, control=NULL, verbose=F )
+permute.binarray <- function(cls, nperm=1, balanced=FALSE, equalized=FALSE, seed=NULL,
+                             exhaustive=FALSE, control=NULL, verbose=FALSE )
 {
   if ( !is.null(dim(cls)) )
     if (ncol(cls)==2)
@@ -173,8 +174,8 @@ permute.binarray <- function(cls, nperm=1, balanced=F, equalized=F, seed=NULL,
     }
     return(perm)
   }
-  # binary response variable
-  #
+  ## binary response variable
+  ##
   n1 <- sum(cls==lev[1])
   n2 <- sum(cls==lev[2])
   i.max <- which.max(c(n1,n2))
@@ -209,16 +210,18 @@ permute.binarray <- function(cls, nperm=1, balanced=F, equalized=F, seed=NULL,
       perm[i,idx.min.perm] <- max.lev
     }
   }
-  # IF NOT controlling for confounding variables
-  #
+  ## IF NOT controlling for confounding variables
+  ##
   else if ( is.null(control) )
   {
-    if ( exhaustive )
+    if ( exhaustive || log(nperm)>lchoose(m,n.max) )
     {
       if ( choose(m,n.max)<=nperm )
       {
         nperm <- round(choose(m,n.max))
-        VERBOSE( verbose, "Number of exhaustive permutations:", nperm, "\n" )
+        VERBOSE( verbose, "Number of exhaustive permutations:", nperm )
+        if ( log(nperm)>lchoose(m,n.max) ) VERBOSE(verbose, " (reduced)")
+        VERBOSE( verbose, "\n")
         nidx <- t(combn(m, n.max))
         perm  <- matrix( min.lev, nrow=nrow(nidx), ncol=m )
         for ( i in 1:nrow(nidx) ) {
@@ -233,9 +236,10 @@ permute.binarray <- function(cls, nperm=1, balanced=F, equalized=F, seed=NULL,
     }
     # ELSE (if not exhaustive) ..
     #
-    if ( log(nperm)>lchoose(n1+n2,n1)-log(2) )
-      warning( paste("Number of possible permutations less than needed (", nperm, "): ",
-                     choose(n1+n2,n1)/2, sep="") )
+    if ( log(nperm)>lchoose(n1+n2,n1) ) {
+      stop( paste("Number of possible permutations less than needed (", nperm, "): ",
+                  choose(n1+n2,n1), sep="") )
+    }
     for ( i in (1:nperm) )
     {
       idx <- if (equalized) 

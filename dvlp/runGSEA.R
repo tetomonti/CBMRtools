@@ -242,8 +242,8 @@ gsea2matrix <- function
     do.sort=TRUE,       # sort matrices by HC
     do.heat=FALSE,      # display heatmap
     rm.zero=TRUE,       # remove genesets/rows w/ no hits
-    pvalID="FDR q-val", # which significance measure to use (either "p2" or "fdr")
-    ...                 # extra arguments to my.heatmap
+    pvalID="FDR q-val", # which significance measure to use (see GSEA output for choices)
+    ...                 # extra arguments to fdrMatrix2heatmap
 )
 {
     ## each element of the variable gsea correspond to a distinct GSEA
@@ -270,12 +270,21 @@ gsea2matrix <- function
 #######################################################################
 ## function: FDR MATRIX 2 HEATMAP
 ##
-## Take a geneset-by-signature matrix of q-values, and generate a
-## corresponding 'discretized' matrix based on the input threshold,
-## and optionally a corresponding color-coded heatmap
+## Take a geneset-by-signature matrix of q-values, and generate:
+## 1) a 'discretized' matrix based on the input threshold(s)
+## 2) (optionally) a color-coded heatmap
 ##
 #######################################################################
-fdrMatrix2heatmap <- function( mx, fdr=c(.05,.01), do.sort=TRUE, do.heat=FALSE, rm.zero=TRUE, verbose=TRUE, ... )
+fdrMatrix2heatmap <- function
+(
+    mx,             # geneset-by-signature matrix of q-values
+    fdr=c(.05,.01), # FDR thresholds (must be in decreasing order)
+    do.sort=TRUE,   # sort matrices by HC
+    do.heat=FALSE,  # display heatmap
+    rm.zero=TRUE,   # remove genesets/rows w/ no hits
+    verbose=TRUE,   # extra arguments to my.heatmap
+    ...
+)
 {
     levs <- 0:length(fdr)
     zero <- -0.000001
@@ -323,8 +332,9 @@ fdrMatrix2heatmap <- function( mx, fdr=c(.05,.01), do.sort=TRUE, do.heat=FALSE, 
 ## the genesets' q-values
 ##
 #######################################################################
-cbmGSEA2matrix <- function(
-    cgsea,           # list of data.frames, the up and down genesets, as output by cbmGSEA)
+cbmGSEA2matrix <- function
+(
+    cgsea,           # list of data.frames, the up and down genesets, as output by cbmGSEA
     fdr=c(.05,.01),  # FDR thresholds (must be in decreasing order)
     do.sort=TRUE,    # sort matrices by HC
     do.heat=FALSE,   # display heatmap
@@ -335,18 +345,17 @@ cbmGSEA2matrix <- function(
     ...              # extra arguments to my.heatmap
 )
 {
-    ## each element of the variable gsea correspond to a distinct GSEA
-    ## run, and it contains a two-element list corresponding to the
-    ## files 'gsea_report_for_na_{pos,neg}_*.xls' output by GSEA
+    ## each element of the variable gsea correspond to a distinct cbmGSEA
+    ## run, and it contains a data.frame object
     ##
     if ( length(fdr)>1 && any(diff(fdr)>0) ) stop( "fdr must be in decreasing order" )
     if ( globalMHT ) pvalID <- "p2"
     
-    ## extract all the geneset IDs
+    ## extract all the geneset IDs from the first data.frame
     gID <- rownames(cgsea[[1]])
     if ( !(pvalID %in% colnames(cgsea[[1]])) ) stop( "unrecognized pvalID: ", pvalID)
 
-    ## extract the FDRs of all genesets for each GSEA run (i.e., each list item)
+    ## extract the FDRs of all genesets for each cbmGSEA run 
     VERBOSE(verbose, "extracting into matrix ..")
     mx <- sapply( cgsea, function(z) {
         tmp <- z[match.nona(gID,rownames(z)),,drop=FALSE]

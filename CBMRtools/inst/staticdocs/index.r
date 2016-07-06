@@ -7,7 +7,7 @@ sd_section(
 sd_section(
 	"Algorithms for gene expression based analysis",
 	"These functions perform gene expression based statistical analysis",
-	c("hyperEnrichment", "nnAnalysis", "oligo_wrapper", "geneSetProjection", "run_limma")
+	c("hyperEnrichment", "nnAnalysis", "oligo_wrapper", "geneSetProjection","cbmGSEA", "run_limma","run_deseq")
 )
 
 sd_section(
@@ -19,7 +19,7 @@ sd_section(
 sd_section(
 	"Datasets",
 	"Datasets used in examples",
-	c("eSet.brca.100", "gspData", "hyper", "resdata-class")
+	c("eSet.brca.100", "gspData", "hyper", "resdata-class","cbmGSEAdata")
 	)
 sd_section(
 	"Documentation related pages",

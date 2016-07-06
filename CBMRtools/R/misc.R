@@ -629,3 +629,18 @@ pruneFactors <- function( DF )
     DF[,i] <- pruneFactor(DF[,i])
   DF
 }
+many2one <- function( cls ) many2one.cls(cls) # just for backward compatibility
+many2one.cls <- function( cls )
+{
+  if ( is.null(dim(cls)) || ncol(cls)==1 ) {
+    cls2 <- as.numeric(match(drop(cls),sort(unique(drop(cls)))))
+    levels(cls2) <- levels(cls)
+    return(cls2)
+  }
+  # ELSE ..
+  #
+  levs <- sort(apply(unique(cls),1,paste,collapse="."))
+  cls.new <- as.numeric( match( apply(cls,1,paste,collapse="."), levs) )
+  levels(cls.new) <- levs
+  cls.new
+}
