@@ -22,7 +22,7 @@ diffanalOverlap <- function
     outfile=NULL
 )
 {
-    ## First, extract signature (i.e., gene lists) from diffanal results
+    ## First, extract signatures (i.e., gene lists) from diffanal results
     SIGlist <- diffanal2signatures(diffanalList,key=key,maxFDR=maxFDR,minFC=minFC,fdrKey=fdrKey,fcKey=fcKey,tKey=tKey)
 
     ## Then, compare the signatures (by 'Venn-Diagramming')
