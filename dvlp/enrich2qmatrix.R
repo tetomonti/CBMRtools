@@ -107,9 +107,13 @@ qmatrix2heatmap <- function
     do.heat=FALSE,  # display heatmap
     rm.zero=TRUE,   # remove genesets/rows w/ no hits
     verbose=TRUE,   # extra arguments to my.heatmap
+                    # hclust methods
+    method=c("ward.D","ward.D2","single","complete","average","mcquitty","median","centroid"),
     ...
 )
 {
+    method <- match.arg(method)
+    
     levs <- 0:length(fdr)
     zero <- -0.000001
     mx01 <- suppressWarnings(matrix(cut(as.vector(mx),
@@ -132,14 +136,15 @@ qmatrix2heatmap <- function
     }
     ## sort rows and columns by HC
     if ( do.sort || do.heat ) {
-        hc.col <- hcopt(dist(t(mx01),method="euclidean"),method="ward.D")
-        hc.row <- hcopt(dist(mx01,method="euclidean"),method="ward.D")
+        hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=method)
+        hc.row <- hcopt(dist(mx01,method="euclidean"),method=method)
 
         if ( do.heat ) {
             ncolors <- length(fdr)*2+1
             COL <- col.gradient(c("blue","white","red"),length=ncolors)
             COL <- COL[sort(unique(as.vector(mx01)))+levs[length(levs)]+1]
-            my.heatmap(mx01,Rowv=as.dendrogram(hc.row),Colv=as.dendrogram(hc.col),scale="none",col=COL,revC=TRUE,...)
+            my.heatmap(mx01,Rowv=as.dendrogram(hc.row),Colv=as.dendrogram(hc.col),
+                       scale="none",col=COL,revC=TRUE,...)
         }
         if ( do.sort ) {
             mx <- mx[hc.row$order,hc.col$order]
@@ -162,11 +167,16 @@ hyper2qmatrix <- function
     do.sort=TRUE,   # sort matrices by HC
     do.heat=FALSE,  # display heatmap
     rm.zero=TRUE,   # remove genesets/rows w/ no hits
+                    # hclust methods
+    method=c("ward.D","ward.D2","single","complete","average","mcquitty","median","centroid"),
     ...             # extra arguments to my.heatmap
 )
 {
-    if ( length(fdr)>1 && any(diff(fdr)>0) ) stop( "fdr must be in decreasing order" )
-    if ( length(unique(hyper[,"set"]))==1 ) stop( "hyper must contain results for at least two signatures")
+    if ( length(fdr)>1 && any(diff(fdr)>0) )
+        stop( "fdr must be in decreasing order" )
+    if ( length(unique(hyper[,"set"]))==1 )
+        stop( "hyper must contain results for at least two signatures")
+    method <- match.arg(method)
     
     SIG <- unique(hyper[,"set"])
     gsets <- hyper[hyper[,"set"]==SIG[1],"category"]
@@ -182,13 +192,13 @@ hyper2qmatrix <- function
     mx01[mx>fdr[1]] <- 0
 
     if ( rm.zero ) {
-        rm.idx <- apply(mx01!=0,1,any)
-        if ( sum(rm.idx)==0 ) {
+        keep.idx <- apply(mx01!=0,1,any)
+        if ( sum(keep.idx)==0 ) {
             warning("no significant genesets found")
         }
         else {
-            mx01 <- mx01[rm.idx,,drop=FALSE]
-            mx <- mx[rm.idx,,drop=FALSE]
+            mx01 <- mx01[keep.idx,,drop=FALSE]
+            mx <- mx[keep.idx,,drop=FALSE]
         }
     }
     ## sort rows and columns by HC
@@ -207,4 +217,43 @@ hyper2qmatrix <- function
         }
     }
     return( list(mx01=mx01,mx=mx) )
+}
+
+##################################################################
+## code to create and test the data objects used in the examples #
+##################################################################
+if ( FALSE )
+{
+    require(CBMRtools)
+    CBMRtools <- Sys.getenv("CBMRtools")
+    source(file.path(CBMRtools,"dvlp/heatmap.R"))
+    source(file.path(CBMRtools,"dvlp/enrich2qmatrix.R"))
+    ## path in my desktop
+    PATH <- "~/Research/Projects/AhR/AHR_CYP1B1_CB799_microarrays2016"
+    ## path on SCC
+    #PATH <- "/restricted/projectnb/montilab-p/projects/AhR/AHR_CYP1B1_CB799_microarrays2016"
+
+    ## upload MSigDB's hallmark geneset compendium (stored locally)
+    gSet <- new("GeneSet","~/Research/CancerGenomeAnalysisData/annot/h.all.v5.1.symbols.gmt")
+
+    ## loading pre-computed list of diffanal results
+    DIF <- readRDS(file.path("results/rds/DIF2.RDS"))
+    names(DIF)
+    ##  [1] "MDA.AhR" "MDA.CYP" "SUM.AhR" "SUM.CYP" "AhR"     "CYP"     "CB113"  
+    ##  [8] "BaP"     "PYO"     "CH"     
+
+    ## loading pre-computed list of cbmGSEA results (this takes a long time to compute)
+    cGSEA <- readRDS(file.path(PATH,"results/rds/cbmGSEA.RDS"))
+    names(cGSEA)
+    ## [1] "h.all"  "c2.cp"  "c3.all" "c2.cgp"
+
+    ## extract the hallmarks results (hGSEA is a list of data.frames, one per signature)
+    hGSEA <- cGSEA[['h.all']]
+    names(hGSEA)
+    ## [1] "MDA.AhR" "MDA.CYP" "SUM.AhR" "SUM.CYP" "AhR"     "CYP"     "CB113"  
+    ## [8] "BaP"     "PYO"     "CH"     
+
+    png("ahr.hallmarks.png")
+    OUT <- cbmGSEA2qmatrix(hGSEA,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,margins=c(6,15))
+    dev.off()
 }
