@@ -37,3 +37,4 @@ source("http://bioconductor.org/biocLite.R")
 biocLite()
 biocLite(c("biomaRt","ROC","pathifier","ConsensusClusterPlus","ASSIGN","Biobase","oligo","oligoClasses",
            "limma","frma","GSEAlm"))
+biocLite("DESeq2","edgeR")
