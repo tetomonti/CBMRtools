@@ -191,6 +191,17 @@ plot.norm <- function( n=1000, mean=0, sd=1, add=F, lty="solid", ...)
   }
 }
 #' @export
+plot.distn <- function( qfun, dfun, n, lty=1, add=FALSE, xlab=NULL, ylab=NULL, main=NULL, ... ) 
+{
+  p <- (1:(n-1))/n
+  q <- qfun(p,...)
+  
+  if ( add )
+    lines( q, dfun(q,...), lty=lty )
+  else
+    plot( q, dfun(q,...), type="l", lty=lty, xlab=xlab,ylab=ylab,main=main )
+}
+#' @export
 cumineq <- function( prm, obs, dir=1, debug=F )
 {
   ## INPUT:
@@ -617,4 +628,19 @@ pruneFactors <- function( DF )
   for ( i in 1:ncol(DF) )
     DF[,i] <- pruneFactor(DF[,i])
   DF
+}
+many2one <- function( cls ) many2one.cls(cls) # just for backward compatibility
+many2one.cls <- function( cls )
+{
+  if ( is.null(dim(cls)) || ncol(cls)==1 ) {
+    cls2 <- as.numeric(match(drop(cls),sort(unique(drop(cls)))))
+    levels(cls2) <- levels(cls)
+    return(cls2)
+  }
+  # ELSE ..
+  #
+  levs <- sort(apply(unique(cls),1,paste,collapse="."))
+  cls.new <- as.numeric( match( apply(cls,1,paste,collapse="."), levs) )
+  levels(cls.new) <- levs
+  cls.new
 }

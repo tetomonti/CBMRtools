@@ -24,7 +24,7 @@ perm.2side.online <- function( obs, perm, dir=1, do.abs=F )
   abs.prm <- abs(perm)
   abs.obs <- abs(obs)
     
-  smry <- matrix( NA, length(obs), 7 )
+  smry <- matrix( NA, length(obs), length(perm.2side.names) )
   smry[,1]    <- as.numeric( dir*obs<=dir*perm )            # 1-sided p-value
 
   if ( do.abs ) {
@@ -34,9 +34,9 @@ perm.2side.online <- function( obs, perm, dir=1, do.abs=F )
     smry[i.p,2] <- as.numeric( obs[i.p]<=perm[i.p] )        # 2-sided p-value (based on min procedure)
     smry[i.n,2] <- as.numeric( obs[i.n]>=perm[i.n] )        # ..
   }
-  perm.srt <- sort(perm)
-  smry[i.p,3] <- as.numeric( obs[i.p]<=perm.srt[i.p] )      # 'rank-based' p-value
-  smry[i.n,3] <- as.numeric( obs[i.n]>=perm.srt[i.n] )      # ..
+  #perm.srt <- sort(perm)
+  #smry[i.p,3] <- as.numeric( obs[i.p]<=perm.srt[i.p] )      # 'rank-based' p-value
+  #smry[i.n,3] <- as.numeric( obs[i.n]>=perm.srt[i.n] )      # ..
 
   prm.srt <- monotonize( abs.prm, rnk=abs.obs )             # maxT p-value
   smry[,4] <- as.numeric(abs.obs<=prm.srt)                  #  ..
@@ -45,6 +45,41 @@ perm.2side.online <- function( obs, perm, dir=1, do.abs=F )
   smry[,6]    <- as.numeric( smry[,5]>0 )                   # FWER
   smry[,7]    <- smry[,5]                                   # FDR
   smry
+}
+p2ss.add <- function( x.prm, x.obs, nperm, do.abs=FALSE, smoother=0 )
+{
+  ## complete computation of some p-values (see perm.2side.summary for
+  ## ..the "offline" computation of these statistics
+  ##
+  p1.idx <- matchIndex("p1",colnames(x.prm))
+  p2.idx <- matchIndex("p2",colnames(x.prm))
+  gp.idx <- matchIndex("GC.p",colnames(x.prm))
+  mt.idx <- matchIndex("maxT",colnames(x.prm))
+  fp.idx <- matchIndex("fpr",colnames(x.prm))
+  fd.idx <- matchIndex("fdr",colnames(x.prm))
+
+  p.idx <- c(p1.idx,p2.idx)
+  
+  x.prm[,-p.idx] <- x.prm[,-p.idx]/nperm
+  x.prm[,p1.idx] <- x.prm[,p1.idx] + smoother
+  x.prm[,p2.idx] <- if (do.abs)
+    (x.prm[,p2.idx] + smoother)
+  else
+    2*(apply(cbind(x.prm[,p2.idx],nperm-x.prm[,p2.idx]),1,min)+smoother)
+  x.prm[,p.idx]  <- x.prm[,p.idx]/(smoother+nperm)
+  
+  x.prm[,mt.idx] <- monotonize(x.prm[,mt.idx],rnk=-abs(x.obs))
+  x.prm[,fp.idx] <- x.prm[,fp.idx]/nrow(x.prm)
+  x.prm[,fd.idx] <- x.prm[,fd.idx]/cumineq(abs(x.obs), obs=abs(x.obs), dir=2)
+  x.prm[,fd.idx] <- apply( cbind(x.prm[,fd.idx],rep(1,nrow(x.prm))),1,min)
+  
+  x.prm <- cbind(x.prm,fdr.test=x.prm[,fd.idx])
+  x.prm[,fd.idx] <- pval2fdr(x.prm[,p2.idx])    
+  x.prm <- cbind(score=x.obs,x.prm)
+  
+  x.prm <- x.prm[,match(c("score", "p1","p2","fdr","maxT"),
+                        colnames(x.prm))]
+  as.data.frame(x.prm,check.names=FALSE,stringsAsFactors=FALSE)
 }
 perm.2side <- function( x, y, nperm=100, score, ngenes=NULL, seed=NULL,
                         alternative=c("two.sided","greater","less"), control=NULL,
@@ -169,40 +204,6 @@ perm.2side <- function( x, y, nperm=100, score, ngenes=NULL, seed=NULL,
   ## complete computation of some p-values (see perm.2side.summary 
   ## ..for the "offline" computation of these statistics
   list( pval=p2ss.add( x.prm, x.obs, nperm, smoother=smoother ), nperm=nperm )
-}
-p2ss.add <- function( x.prm, x.obs, nperm, do.abs=FALSE, smoother=0 )
-{
-  # complete computation of some p-values (see perm.2side.summary for
-  # ..the "offline" computation of these statistics
-  #
-  if (sum(p1.idx <- colnames(x.prm)=="p1")==0)   stop("missing 'p1' column'")
-  if (sum(p2.idx <- colnames(x.prm)=="p2")==0)   stop("missing 'p2' column'")
-  if (sum(gp.idx <- colnames(x.prm)=="GC.p")==0) stop("missing 'GC.p' column'")
-  if (sum(mt.idx <- colnames(x.prm)=="maxT")==0) stop("missing 'maxT' column'")
-  if (sum(fp.idx <- colnames(x.prm)=="fpr")==0)  stop("missing 'fpr' column'")
-  if (sum(fd.idx <- colnames(x.prm)=="fdr")==0)  stop("missing 'fdr' column'")
-  p.idx <- p1.idx | p2.idx
-  
-  x.prm[,!p.idx] <- x.prm[,!p.idx]/nperm
-  x.prm[,p1.idx] <- x.prm[,p1.idx] + smoother
-  x.prm[,p2.idx] <- if (do.abs)
-    (x.prm[,p2.idx] + smoother)
-  else
-    2*(apply(cbind(x.prm[,p2.idx],nperm-x.prm[,p2.idx]),1,min)+smoother)
-  x.prm[,p.idx]  <- x.prm[,p.idx]/(smoother+nperm)
-  
-  x.prm[,mt.idx] <- monotonize(x.prm[,mt.idx],rnk=-abs(x.obs))
-  x.prm[,fp.idx] <- x.prm[,fp.idx]/nrow(x.prm)
-  x.prm[,fd.idx] <- x.prm[,fd.idx]/cumineq(abs(x.obs), obs=abs(x.obs), dir=2)
-  x.prm[,fd.idx] <- apply( cbind(x.prm[,fd.idx],rep(1,nrow(x.prm))),1,min)
-  
-  x.prm <- cbind(x.prm,fdr.test=x.prm[,fd.idx])
-  x.prm[,fd.idx] <- pval2fdr(x.prm[,p2.idx])    
-  x.prm <- cbind(score=x.obs,x.prm)
-  
-  x.prm <- x.prm[,match(c("score", "p1","p2","fdr","maxT"),
-                        colnames(x.prm))]
-  as.data.frame(x.prm,check.names=FALSE,stringsAsFactors=FALSE)
 }
 res.generate <- function(cls,seed=NULL,delta=10,sd=1,ngenes=500,do.plot=FALSE,pch=".")
 {

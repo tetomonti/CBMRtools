@@ -152,12 +152,14 @@ GSPdir &lt;- geneSetProjection(dat=DAT1,
 </div>
 <div class='output'>Projecting 1 groups ..
   &gt; group OSCC .. [ 31 / 315 ]
-	Checking genesets .. done.
-</div>
+	Checking genesets ..</div>
+<strong class='error'>Error in FUN(X[[i]], ...): could not find function &quot;ks.genescore&quot;</strong>
 <div class='input'>
 ## shortening pathway names for better visualization
 featureNames(GSPdir) &lt;- c(&quot;WNT_BCATENIN&quot;,&quot;BCATENIN.CSNK1E&quot;,&quot;BCATENIN.CTBP1&quot;,&quot;TGF_BETA&quot;)
-
+</div>
+<strong class='error'>Error in featureNames(GSPdir) &lt;- c(&quot;WNT_BCATENIN&quot;, &quot;BCATENIN.CSNK1E&quot;,     &quot;BCATENIN.CTBP1&quot;, &quot;TGF_BETA&quot;): object &#39;GSPdir&#39; not found</strong>
+<div class='input'>
 gradeID &lt;- &#39;my_grade&#39;
 stageID &lt;- &#39;my_stage&#39;
 p2 &lt;- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
@@ -172,14 +174,10 @@ p2 &lt;- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
 </div>
 <strong class='warning'>Warning message:
 `axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</strong>
-<div class='output'>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name              grob
-1 1 (1-1,1-1) arrange text[GRID.text.2]
-2 2 (2-2,1-1) arrange   gtable[arrange]
-</div>
+<strong class='error'>Error in exprs(eSet): object &#39;GSPdir&#39; not found</strong>
 <div class='input'>grid.arrange(p2)
 </div>
-<p><img src='geneSetProjection-7.png' alt='' width='540' height='400' /></p>
+<strong class='error'>Error in arrangeGrob(...): object &#39;p2&#39; not found</strong>
 <div class='input'></div></pre>
   </div>
   <div class="span4">
@@ -196,7 +194,7 @@ p2 &lt;- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
       
       <footer>
       <p class="pull-right"><a href="#">Back to top</a></p>
-<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="https://getbootstrap.com/2.0.4/">bootstrap</a>.</p>
       </footer>
     </div>
   </body>

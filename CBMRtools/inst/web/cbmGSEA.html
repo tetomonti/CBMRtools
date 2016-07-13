@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>cbmGSEA. CBMRtools 0.1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">CBMRtools 0.1</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>cbmGSEA</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre><div>cbmGSEA(eSet&nbsp;=&nbsp;NULL, rnkScore&nbsp;=&nbsp;NULL, pheno&nbsp;=&nbsp;NULL, tag&nbsp;=&nbsp;NULL, cond&nbsp;=&nbsp;NULL, control&nbsp;=&nbsp;NULL, geneId&nbsp;=&nbsp;NULL, gSet, minGset&nbsp;=&nbsp;5, nperm&nbsp;=&nbsp;100, score&nbsp;=&nbsp;c("t.score", "delta"), do.abs&nbsp;=&nbsp;FALSE, robust&nbsp;=&nbsp;FALSE, method&nbsp;=&nbsp;c("pearson", "spearman", "euclidean"), alternative&nbsp;=&nbsp;c("two.sided", "greater", "less"), weighted&nbsp;=&nbsp;FALSE, weight.p&nbsp;=&nbsp;1, smoother&nbsp;=&nbsp;1, clsLev&nbsp;=&nbsp;c("neg", "pos"), confound&nbsp;=&nbsp;NULL, seed&nbsp;=&nbsp;NULL, do.pval&nbsp;=&nbsp;!weighted, exhaustive&nbsp;=&nbsp;FALSE, do.plot&nbsp;=&nbsp;!is.null(plot.name), plot.name&nbsp;=&nbsp;NULL, plot.dev&nbsp;=&nbsp;pdf, topG&nbsp;=&nbsp;20, verbose&nbsp;=&nbsp;FALSE, ...)</div></pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>eSet</dt>
+      <dd>an [m-genes x n-samples] matrix</dd>
+      <dt>rnkScore</dt>
+      <dd>provide a ranking score instead</dd>
+      <dt>pheno</dt>
+      <dd>class ID</dd>
+      <dt>tag</dt>
+      <dd>id of gene to use as template (nearest neighbor mode)</dd>
+      <dt>cond</dt>
+      <dd>treatment label (e.g., TCDD)</dd>
+      <dt>control</dt>
+      <dd>control label (e.g., DMSO)</dd>
+      <dt>geneId</dt>
+      <dd>fData column containing the gene symbols</dd>
+      <dt>gSet</dt>
+      <dd>a named list of genesets (i.e. vectors of gene IDs)</dd>
+      <dt>minGset</dt>
+      <dd>minimum length of accepted genesets</dd>
+      <dt>nperm</dt>
+      <dd>number of permutation iterations</dd>
+      <dt>score</dt>
+      <dd>one of "t.score","delta": differential score used when cls is specified</dd>
+      <dt>do.abs</dt>
+      <dd>rank genes by absolute value of score</dd>
+      <dt>robust</dt>
+      <dd>compute robust score</dd>
+      <dt>method</dt>
+      <dd>one of "pearson","spearman","euclidean": score used when tag is specified</dd>
+      <dt>alternative</dt>
+      <dd>one of "two.sided","greater","less"</dd>
+      <dt>weighted</dt>
+      <dd>use weighted KS score as in GSEA</dd>
+      <dt>weight.p</dt>
+      <dd>weight's exponent</dd>
+      <dt>smoother</dt>
+      <dd>smooth p-values</dd>
+      <dt>clsLev</dt>
+      <dd>phenotype labels (e.g., c('normal','tumor'))</dd>
+      <dt>confound</dt>
+      <dd>confounder variable (must be categorical)</dd>
+      <dt>seed</dt>
+      <dd>random seed (for reproducible results)</dd>
+      <dt>do.pval</dt>
+      <dd>compute asymptotic p-values</dd>
+      <dt>exhaustive</dt>
+      <dd>generate all possible permutations</dd>
+      <dt>do.plot</dt>
+      <dd>generate ks plots</dd>
+      <dt>plot.name</dt>
+      <dd>file stub where to save ks plots</dd>
+      <dt>plot.dev</dt>
+      <dd>display device</dd>
+      <dt>topG</dt>
+      <dd>number of genesets to display per direction</dd>
+      <dt>verbose</dt>
+      <dd>verbosity TRUE/FALSE</dd>
+    </dl>
+    
+    <div class="Value">
+      <h2>Value</h2>
+
+      <p><dl>
+a data.frame with one geneset per row and columns reporting KS score, p-value, q-value, etc.
+</dl></p>
+  
+    </div>
+
+    <div class="Description">
+      <h2>Description</h2>
+
+      <p><code>cbmGSEA</code> re-implementation of Broad's GSEA, with
+gene-specific permutation-based p-value calculation and FDR
+correction by the BH method</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>
+data(cbmGSEAdata)
+if ( is.null(cbmGSEA.eSet) || is.null(cbmGSEA.gSet) ) stop( &quot;missing objects&quot; )
+
+table(pData(cbmGSEA.eSet)$tissue_type) # expecting 8 AN&#39;s + 8 Tumor&#39;s
+</div>
+<div class='output'>
+   AN Tumor 
+    8     8 
+</div>
+<div class='input'>
+# carry out a simple t-score calculation (notice the &#39;-&#39;, to achieve a decreasing=TRUE sort)
+rnkS &lt;- -t.score(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
+
+# 1) phenotype shuffling
+
+set.seed(123)
+OUT1 &lt;- cbmGSEA(eSet=cbmGSEA.eSet,gSet=cbmGSEA.gSet,pheno=&quot;tissue_type&quot;,cond=&quot;Tumor&quot;,control=&quot;AN&quot;,
+                nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)
+</div>
+<div class='output'>  computing observed scores .. (based on class template) .. done.
+  computing observed enrichment score(s) ..</div>
+<p><img src='cbmGSEA-5.png' alt='' width='540' height='400' /></p>
+<p><img src='cbmGSEA-6.png' alt='' width='540' height='400' /></p>
+<div class='output'> done.
+  permutation testing (by phenotype shuffling):
+	computing permuted ks scores .. 10% 20% 30% 40% 50% 60% 70% 80% 90% 100% 
+</div>
+<div class='input'>print(OUT1[,1:5])
+</div>
+<div class='output'>                                 score         p1         p2        fdr maxT
+tumor50                      0.7512438 1.00000000 0.01980198 0.04950495 0.00
+normal50                    -0.7512438 0.00990099 0.01980198 0.04950495 0.00
+HALLMARK_NOTCH_SIGNALING    -0.1204913 0.24752475 0.49504950 0.71287129 0.86
+HALLMARK_HEDGEHOG_SIGNALING -0.1368159 0.31683168 0.63366337 0.71287129 0.86
+HALLMARK_ANGIOGENESIS       -0.1156716 0.35643564 0.71287129 0.71287129 0.86
+</div>
+<div class='input'>
+# 2) rank shuffling (based on pre-computed ranked list)
+
+set.seed(123)
+OUT2 &lt;- cbmGSEA(rnkScore=rnkS,gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)
+</div>
+<div class='output'>  computing observed enrichment score(s) ..</div>
+<p><img src='cbmGSEA-12.png' alt='' width='540' height='400' /></p>
+<p><img src='cbmGSEA-13.png' alt='' width='540' height='400' /></p>
+<div class='output'> done.
+  permutation testing (by rank shuffling):
+	computing permuted ks scores .. 10% 20% 30% 40% 50% 60% 70% 80% 90% 100% 
+</div>
+<div class='input'>print(OUT2[,1:5])
+</div>
+<div class='output'>                                 score         p1         p2        fdr maxT
+tumor50                      0.7512438 1.00000000 0.01980198 0.04950495 0.00
+normal50                    -0.7512438 0.00990099 0.01980198 0.04950495 0.00
+HALLMARK_NOTCH_SIGNALING    -0.1204913 0.19801980 0.39603960 0.49504950 0.86
+HALLMARK_HEDGEHOG_SIGNALING -0.1368159 0.15841584 0.31683168 0.49504950 0.80
+HALLMARK_ANGIOGENESIS       -0.1156716 0.26732673 0.53465347 0.53465347 0.86
+</div>
+<div class='input'>all.equal(OUT1[,&quot;score&quot;],OUT2[,&quot;score&quot;]) # same results expected
+</div>
+<div class='output'>[1] TRUE
+</div>
+<div class='input'>
+# 3) gene tag shuffling (ranking by nearest neighbor)
+
+set.seed(123)
+OUT3 &lt;- cbmGSEA(eSet=cbmGSEA.eSet,tag=&quot;MAML2&quot;,gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)
+</div>
+<div class='output'>  computing observed scores .. (based on NN) .. done.
+  computing observed enrichment score(s) ..</div>
+<p><img src='cbmGSEA-21.png' alt='' width='540' height='400' /></p>
+<p><img src='cbmGSEA-22.png' alt='' width='540' height='400' /></p>
+<div class='output'> done.
+  permutation testing (by tag shuffling):
+	computing permuted ks scores .. 10% 20% 30% 40% 50% 60% 70% 80% 90% 100% 
+</div>
+<div class='input'>print(OUT3[,1:5])
+</div>
+<div class='output'>                                 score         p1         p2       fdr maxT
+tumor50                      0.5273632 0.99009901 0.03960396 0.0990099 0.04
+normal50                    -0.4671540 0.02970297 0.05940594 0.0990099 0.08
+HALLMARK_NOTCH_SIGNALING    -0.1486118 0.14851485 0.29702970 0.3712871 0.67
+HALLMARK_HEDGEHOG_SIGNALING -0.2276119 0.00990099 0.01980198 0.0990099 0.24
+HALLMARK_ANGIOGENESIS        0.1318408 0.66336634 0.69306931 0.6930693 0.73
+</div>
+<div class='input'></div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>cbmGSEA</li>
+    </ul>
+    <ul>
+      
+    </ul> -->
+      
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="https://getbootstrap.com/2.0.4/">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

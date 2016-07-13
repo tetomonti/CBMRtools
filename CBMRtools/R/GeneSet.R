@@ -163,3 +163,17 @@ read.gmt <- function( gmtfile, verbose=TRUE )
   gsets <- lapply(gsets,function(z) {z <- z[-1]; unique(toupper(z[z!=""]))}) # <== upper-case + removal
   gsets
 }
+## WRITE GMT
+##
+## write gmt file from a named list
+##
+write.gmt <- function( gsetList, gmtfile, verbose=TRUE )
+{
+    if ( is.null(names(gsetList)) ) stop( "is.null(names(gsetList))" )
+
+    for ( gsetName in names(gsetList) ) {
+        cat( gsetName, "\tblack\t", sep="", file=gmtfile, append=(gsetName!=names(gsetList)[1]) )
+        cat( gsetList[[gsetName]], sep="\t", file=gmtfile, append=TRUE )
+        cat( "\n", file=gmtfile, append=TRUE )
+    }
+}

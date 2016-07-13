@@ -1,45 +1,34 @@
-# source( "~/dvlp/R/misc.R" )
-# source( "~/dvlp/R/write.matrix.R" )
-# source( "~/dvlp/R/levels.R" )
-# source( "~/dvlp/R/permute.array.R" )
-# source( "~/dvlp/R/read.res.R" )
-# source( "~/dvlp/R/gene.cluster.R" )
-# source( "~/dvlp/R/" )
-
-# FUNCTION: KS GENESCORE
-#
-ks.genescore <- function
+## FUNCTION: KS GENESCORE
+##
+##' @export
+##
+ksGenescore <- function
 (
  n.x,               # length of ranked list
  y,                 # positions of geneset items in ranked list (basically, ranks)
  do.pval=T,         # compute asymptotic p-value
  alternative=c("two.sided","greater","less"),
- do.plot=F,         # draw the ES plot
- bare=F,            # return score & p-value only (a 2-tuple)
+ do.plot=FALSE,     # draw the ES plot
+ bare=FALSE,        # return score & p-value only (a 2-tuple)
  weight=NULL,       # weights for weighted score (see Subramanian et al.) (usually, sort(score))
  weight.p=1,        # weights' exponent
  cls.lev=c(0,1),    # class labels to display
- absolute=F,        # takes max - min score rather than the maximum deviation from null
+ absolute=FALSE,    # takes max - min score rather than the maximum deviation from null
  plot.labels=FALSE, # hits' labels
- exact=NULL,
  ...                # additional plot arguments
- )
+)
 {
   # efficient version of ks.score (should give same results as ks.test, when weight=NULL)
   #
   alternative <- match.arg(alternative)
-  DNAME <- paste( "1:", n.x, " and ", deparse(substitute(y)), sep="" )
-  METHOD <- "Two-sample Kolmogorov-Smirnov test"
   n.y <- length(y)
   if ( n.y < 1 )  stop("Not enough y data")
   if ( any(y>n.x) ) stop( "y must be <= n.x: ", max(y) )
   if ( any(y<1) ) stop( "y must be positive: ", min(y) )
-  if ( do.pval && !is.null(weight) ) warning("p-value meaningless w/ weighted score")
-  if ( !is.null(weight) && length(weight)!=n.x ) stop("weights must be same length as ranked list: ", length(weight), " vs ", n.x)
   x.axis <- y.axis <- NULL
 
-  # weighted GSEA score
-  #
+  ## weighted GSEA score
+  ##
   if ( !is.null(weight) )
   {
     weight <- abs(weight[y])^weight.p
@@ -53,71 +42,60 @@ ks.genescore <- function
     x.axis <- 1:n.x
     y.axis <- z
   }
-  # KS score
-  #
+  ## KS score
+  ##
   else
   {
-    y <- sort(y)
-    n <- n.x * n.y/(n.x + n.y)
-    hit <- 1/n.y
-    mis <- 1/n.x
+      y <- sort(y)
+      n <- n.x * n.y/(n.x + n.y)
+      hit <- 1/n.y
+      mis <- 1/n.x
+      
+      ## to compute score, only the y positions and their immediate preceding
+      ## ..positions are needed
+      ##
+      Y <- sort(c(y-1,y)); Y <- Y[diff(Y)!=0]; y.match <- match(y,Y)
+      D <- rep( 0, length(Y) ); D[y.match] <- (1:n.y)
+      zero <- which(D==0)[-1]; D[zero] <- D[zero-1]
+      
+      z <- D*hit - Y*mis
+      
+      score <- if (absolute) max(z)-min(z) else z[which.max(abs(z))]
 
-    # to compute score, only the y positions and their immediate preceding
-    # ..positions are needed
-    #
-    Y <- sort(c(y-1,y)); Y <- Y[diff(Y)!=0]; y.match <- match(y,Y); if ( any(is.na(y.match)) ) browser()
-    D <- rep( 0, length(Y) ); D[y.match] <- (1:n.y)
-    zero <- which(D==0)[-1]; D[zero] <- D[zero-1]
-
-    z <- D*hit - Y*mis
-    
-    score <- if (absolute) max(z)-min(z) else z[which.max(abs(z))]
-
-    if (do.plot) {
       x.axis <- Y;
       y.axis <- z;
       if(Y[1]>0) {
-        x.axis <- c(0,x.axis);
-        y.axis <- c(0,y.axis);
+          x.axis <- c(0,x.axis);
+          y.axis <- c(0,y.axis);
       }
       if ( max(Y)<n.x ) {
-        x.axis <- c(x.axis,n.x)
-        y.axis <- c(y.axis,0)
+          x.axis <- c(x.axis,n.x)
+          y.axis <- c(y.axis,0)
       }
-    }
   }
-  if ( do.plot )
-  {
-    plot( x.axis, y.axis, type="l",
-          xlab=paste("up-regulated for class ", cls.lev[2], " (KS>0) vs ",
-                     "up-regulated for class ", cls.lev[1], " (KS<0)", sep="" ),
-          ylab="gene hits",...)
-    abline(h=0)
-    abline(v=n.x/2,lty=3)
-    axis(1,at=y,labels=plot.labels,tcl=0.25,las=2)
-    i.max <- which.max(abs(y.axis))
-    points( x.axis[i.max], y.axis[i.max], pch=20, col="red")
-    text(x.axis[i.max]+n.x/20,y.axis[i.max],round(y.axis[i.max],2))
+  if (do.plot) {
+      plot( x.axis, y.axis, type="l",
+           xlab=paste("up-regulated for class ", cls.lev[2], " (KS>0) vs ",
+               "up-regulated for class ", cls.lev[1], " (KS<0)", sep="" ),
+           ylab="gene hits",...)
+      abline(h=0)
+      abline(v=n.x/2,lty=3)
+      axis(1,at=y,labels=plot.labels,tcl=0.25,las=2)
+      i.max <- which.max(abs(y.axis))
+      points( x.axis[i.max], y.axis[i.max], pch=20, col="red")
+      text(x.axis[i.max]+n.x/20,y.axis[i.max],round(y.axis[i.max],2))
   }
-  if ( !do.pval )
-    return(score)
-
-  # ELSE, compute asymptotic p-value
-  #
-  names(score) <- switch(alternative, two.sided="D", greater="D^+", less="D^-")
-  PVAL <- ks.test(1:n.x,y=y,alternative=alternative,exact=exact)$p.value
-  
-  if ( bare ) {
-    return( c(score=score, p.value=PVAL) )
+  if ( !do.pval ) {
+      return( as.numeric(score) )
   }
-  RVAL <- list(statistic = score,
-               p.value = PVAL, alternative = alternative, 
-               method = METHOD, data.name = DNAME)
-  class(RVAL) <- "htest"
-  return(RVAL)
-}
-# FUNCTION: GSET 2 LIST
-#
+  ## ELSE compute p-value as in function ks.test but return signed statistic
+  ##
+  tmp <- suppressWarnings(ks.test(1:n.x,y,alternative=alternative))
+  tmp$statistic <- score # use the signed statistic
+  return( if (bare) c(score=as.numeric(tmp$statistic), p.value=tmp$p.value) else tmp )
+}  
+## FUNCTION: GSET 2 LIST
+##
 gset2list <- function( gset, verbose=F )
 {
   # transfer genesets from matrix format to list format
@@ -143,19 +121,19 @@ gset2list <- function( gset, verbose=F )
   }
   gset
 }
-# FUNCTION: GSET 2 IDX
-#
-glist2idx <- function( glist, names, min.gset )
+## FUNCTION: GLIST 2 IDX
+##
+glist2idx <- function( glist, gnames, minGset )
 {
   # replace list of geneset names with list of geneset indices
   #
   if ( is.list(glist) )
   {
-    glist.idx <- lapply( glist, function(z){ z.idx <- match(z,names);
+    glist.idx <- lapply( glist, function(z){ z.idx <- match(z,gnames);
                                              z.idx <- z.idx[!is.na(z.idx)]})
     tmp <- tmp.names <- NULL
     for ( i in 1:length(glist.idx) ) {
-      if ( length(glist.idx[[i]])>=min.gset ) {
+      if ( length(glist.idx[[i]])>=minGset ) {
         tmp <- c( tmp, list(glist.idx[[i]]) )
         tmp.names <- c( tmp.names, names(glist.idx)[i] )
       }
@@ -163,16 +141,16 @@ glist2idx <- function( glist, names, min.gset )
     names(tmp) <- tmp.names
     glist.idx <- tmp
     if ( (tmp <- length(glist)-length(glist.idx))>0 )
-      cat("  Removed ", tmp, " genesets because too short (<",min.gset,")\n",sep="")
+      cat("  Removed ", tmp, " genesets because too short (<",minGset,")\n",sep="")
     if ( length(glist.idx)==0 )
       stop( "no geneset with the required minimum of genetags present in the dataset" )
   }
   else
   {
-    glist.idx <- match( glist, names ); glist.idx <- glist.idx[!is.na(glist.idx)]
+    glist.idx <- match( glist, gnames ); glist.idx <- glist.idx[!is.na(glist.idx)]
     n.idx <- length(glist.idx)
-    if ( n.idx<min.gset ) {
-      stop( paste("less tags than allowed (min=",min.gset,"): ", n.idx, sep="") )
+    if ( n.idx<minGset ) {
+      stop( paste("less tags than allowed (min=",minGset,"): ", n.idx, sep="") )
     }
     glist.idx <- list(geneset=glist.idx)
   }
@@ -221,7 +199,6 @@ ks.perm <- function
   if (is.null(dim(x))) stop( "x must be a 2D matrix" )
   if (is.null(cls) && is.null(tag) ) stop( "must specify either cls or tag" )
   if (!is.null(cls) && ncol(x)!=length(cls)) stop( "cls must be same length as ncol(x)" )
-  #if (nperm<1 && !do.pval) stop( "must ask for either asymptotic or empirical p-value" )
   if (is.null(cls) && is.na(match(tag,rownames(x))) ) stop( "tag not found: ", tag )
   if (!is.null(dim(gset))) gset <- gset2list(gset, verbose=verbose)
   if (is.list(gset) && is.null(names(gset))) stop( "genesets must be named" )
@@ -329,7 +306,7 @@ ks.perm <- function
   }
   for ( i in 1:length(gset.idx) )
   {
-    tmp <- ks.genescore(nrow(x),y=x.rank[gset.idx[[i]]],do.pval=do.pval, bare=T, 
+    tmp <- ksGenescore(nrow(x),y=x.rank[gset.idx[[i]]],do.pval=do.pval, bare=TRUE, 
                         weight=if (weighted) sort(x.score), weight.p=weight.p,
                         do.plot=do.plot || !is.null(plot.name), cls.lev=cls.lev,
                         main=names(gset.idx)[i], ... )
@@ -394,7 +371,7 @@ ks.perm <- function
     x.scores <- if (is.null(cls))
       apply(x,1,SCORE,y=cls.perm[i,])
     else if (paired)
-      SCORE(x[,cls.perm[i,],drop=F],cls=cls,robust=robust,paired=T)
+      SCORE(x[,cls.perm[i,],drop=F],cls=cls,robust=robust,paired=TRUE)
     else
       SCORE(x, cls=cls.perm[i,], robust=robust)
     if (do.abs) {
@@ -403,7 +380,7 @@ ks.perm <- function
     x.rnks <- rank(x.scores,ties.method="first")
     weight <- if (weighted) sort(x.scores)
     ks.nul <- sapply(gset.idx, function(z)
-                     ks.genescore(nrow(x),y=x.rnks[z],weight=weight,weight.p=weight.p,do.pval=F) )
+                     ksGenescore(nrow(x),y=x.rnks[z],weight=weight,weight.p=weight.p,do.pval=F) )
 
     #tmp <- perm.2side.online(ks.obs, ks.nul, dir=dir, do.abs=do.abs)
     tmp <- perm.2side.online(ks.obs, ks.nul, dir=dir)
@@ -441,7 +418,7 @@ ks.wrapper <- function( gp.filename, cls.filename, gset.filename, outstub=NULL,
                         score=c("snr","t.score"), paired=F, weighted=F, weight.p=1,
                         min.gset=5, robust=F, nperm=0, tag.skip=0, do.pval=!weighted,
                         do.plot=!is.null(outstub), plot.dev=c("pdf","jpeg"),
-                        verbose=F, header=T )
+                        verbose=F, header=TRUE )
 {
   # checks on inputs
   #
@@ -468,7 +445,7 @@ ks.wrapper <- function( gp.filename, cls.filename, gset.filename, outstub=NULL,
   cls  <- read.cls( cls.filename, verbose=verbose )
   VERBOSE( verbose, "  Reading genesets .. " )
 
-  if ( length(grep(".Rout$",gset.filename,perl=T))>0 )
+  if ( length(grep(".Rout$",gset.filename,perl=TRUE))>0 )
   {
     VERBOSE(verbose,"('.Rout' format) ")
     load(file=gset.filename)
@@ -477,7 +454,7 @@ ks.wrapper <- function( gp.filename, cls.filename, gset.filename, outstub=NULL,
   else
   {
     is.gmt <- length(grep(".gmt",gset.filename))>0
-    gset <- read.table( gset.filename, fill=T, header=!is.gmt, skip=tag.skip, sep="\t" )
+    gset <- read.table( gset.filename, fill=TRUE, header=!is.gmt, skip=tag.skip, sep="\t" )
     if ( is.gmt ) {
       VERBOSE( verbose, "(gmt format)" )
       gset <- gset[,-2] # eliminate the color column
@@ -508,7 +485,7 @@ ks.wrapper <- function( gp.filename, cls.filename, gset.filename, outstub=NULL,
 
   if ( !is.null(outstub) ) {
     outname <- paste(outstub, ".txt", sep="")
-    write.table( results, sep="\t", row.names=T, file=outname, quote=F )
+    write.table( results, sep="\t", row.names=TRUE, file=outname, quote=F )
     VERBOSE( verbose, "  Results saved to file '", outname, "'.\n\n", sep="" )
   }
   results
@@ -536,5 +513,5 @@ CBMMLAB <- Sys.getenv('CBMMLAB')
   ## run GSEA
   ##
   GSEA <- ks.perm(DAT,cls=CLS,control=CTL,score="t.score",min.gset=5,gset=GSETS.list,
-                  weighted=T,smoother=1,nperm=1000,verbose=T)
+                  weighted=TRUE,smoother=1,nperm=1000,verbose=TRUE)
 }

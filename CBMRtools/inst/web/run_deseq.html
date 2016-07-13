@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>CBMRtools. CBMRtools 0.1</title>
+<title>run_deseq. CBMRtools 0.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="">
 
@@ -47,21 +47,43 @@
         
       </header>
       
-      <h1>CBMRtools</h1>
+      <h1>Run DESeq2 on eset object</h1>
 
 <div class="row">
   <div class="span8">
-        
+    <h2>Usage</h2>
+    <pre><div>run_deseq(eset, class_id, control, treatment, verbose&nbsp;=&nbsp;TRUE, sortByPValue&nbsp;=&nbsp;TRUE, FDRcutoff&nbsp;=&nbsp;NULL)</div></pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>eset</dt>
+      <dd>expression set object with raw count data</dd>
+      <dt>class_id</dt>
+      <dd>column name in pData(eset) specifying the conditions for differential expression</dd>
+      <dt>control</dt>
+      <dd>value in treatment specifying the control condition</dd>
+      <dt>treatment</dt>
+      <dd>value in treatment specifying the positive condition</dd>
+      <dt>verbose</dt>
+      <dd>add additional information and perform filtering</dd>
+      <dt>sortByPValue</dt>
+      <dd>whether to sort results by nominal p-value, if verbose = TRUE</dd>
+      <dt>FDRcutoff</dt>
+      <dd>FDR threshold for filtering results, if verbose = TRUE</dd>
+      <dt>control</dt>
+      <dd>value in treatment specifying the control condition</dd>
+    </dl>
+    
     <div class="Description">
       <h2>Description</h2>
 
-      <p>A package for accessing general-use R scripts developed by montilab members</p>
+      <p>Run DESeq2 on eset object</p>
   
     </div>
       </div>
   <div class="span4">
     <!-- <ul>
-      <li>CBMRtools</li><li>CBMRtools-package</li>
+      <li>run_deseq</li>
     </ul>
     <ul>
       
