@@ -298,7 +298,9 @@ heatmap.ggplot2.discrete<-function(eSet,
   	geom_tile(aes_string(fill=heatmap.colorlegend.name)) + 
   	scale_fill_manual(breaks=levels(dfm[,heatmap.colorlegend.name]),
                        values =  discrete.colors.values,
-                       guide=guide_legend(label.hjust=-2, label.position="bottom"),
+                       guide=guide_legend(
+                       	#label.hjust=-2, 
+                       	label.position="bottom"),
                        labels = discrete.colors.labels, drop = FALSE) +
   	theme_none +
   	theme(legend.position="bottom", 
@@ -379,13 +381,13 @@ heatmap.ggplot2.discrete<-function(eSet,
 				stop("col.legend.brewer must have names representing ids of color labels")
 			}
 			if (any(duplicated(names(col.legend.brewer)))){
-				stop("duplicated column legend colors in col.lgend.brewer")
+				stop("duplicated column legend colors in col.legend.brewer")
 			} 
 			missingcols<-setdiff(names(col.legend.brewer), metacolunq)
-			if (length(missingcols)!= 0){
-				stop(paste("missing column legend colors", 
-					paste(missingcols, collapse = ","), sep = ":"))
-			}
+			#if (length(missingcols)!= 0){
+			#	stop(paste("missing column legend colors", 
+			#		paste(missingcols, collapse = ","), sep = ":"))
+			#}
 			col.legend.brewer.ordered<- col.legend.brewer[ match( metacolunq,
 				names(col.legend.brewer))]
 			col.legend.brewer.ordered[which(is.na(col.legend.brewer.ordered))]<- to.hex("white")
