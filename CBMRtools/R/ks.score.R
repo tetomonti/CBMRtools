@@ -156,8 +156,9 @@ glist2idx <- function( glist, gnames, minGset )
   }
   glist.idx
 }
-# FUNCTION: KS PERM
-#
+## FUNCTION: KS PERM
+##
+## DEPRECATED - USe FILE cbmGSEA.R INSTEAD
 ks.perm <- function
 (
  x,                        # an (m-genes x n-samples) matrix

@@ -43,9 +43,6 @@
 #'
 #' table(pData(cbmGSEA.eSet)$tissue_type) # expecting 8 AN's + 8 Tumor's
 #'
-#' # carry out a simple t-score calculation (notice the '-', to achieve a decreasing=TRUE sort)
-#' rnkS <- -t.score(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
-#'
 #' # 1) phenotype shuffling
 #'
 #' set.seed(123)
@@ -55,12 +52,17 @@
 #' 
 #' # 2) rank shuffling (based on pre-computed ranked list)
 #'
+#' # carry out a simple t-score calculation (notice the '-', to achieve a decreasing=TRUE sort)
+#' rnkS <- -t.score(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
+#'
 #' set.seed(123)
 #' OUT2 <- cbmGSEA(rnkScore=rnkS,gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)
 #' print(OUT2[,1:5])
+#'
+#' # ascertain that the results are the same with the two methods
 #' all.equal(OUT1[,"score"],OUT2[,"score"]) # same results expected
 #'
-#' # 3) gene tag shuffling (ranking by nearest neighbor)
+#' # 3) gene tag shuffling (ranking by nearest neighbor with respect to "MAML2")
 #'
 #' set.seed(123)
 #' OUT3 <- cbmGSEA(eSet=cbmGSEA.eSet,tag="MAML2",gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)

@@ -298,8 +298,9 @@ load.var <- function(file,verbose=F)
   
   varlist <- c(ls(),"varlist")
   load(file=file)
+  if ( length(setDiff <- setdiff(ls(),varlist))>1 ) stop( "loading more than one variable" )
   VERBOSE(verbose,"(variable loaded: ",setdiff(ls(),varlist),")\n",sep="")
-  return( eval(parse(text=setdiff(ls(),varlist))) )
+  return( eval(parse(text=setDiff)) )
 }
 robust.load <- function( file, envir=parent.env(environment()), max.try=100, verbose=T )
 {
