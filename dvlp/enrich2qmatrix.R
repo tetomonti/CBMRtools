@@ -10,32 +10,45 @@ cbmGSEA2qmatrix <- function
 (
     cgsea,           # list of data.frames, the up and down genesets, as output by cbmGSEA
     fdr=c(.05,.01),  # FDR thresholds (must be in decreasing order)
+    method=c("intersect","union"),
+                     # union or intersection of genesets across signatures
     do.sort=TRUE,    # sort matrices by HC
     do.heat=FALSE,   # display heatmap
     rm.zero=TRUE,    # remove genesets/rows w/ no hits
     pvalID="fdr",    # which significance measure to use (either "p2" or "fdr")
     globalMHT=FALSE, # correct for MHT *across* signatures (default is within)
+    na.col="gray",   # color for missing values in the heatmap
     verbose=TRUE,    # verbose output
     ...              # extra arguments to my.heatmap
 )
 {
-    ## each element of the variable gsea correspond to a distinct cbmGSEA
+    ## each element of the variable cgsea corresponds to a distinct cbmGSEA
     ## run, and it contains a data.frame object
-    ##
+
+    ## input checks
     if ( length(fdr)>1 && any(diff(fdr)>0) ) stop( "fdr must be in decreasing order" )
     if ( globalMHT ) pvalID <- "p2"
-    
-    ## extract all the geneset IDs from the first data.frame
-    gID <- rownames(cgsea[[1]])
     if ( !(pvalID %in% colnames(cgsea[[1]])) ) stop( "unrecognized pvalID: ", pvalID)
+    method <- match.arg(method)
+    combineFun <- match.fun(method)
+
+    VERBOSE(verbose,"Generating qmatrix based on",method,"..")
+    
+    ## extract all the geneset IDs in common among all cbmGSEA runs
+    gID <- Reduce(combineFun,lapply(cgsea,rownames))
 
     ## extract the FDRs of all genesets for each cbmGSEA run 
-    VERBOSE(verbose, "extracting into matrix ..")
-    mx <- sapply( cgsea, function(z) {
-        tmp <- z[match.nona(gID,rownames(z)),,drop=FALSE]
-        tmp[tmp[,"score"]<0,pvalID] <- -tmp[tmp[,"score"]<0,pvalID]
-        tmp[,pvalID]})
-    rownames(mx) <- gID
+    mx <- matrix(NA,length(gID),length(cgsea),dimnames=list(gID,names(cgsea)))
+    for ( i in 1:ncol(mx) ) {
+        z <- cgsea[[i]]
+        z[z[,"score"]<0,pvalID] <- -z[z[,"score"]<0,pvalID]
+        if ( method=="intersect" ) 
+            mx[,i] <- z[match.nona(rownames(mx),rownames(z)),pvalID]
+        else if ( method=="union" )
+            mx[match.nona(rownames(z),rownames(mx)),i] <- z[,pvalID]
+        else
+            stop("unrecognized method:",method)
+    }    
     VERBOSE(verbose, " done, [", paste(dim(mx),collapse=","),"] matrix generated.\n",sep="")
 
     ## if global multiple hypothesis correction (MHT), take the uncorrected
@@ -45,11 +58,12 @@ cbmGSEA2qmatrix <- function
         VERBOSE(verbose, "carrying out global MHT ..")
         absMX <- abs(mx)
         absMX[,] <- p.adjust(as.vector(absMX),method="BH")
+        mx[is.na(mx)] <- 999 # remove NA's (necessary for next inequality)
         absMX[mx<0] <- -absMX[mx<0]
         mx <- absMX
-        VERBOSE(verbose, " done, min(fdr):", min(abs(mx)), "max(fdr):", max(mx),"\n")
+        VERBOSE(verbose, " done, min(fdr):", min(abs(mx),na.rm=TRUE), "max(fdr):", max(mx,na.rm=TRUE),"\n")
     }
-    return( qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,rm.zero=rm.zero, ...) )
+    return( qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,rm.zero=rm.zero,na.col=na.col,...) )
 }
 #######################################################################
 ## function: GSEA 2 QMATRIX
@@ -63,10 +77,13 @@ gsea2qmatrix <- function
 (
     gsea,               # list of lists (each with 2 data.frames, the up and down genesets, as output by gsea)
     fdr=c(.05,.01),     # FDR thresholds (must be in decreasing order)
+    method=c("intersect","union"),
+                        # union or intersection of genesets across signatures
     do.sort=TRUE,       # sort matrices by HC
     do.heat=FALSE,      # display heatmap
     rm.zero=TRUE,       # remove genesets/rows w/ no hits
     pvalID="FDR q-val", # which significance measure to use (see GSEA output for choices)
+    na.col="gray",      # color for missing values in the heatmap
     ...                 # extra arguments to qmatrix2heatmap
 )
 {
@@ -76,20 +93,29 @@ gsea2qmatrix <- function
     ##
     if ( length(fdr)>1 && any(diff(fdr)>0) ) stop( "fdr must be in decreasing order" )
     if ( !(pvalID %in% colnames(gsea[[1]][[1]])) ) stop( "unrecognized pvalID: ", pvalID)
+    method <- match.arg(method)
+    combineFun <- match.fun(method)
 
-    ## extract all the geneset IDs
-    gID <- c(gsea[[1]][[1]][,'NAME'],gsea[[1]][[2]][,'NAME'])
+    VERBOSE(verbose,"Generating qmatrix based on",method,"..")
+
+    ## extract all the geneset IDs in common among all GSEA runs
+    gID <- Reduce(combineFun,lapply(gsea,function(Z) c(Z[[1]][,'NAME'],Z[[2]][,'NAME'])))
 
     ## extract the FDRs of all genesets for each GSEA run (i.e., each list item)
-    mx <- sapply( gsea, function(z) {
-        tmp <- rbind(z[[1]][,c('NAME',pvalID)],
+    mx <- matrix(NA,length(gID),length(gsea),dimnames=list(gID,names(gsea)))
+    for ( i in 1:ncol(mx) ) {
+        z <- cgsea[[i]]
+        tmp <- rbind(z[[1]][,c('NAME',pvalID),drop=FALSE],
                      data.frame(z[[2]][,'NAME',FALSE],-z[[2]][,pvalID,FALSE],
                                 check.names=FALSE,stringsAsFactors=FALSE))
-        tmp[ match.nona(gID,tmp[,'NAME']), pvalID ]
-    })
-    rownames(mx) <- gID
-
-    return( qmatrix2heatmap(mx=mx, fdr=fdr, do.sort=do.sort, do.heat=do.heat, rm.zero=rm.zero, ...) )
+        if ( method=="intersect" ) 
+            mx[,i] <- tmp[match.nona(rownames(mx),tmp[,'NAME']),pvalID]
+        else if ( method=="union" )
+            mx[match.nona(tmp[,'NAME'],rownames(mx)),i] <- tmp[,pvalID]
+        else
+            stop("unrecognized method:",method)
+    }
+    return( qmatrix2heatmap(mx=mx, fdr=fdr, do.sort=do.sort, do.heat=do.heat, rm.zero=rm.zero, na.col=na.col,...) )
 }
 #######################################################################
 ## function: QMATRIX 2 HEATMAP
@@ -109,6 +135,7 @@ qmatrix2heatmap <- function
     verbose=TRUE,   # extra arguments to my.heatmap
                     # hclust methods
     method=c("ward.D","ward.D2","single","complete","average","mcquitty","median","centroid"),
+    na.col="gray",  # color for missing values in the heatmap
     ...
 )
 {
@@ -124,7 +151,7 @@ qmatrix2heatmap <- function
     dimnames(mx01) <- dimnames(mx)
 
     if ( rm.zero ) {
-        rm.idx <- apply(mx01!=0,1,any)
+        rm.idx <- apply(mx01!=0,1,any,na.rm=TRUE)
         if ( sum(rm.idx)==0 ) {
             VERBOSE(verbose,"no significant genesets found, not removing any")
         }
@@ -142,7 +169,15 @@ qmatrix2heatmap <- function
         if ( do.heat ) {
             ncolors <- length(fdr)*2+1
             COL <- col.gradient(c("blue","white","red"),length=ncolors)
+            
+            ## yucky handling of color-coding (but necessary 'cause the default is not smart enough)
             COL <- COL[sort(unique(as.vector(mx01)))+levs[length(levs)]+1]
+                     
+            ## add color used for the NA's
+            if ( any(is.na(mx)) ) {
+                COL <- c(COL,col.gradient(na.col,1))
+                mx01[is.na(mx01)] <- max(mx01,na.rm=TRUE)+1
+            }            
             my.heatmap(mx01,Rowv=as.dendrogram(hc.row),Colv=as.dendrogram(hc.col),
                        scale="none",col=COL,revC=TRUE,...)
         }
@@ -151,6 +186,7 @@ qmatrix2heatmap <- function
             mx01 <- mx01[hc.row$order,hc.col$order]
         }
     }
+    return( list(mx=mx,mx01=mx01,COL=COL) )
     return( list(mx=mx,mx01=mx01) )
 }
 #######################################################################
@@ -237,7 +273,7 @@ if ( FALSE )
     gSet <- new("GeneSet","~/Research/CancerGenomeAnalysisData/annot/h.all.v5.1.symbols.gmt")
 
     ## loading pre-computed list of diffanal results
-    DIF <- readRDS(file.path("results/rds/DIF2.RDS"))
+    DIF <- readRDS(file.path(PATH,"results/rds/DIF2.RDS"))
     names(DIF)
     ##  [1] "MDA.AhR" "MDA.CYP" "SUM.AhR" "SUM.CYP" "AhR"     "CYP"     "CB113"  
     ##  [8] "BaP"     "PYO"     "CH"     
@@ -256,4 +292,13 @@ if ( FALSE )
     png("ahr.hallmarks.png")
     OUT <- cbmGSEA2qmatrix(hGSEA,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,margins=c(6,15))
     dev.off()
+
+    ## let's test with different genesets
+    hGSEA1 <- hGSEA
+    for ( i in 1:length(hGSEA1) ) # remove a (different) geneset from each data.frame
+        hGSEA1[[i]] <- hGSEA[[i]][-i,]
+
+    OUT1 <- cbmGSEA2qmatrix(hGSEA1,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,margins=c(6,15),method="intersect")
+
+    OUT2 <- cbmGSEA2qmatrix(hGSEA1,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,margins=c(6,15),method="union")
 }
