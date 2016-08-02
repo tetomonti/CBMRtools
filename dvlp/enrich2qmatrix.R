@@ -84,6 +84,7 @@ gsea2qmatrix <- function
     rm.zero=TRUE,       # remove genesets/rows w/ no hits
     pvalID="FDR q-val", # which significance measure to use (see GSEA output for choices)
     na.col="gray",      # color for missing values in the heatmap
+    verbose=TRUE,       # verbose output
     ...                 # extra arguments to qmatrix2heatmap
 )
 {
