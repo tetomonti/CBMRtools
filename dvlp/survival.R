@@ -206,19 +206,22 @@ plot.km.survfit <- function( gct, surv, km, r, col=c("blue","red"), lty=c(1,2) )
   #cat("offset:", off, "\n" )
   #cat("p-value =", km[r,i.pv], "\n" )
 }
-perm.survfit <- function( x, y, nperm, nmin=2, probs=NULL, seed=NULL, online=TRUE, verbose=FALSE )
+perm.survfit <- function( x, surv, nperm, nmin=1, probs=NULL, seed=NULL, online=TRUE, verbose=FALSE )
 {
   # define the score function
   #
-  score <- function(x,y,nmin,probs,verbose)
+  score <- function(x,surv,nmin,probs,verbose)
   {
-    gene.km.survfit( x, y, nmin=nmin, probs=probs, bare=TRUE, verbose=FALSE )
+    gene.km.survfit( x, surv, nmin=nmin, probs=probs, bare=TRUE, verbose=FALSE )
   }
+  x.obs <- gene.km.survfit(x, surv, nmin=nmin, probs=probs, bare=FALSE, verbose=FALSE )
+
   # call the generic permutation routine
   #
-  x.perm <- perm.1side( x, y, nperm=nperm, score=score, seed=seed,
-                        online=online, verbose=verbose, nmin=nmin, probs=probs )
-  (x.perm)
+  x.prm <- perm.1side( x, surv, nperm=nperm, score=score, seed=seed,
+                       online=online, verbose=verbose, nmin=nmin, probs=probs )
+
+  list(pval=cbind(x.obs[,c("thresh","gt")],x.prm$pval),nperm=x.prm$nperm)
 }
 debug.perm.survfit <- function()
 {
