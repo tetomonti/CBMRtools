@@ -10,7 +10,7 @@ cbmGSEA2qmatrix <- function
 (
     cgsea,           # list of data.frames, the up and down genesets, as output by cbmGSEA
     fdr=c(.05,.01),  # FDR thresholds (must be in decreasing order)
-    method=c("intersect","union"),
+    method=c("union","intersect"),
                      # union or intersection of genesets across signatures
     do.sort=TRUE,    # sort matrices by HC
     do.heat=FALSE,   # display heatmap
@@ -77,7 +77,7 @@ gsea2qmatrix <- function
 (
     gsea,               # list of lists (each with 2 data.frames, the up and down genesets, as output by gsea)
     fdr=c(.05,.01),     # FDR thresholds (must be in decreasing order)
-    method=c("intersect","union"),
+    method=c("union","intersect"),
                         # union or intersection of genesets across signatures
     do.sort=TRUE,       # sort matrices by HC
     do.heat=FALSE,      # display heatmap
