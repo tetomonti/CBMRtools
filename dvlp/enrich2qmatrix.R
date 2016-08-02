@@ -171,6 +171,7 @@ qmatrix2heatmap <- function
             COL <- col.gradient(c("blue","white","red"),length=ncolors)
             
             ## yucky handling of color-coding (but necessary 'cause the default is not smart enough)
+            ## (if anybody has a better solution, feel free to amend)
             COL <- COL[sort(unique(as.vector(mx01)))+levs[length(levs)]+1]
                      
             ## add color used for the NA's
@@ -298,7 +299,9 @@ if ( FALSE )
     for ( i in 1:length(hGSEA1) ) # remove a (different) geneset from each data.frame
         hGSEA1[[i]] <- hGSEA[[i]][-i,]
 
+    ## take the intersection
     OUT1 <- cbmGSEA2qmatrix(hGSEA1,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,margins=c(6,15),method="intersect")
 
+    ## take the union (there should be rows with missing values, color-coded 'gray' by default)
     OUT2 <- cbmGSEA2qmatrix(hGSEA1,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,margins=c(6,15),method="union")
 }
