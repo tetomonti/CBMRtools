@@ -172,7 +172,7 @@ matchIndex <- function( key, names, ignore.case=FALSE )
   if ( ignore.case ) {
     key <- toupper(key); names <- toupper(names)
   }
-  if ( length(grep(paste("\\b",key,"$",sep=""),names))>1 ) {
+  if ( sum(key==names)>1 ) {
     warning('multiple matches, returning first only')
   }
   idx <- match(key,names)

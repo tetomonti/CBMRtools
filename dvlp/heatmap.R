@@ -72,7 +72,7 @@ value.cap <- function(dat,qnt=.95)
 }
 clustColors <- function(clust,
                         ncuts,
-                        COL=c('magenta','darkgreen','blue','orange','gray','black'),
+                        COL=rainbow(n=ncuts),
                         do.matrix=TRUE)
 {
     CC <- COL[cutree(clust,k=ncuts)];

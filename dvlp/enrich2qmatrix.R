@@ -58,7 +58,7 @@ cbmGSEA2qmatrix <- function
         VERBOSE(verbose, "carrying out global MHT ..")
         absMX <- abs(mx)
         absMX[,] <- p.adjust(as.vector(absMX),method="BH")
-        mx[is.na(mx)] <- 999 # remove NA's (necessary for next inequality)
+        mx[is.na(mx)] <- 999 # remove NA's (necessary for 'mx<0' test)
         absMX[mx<0] <- -absMX[mx<0]
         mx <- absMX
         VERBOSE(verbose, " done, min(fdr):", min(abs(mx),na.rm=TRUE), "max(fdr):", max(mx,na.rm=TRUE),"\n")
@@ -94,6 +94,9 @@ gsea2qmatrix <- function
     ##
     if ( length(fdr)>1 && any(diff(fdr)>0) ) stop( "fdr must be in decreasing order" )
     if ( !(pvalID %in% colnames(gsea[[1]][[1]])) ) stop( "unrecognized pvalID: ", pvalID)
+    if ( !all(sapply(gsea,function(Z1) sapply(Z1,function(Z2) is.character(Z2[,'NAME'])))) )
+        stop( "column 'NAME' expected to be of type character")
+        
     method <- match.arg(method)
     combineFun <- match.fun(method)
 
@@ -105,7 +108,7 @@ gsea2qmatrix <- function
     ## extract the FDRs of all genesets for each GSEA run (i.e., each list item)
     mx <- matrix(NA,length(gID),length(gsea),dimnames=list(gID,names(gsea)))
     for ( i in 1:ncol(mx) ) {
-        z <- cgsea[[i]]
+        z <- gsea[[i]]
         tmp <- rbind(z[[1]][,c('NAME',pvalID),drop=FALSE],
                      data.frame(z[[2]][,'NAME',FALSE],-z[[2]][,pvalID,FALSE],
                                 check.names=FALSE,stringsAsFactors=FALSE))
@@ -188,7 +191,6 @@ qmatrix2heatmap <- function
             mx01 <- mx01[hc.row$order,hc.col$order]
         }
     }
-    return( list(mx=mx,mx01=mx01,COL=COL) )
     return( list(mx=mx,mx01=mx01) )
 }
 #######################################################################

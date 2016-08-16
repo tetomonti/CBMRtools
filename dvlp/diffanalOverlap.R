@@ -10,21 +10,21 @@
 
 diffanalOverlap <- function
 (
-    diffanalList,      # list of diffanal results (each a data.frame, see limma_wrapper)
+    diffanalList,      # list of diffanal results (each a data.frame, see e.g. limma_wrapper)
     key="hgnc_symbol", # column id of gene identifiers in the table
     maxFDR=1.0,        # max FDR for genes to include in signature
-    minFC=1.0,         # min fold-change for genes to include in signature
+    minFCG=1.0,        # min fold-change for genes to include in signature
     ntotal=nrow(diffanalList[[1]]),
     fdrKey="adj.P.Val",
-    fcKey="limma.fold.change",
-    tKey="t",
+    fcgKey="limma.fold.change",
+    scrKey="t",
     adjust=TRUE,
     outfile=NULL
 )
 {
     ## First, extract signatures (i.e., gene lists) from diffanal results
-    SIGlist <- diffanal2signatures(diffanalList,key=key,maxFDR=maxFDR,minFC=minFC,fdrKey=fdrKey,fcKey=fcKey,tKey=tKey)
-
+    SIGlist <- diffanal2signatures(diffanalList,key=key,maxFDR=maxFDR,minFCG=minFCG,fdrKey=fdrKey,fcgKey=fcgKey,scrKey=scrKey)
+    
     ## Then, compare the signatures (by 'Venn-Diagramming')
     signatureOverlap( SIGlist, ntotal=ntotal, adjust=adjust, outfile=outfile )
 }
@@ -39,28 +39,38 @@ diffanalOverlap <- function
 
 diffanal2signatures <- function
 (
-    diffanalList,             # list of diffanal results (possibly, data frames)
-    key="hgnc_symbol",        # column header where to find gene symbols
-    maxFDR=1.0,               # max FDR to be included in the signatures
-    minFC=1.0,                # min fold-change to be included
-    fdrKey="adj.P.Val",       # column IDs (defaults are run_limma columns)
-    fcKey="limma.fold.change",# ..
-    tKey="t"                  # ..
+    diffanalList,               # list of diffanal results (possibly, data frames)
+    maxFDR=1.0,                 # max FDR to be included in the signatures
+    minFCG=1.0,                 # min fold-change to be included
+    key="hgnc_symbol",          # column header where to find gene symbols
+    fdrKey="adj.P.Val",         # column IDs (defaults are run_limma columns)
+    fcgKey="limma.fold.change", # fold-change key
+    scrKey="t"                  # score key
 )
 {
     SIGlist <- NULL
-    if ( !(key %in% colnames(diffanalList[[1]])) ) {
-        stop( "column key",key,"not found")
-    }
+
+    ## check inputs
+    if ( is.null(names(diffanalList)) ) stop( "is.null(names(diffanalList))" )
+    if ( maxFDR>1 | maxFDR<=0 ) stop( "maxFDR must be in (0,1]: ", maxFDR )
+    if ( minFCG<1 ) stop( "minFCG must be >= 1: ", minFCG )
+    
+    ## establish key mapping (and throw error if any mapping fails)
+    cnames <- colnames(diffanalList[[1]])
+    keyI <- matchIndex(key,cnames)
+    fdrI <- matchIndex(fdrKey,cnames)
+    fcgI <- matchIndex(fcgKey,cnames)
+    scrI <- matchIndex(scrKey,cnames)
+    
     for ( i in 1:length(diffanalList) )
     {
         DIFi <- diffanalList[[i]]
-        SIGi <- list(up=DIFi[as.numeric(DIFi[,fdrKey])<=maxFDR &
-                             as.numeric(DIFi[,fcKey])>=minFC &
-                             as.numeric(DIFi[,tKey])>0,key],
-                     dn=DIFi[as.numeric(DIFi[,fdrKey])<=maxFDR &
-                             1/as.numeric(DIFi[,fcKey])>=minFC &
-                             as.numeric(DIFi[,tKey])<0,key])
+        SIGi <- list(up=DIFi[as.numeric(DIFi[,fdrI])<=maxFDR &
+                             as.numeric(DIFi[,fcgI])>=minFCG &
+                             as.numeric(DIFi[,scrI])>0,keyI],
+                     dn=DIFi[as.numeric(DIFi[,fdrI])<=maxFDR &
+                             1/as.numeric(DIFi[,fcgI])>=minFCG &
+                             as.numeric(DIFi[,scrI])<0,keyI])
         names(SIGi) <- paste( names(diffanalList)[i], names(SIGi), sep="." )
         SIGlist <- c( SIGlist, SIGi )
                   
@@ -83,8 +93,7 @@ signatureOverlap <- function
     outfile=NULL # write summary table to output file
 )
 {
-    OVLP <- matrix("",length(SIGlist),length(SIGlist),dimnames=list(names(SIGlist),names(SIGlist)))
-    NOVLP <- matrix("",length(SIGlist),length(SIGlist),dimnames=list(names(SIGlist),names(SIGlist)))
+    OVLP <- NOVLP <- JOVLP <- matrix(NA,length(SIGlist),length(SIGlist),dimnames=list(names(SIGlist),names(SIGlist)))
     for ( i in 1:(length(SIGlist)-1) ) {
         for ( j in (i+1):length(SIGlist) ) {
             n1 <- length(SIGlist[[i]])
@@ -92,6 +101,7 @@ signatureOverlap <- function
             ov <- length(intersect(SIGlist[[i]],SIGlist[[j]]))
             OVLP[i,j] <- test.overlap(novlp=ov,nset1=n1,nset2=n2,ntotal=ntotal)
             NOVLP[i,j] <- paste(ov,n1,n2,sep="|")
+            JOVLP[i,j] <- ov/length(union(SIGlist[[i]],SIGlist[[j]]))
         }
     }
     if ( adjust ) {
@@ -101,8 +111,10 @@ signatureOverlap <- function
         my.write.table(OVLP,names="overlap",file=outfile)
         cat("\n",file=outfile,append=TRUE)
         my.write.table(NOVLP,names="Noverlap",file=outfile,append=TRUE)
+        cat("\n",file=outfile,append=TRUE)
+        my.write.table(JOVLP,names="Jaccard",file=outfile,append=TRUE)
     }
-    return( list(signatures=SIGlist,overlap=OVLP,noverlap=NOVLP) )
+    return( list(signatures=SIGlist,overlap=OVLP,noverlap=NOVLP,jaccard=JOVLP) )
 }
 #######################################################################
 ## support functions
