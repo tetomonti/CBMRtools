@@ -5,7 +5,7 @@
 ## limma_wrapper, or edgeR_wrapper, or similar), and return a list of
 ## correspoding gene lists (selected based on significance criteria),
 ## and a table with pairwise signature comparison (overlap
-## significance and overlap counts).
+## significance, overlap counts, and jaccard index).
 #######################################################################
 
 diffanalOverlap <- function

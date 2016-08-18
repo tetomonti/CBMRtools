@@ -173,7 +173,7 @@ matchIndex <- function( key, names, ignore.case=FALSE )
     key <- toupper(key); names <- toupper(names)
   }
   if ( sum(key==names)>1 ) {
-    warning('multiple matches, returning first only')
+    warning('multiple matches, returning first only:',key)
   }
   idx <- match(key,names)
   if (is.na(idx)) stop( "index not found: ", key )

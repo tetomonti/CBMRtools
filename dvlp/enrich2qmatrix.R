@@ -268,13 +268,17 @@ if ( FALSE )
     CBMRtools <- Sys.getenv("CBMRtools")
     source(file.path(CBMRtools,"dvlp/heatmap.R"))
     source(file.path(CBMRtools,"dvlp/enrich2qmatrix.R"))
+    source(file.path(CBMRtools,"dvlp/diffanalOverlap.R"))
     ## path in my desktop
     PATH <- "~/Research/Projects/AhR/AHR_CYP1B1_CB799_microarrays2016"
-    ## path on SCC
+    GSPATH <- "~/Research/CancerGenomeAnalysisData/annot"
+    
+    ## paths on SCC:
     #PATH <- "/restricted/projectnb/montilab-p/projects/AhR/AHR_CYP1B1_CB799_microarrays2016"
+    #GSPATH <- "/restricted/projectnb/montilab-p/CBMrepositoryData/annot/"
 
     ## upload MSigDB's hallmark geneset compendium (stored locally)
-    gSet <- new("GeneSet","~/Research/CancerGenomeAnalysisData/annot/h.all.v5.1.symbols.gmt")
+    gSet <- new("GeneSet",file.path(GSPATH,"h.all.v5.1.symbols.gmt"))
 
     ## loading pre-computed list of diffanal results
     DIF <- readRDS(file.path(PATH,"results/rds/DIF2.RDS"))
@@ -307,4 +311,17 @@ if ( FALSE )
 
     ## take the union (there should be rows with missing values, color-coded 'gray' by default)
     OUT2 <- cbmGSEA2qmatrix(hGSEA1,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,margins=c(6,15),method="union")
+
+    ## TEST HYPER-ENRICHMENT VISUALIZATION
+
+    SIG <- diffanal2signatures(DIF, maxFDR=0.05, minFC=1.5)
+    # notice it will return a warning re 'multiple matches'. The latest version of matchIndex eliminates it.
+    
+    gSet <- new("GeneSet","~/Research/CancerGenomeAnalysisData/annot/h.all.v5.1.symbols.gmt")
+
+    hOut <- hyperEnrichment(SIG,categories=getGeneSet(gSet),ntotal=22981)
+
+    tmp <- hyper2qmatrix(hOut,fdr=c(.05,.01),do.heat=TRUE,margins=c(9,20))
+
+    my.write.table(tmp$mx,names="GeneSet",file="HYPERtable.xls")
 }
