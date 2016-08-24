@@ -19,6 +19,7 @@ cbmGSEA2qmatrix <- function
     globalMHT=FALSE, # correct for MHT *across* signatures (default is within)
     na.col="gray",   # color for missing values in the heatmap
     verbose=TRUE,    # verbose output
+    outfile=NULL,    # save output to file
     ...              # extra arguments to my.heatmap
 )
 {
@@ -63,7 +64,15 @@ cbmGSEA2qmatrix <- function
         mx <- absMX
         VERBOSE(verbose, " done, min(fdr):", min(abs(mx),na.rm=TRUE), "max(fdr):", max(mx,na.rm=TRUE),"\n")
     }
-    return( qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,rm.zero=rm.zero,na.col=na.col,...) )
+    q2h <- qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,rm.zero=rm.zero,na.col=na.col,...)
+    
+    if ( !is.null(outfile) )
+    {
+        out <- qmatrix2workbook(q2h$mx,fdr=fdr,col=c("blue","white","red"))
+        saveWorkbook(out,file=outfile,overwrite=TRUE)
+        VERBOSE(verbose,"Workbook saved to '",outfile,"'\n",sep="")
+    }
+    return( q2h )
 }
 #######################################################################
 ## function: GSEA 2 QMATRIX
@@ -85,6 +94,7 @@ gsea2qmatrix <- function
     pvalID="FDR q-val", # which significance measure to use (see GSEA output for choices)
     na.col="gray",      # color for missing values in the heatmap
     verbose=TRUE,       # verbose output
+    outfile=NULL,       # save output to file
     ...                 # extra arguments to qmatrix2heatmap
 )
 {
@@ -119,7 +129,15 @@ gsea2qmatrix <- function
         else
             stop("unrecognized method:",method)
     }
-    return( qmatrix2heatmap(mx=mx, fdr=fdr, do.sort=do.sort, do.heat=do.heat, rm.zero=rm.zero, na.col=na.col,...) )
+    q2h <- qmatrix2heatmap(mx=mx, fdr=fdr, do.sort=do.sort, do.heat=do.heat, rm.zero=rm.zero, na.col=na.col,...)
+    
+    if ( !is.null(outfile) )
+    {
+        out <- qmatrix2workbook(q2h$mx,fdr=fdr,col=c("blue","white","red"))
+        saveWorkbook(out,file=outfile,overwrite=TRUE)
+        VERBOSE(verbose,"Workbook saved to '",outfile,"'\n",sep="")
+    }
+    return( q2h )
 }
 #######################################################################
 ## function: QMATRIX 2 HEATMAP
@@ -222,7 +240,7 @@ hyper2qmatrix <- function
     gsets <- hyper[hyper[,"set"]==SIG[1],"category"]
     mx <- sapply(SIG,function(z) {
         tmp <- hyper[hyper[,"set"]==z,c("fdr","category")]
-        as.numeric(tmp[match(gsets,tmp[,"category"]),"fdr"])
+        as.numeric(tmp[match.nona(gsets,tmp[,"category"]),"fdr"])
     });
     rownames(mx) <- gsets
     mx01 <- mx
@@ -257,6 +275,107 @@ hyper2qmatrix <- function
         }
     }
     return( list(mx01=mx01,mx=mx) )
+}
+#######################################################################
+## function: QMATRIX 2 WORKBOOK
+##
+## 
+#######################################################################
+qmatrix2workbook <- function
+(
+    qmatrix,        # matrix of signed q-values
+    fdr=c(.05,.01), # FDR thresholds (must be in decreasing order)
+    col=c("blue","white","red"),
+    fcol="black"    # font color
+)
+{
+    bi <- any(qmatrix<0)        # bi- or uni-directional q-values?
+    if ( !bi && length(col)>2 ) # two colors expected when qmatrix is uni-directional
+        warning( "more than two colors input with unidirectional qmatrix?" )
+    
+    levs <- 0:length(fdr); nlevs <- length(levs)
+    ncolors <- if ( bi ) length(fdr)*2+1 else length(fdr)+1
+    COL <- col.gradient(col,length=ncolors)
+    
+    posCol <- if (bi) COL[length(COL):nlevs] else rev(COL)
+    negCol <- if (bi) COL[1:nlevs]
+    
+    shName <- "sheet1"
+    wb <- createWorkbook()
+    addWorksheet(wb,shName)
+    writeData(wb,shName,qmatrix,startCol=1,startRow=1,rowNames=TRUE)
+
+    ## handling of the positive q-values
+    ##
+    fdr <- c(0.0,rev(fdr))
+    if( length(fdr)!=length(posCol) ) stop( "length(fdr)!=length(posCol)" )
+    for ( i in 1:length(fdr) )
+    {
+        colInd <- which(qmatrix>fdr[i], arr.ind=TRUE)+1  
+        if ( length(colInd)>0 ){
+            addStyle(wb, shName, style=createStyle(fgFill=posCol[i]), rows=colInd[,1], cols=colInd[,2])
+        }
+    }
+    ## if bi-directional, handling of the negative q-values
+    ##
+    if ( bi ) for ( i in 1:length(fdr) )
+    {
+        colInd <- which(qmatrix < -fdr[i], arr.ind=TRUE)+1  
+        if ( length(colInd)>0 ){
+            addStyle(wb, shName, style=createStyle(fgFill=negCol[i]), rows=colInd[,1], cols=colInd[,2])
+        }
+    }
+    return( wb )
+}
+qmatrix2workbook2 <- function
+(
+    qmatrix,        # matrix of signed q-values
+    fdr=c(.05,.01), # FDR thresholds (must be in decreasing order)
+    col=c("blue","white","red"),
+    fcol="black"    # font color
+)
+{
+    bi <- any(qmatrix<0)        # bi- or uni-directional q-values?
+    if ( !bi && length(col)>2 ) # two colors expected when qmatrix is uni-directional
+        warning( "more than two colors input with unidirectional qmatrix?" )
+    
+    levs <- 0:length(fdr); nlevs <- length(levs)
+    ncolors <- if ( bi ) length(fdr)*2+1 else length(fdr)+1
+    COL <- col.gradient(col,length=ncolors)
+    
+    posCol <- if (bi) COL[length(COL):(nlevs+1)] else rev(COL[-1])
+    negCol <- if (bi) COL[1:(nlevs-1)]
+    
+    shName <- "sheet1"
+    wb <- createWorkbook()
+    addWorksheet(wb,shName)
+    writeData(wb,shName,qmatrix,startCol=1,startRow=1,rowNames=TRUE)
+
+    ## handling of the positive q-values
+    ##
+    fdr <- c(0.0,rev(fdr),1.0)
+    if ( length(fdr)!=length(posCol)+2 ) stop( "length(fdr)!=length(posCol)+2" )
+    for ( i in 1:length(posCol) )
+    {
+        colInd <- which(qmatrix>fdr[i] & qmatrix<=fdr[i+1], arr.ind=TRUE)+1  
+        if ( length(colInd)>0 ){
+            addStyle(wb, shName, style=createStyle(fgFill=posCol[i]), rows=colInd[,1], cols=colInd[,2])
+        }
+    }
+    ## if bi-directional, handling of the negative q-values
+    ##
+    if ( bi )
+    {
+        if ( length(fdr)!=length(negCol)+2 ) stop( "length(fdr)!=length(negCol)+2" )
+        for ( i in 1:length(fdr) )
+        {
+            colInd <- which(qmatrix < -fdr[i], arr.ind=TRUE)+1  
+            if ( length(colInd)>0 ){
+                addStyle(wb, shName, style=createStyle(fgFill=negCol[i]), rows=colInd[,1], cols=colInd[,2])
+            }
+        }
+    }
+    wb
 }
 
 ##################################################################
@@ -301,6 +420,11 @@ if ( FALSE )
     OUT <- cbmGSEA2qmatrix(hGSEA,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,margins=c(6,15))
     dev.off()
 
+    wOUT1 <- qmatrix2workbook(OUT$mx,col=c("blue","white","red"),fdr=c(0.05,0.01))
+    saveWorkbook(wOUT1,file="wOUT1.xlsx")
+    wOUT2 <- qmatrix2workbook(OUT$mx,col=c("blue","white","red"),fdr=c(0.10,0.05,0.01))
+    saveWorkbook(wOUT2,file="wOUT2.xlsx")
+    
     ## let's test with different genesets
     hGSEA1 <- hGSEA
     for ( i in 1:length(hGSEA1) ) # remove a (different) geneset from each data.frame
@@ -315,13 +439,15 @@ if ( FALSE )
     ## TEST HYPER-ENRICHMENT VISUALIZATION
 
     SIG <- diffanal2signatures(DIF, maxFDR=0.05, minFC=1.5)
-    # notice it will return a warning re 'multiple matches'. The latest version of matchIndex eliminates it.
-    
     gSet <- new("GeneSet","~/Research/CancerGenomeAnalysisData/annot/h.all.v5.1.symbols.gmt")
-
     hOut <- hyperEnrichment(SIG,categories=getGeneSet(gSet),ntotal=22981)
-
     tmp <- hyper2qmatrix(hOut,fdr=c(.05,.01),do.heat=TRUE,margins=c(9,20))
-
     my.write.table(tmp$mx,names="GeneSet",file="HYPERtable.xls")
+
+    ## TESTING qmatrix2workbook
+
+    require(openxlsx)
+    wb1 <- qmatrix2workbook(tmp$mx,col=c("white","red"))
+    wb2 <- qmatrix2workbook2(tmp$mx,col=c("white","red"))
+    saveWorkbook(wb,"test.xlsx",overwrite=TRUE)
 }
