@@ -185,8 +185,23 @@ qmatrix2heatmap <- function
     }
     ## sort rows and columns by HC
     if ( do.sort || do.heat ) {
-        hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=method)
-        hc.row <- hcopt(dist(mx01,method="euclidean"),method=method)
+      
+      #Remove gene sets that cause crash - no overlap with another gene set
+      dist.row <-dist(mx01,method="euclidean")
+      rmC <- 0
+      while(sum(is.na(dist.row)) > 0){
+        rmC <- rmC + 1
+        remGS <- names( sort( colSums( is.na( as.matrix(dist.row) ) ), decreasing = TRUE ) )[1]
+        mx01 <- mx01[rownames(mx01)!=remGS,]
+        mx <- mx[rownames(mx)!=remGS,]
+        dist.row  <- dist(mx01,method="euclidean")
+      }
+      if( rmC > 0 ){
+        VERBOSE(verbose, "Removed", rmC ,"genesets due to no overlap with another gene set(s).\n")
+      }
+      
+      hc.row <- hcopt(dist.row,method=method)
+      hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=method)
 
         if ( do.heat ) {
             ncolors <- length(fdr)*2+1
