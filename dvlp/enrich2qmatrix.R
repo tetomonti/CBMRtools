@@ -197,7 +197,7 @@ qmatrix2heatmap <- function
         dist.row  <- dist(mx01,method="euclidean")
       }
       if( rmC > 0 ){
-        VERBOSE(verbose, "Removed", rmC ,"genesets due to no overlap with other gene sets.\n")
+        VERBOSE(verbose, "Removed", rmC ,"genesets due to no overlap with another gene set(s).\n")
       }
       
       hc.row <- hcopt(dist.row,method=method)
