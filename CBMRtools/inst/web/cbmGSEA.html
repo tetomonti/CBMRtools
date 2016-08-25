@@ -144,9 +144,6 @@ table(pData(cbmGSEA.eSet)$tissue_type) # expecting 8 AN&#39;s + 8 Tumor&#39;s
     8     8 
 </div>
 <div class='input'>
-# carry out a simple t-score calculation (notice the &#39;-&#39;, to achieve a decreasing=TRUE sort)
-rnkS &lt;- -t.score(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
-
 # 1) phenotype shuffling
 
 set.seed(123)
@@ -173,6 +170,9 @@ HALLMARK_ANGIOGENESIS       -0.1156716 0.35643564 0.71287129 0.71287129 0.86
 <div class='input'>
 # 2) rank shuffling (based on pre-computed ranked list)
 
+# carry out a simple t-score calculation (notice the &#39;-&#39;, to achieve a decreasing=TRUE sort)
+rnkS &lt;- -t.score(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
+
 set.seed(123)
 OUT2 &lt;- cbmGSEA(rnkScore=rnkS,gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)
 </div>
@@ -192,12 +192,14 @@ HALLMARK_NOTCH_SIGNALING    -0.1204913 0.19801980 0.39603960 0.49504950 0.86
 HALLMARK_HEDGEHOG_SIGNALING -0.1368159 0.15841584 0.31683168 0.49504950 0.80
 HALLMARK_ANGIOGENESIS       -0.1156716 0.26732673 0.53465347 0.53465347 0.86
 </div>
-<div class='input'>all.equal(OUT1[,&quot;score&quot;],OUT2[,&quot;score&quot;]) # same results expected
+<div class='input'>
+# ascertain that the results are the same with the two methods
+all.equal(OUT1[,&quot;score&quot;],OUT2[,&quot;score&quot;]) # same results expected
 </div>
 <div class='output'>[1] TRUE
 </div>
 <div class='input'>
-# 3) gene tag shuffling (ranking by nearest neighbor)
+# 3) gene tag shuffling (ranking by nearest neighbor with respect to &quot;MAML2&quot;)
 
 set.seed(123)
 OUT3 &lt;- cbmGSEA(eSet=cbmGSEA.eSet,tag=&quot;MAML2&quot;,gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)

@@ -19,7 +19,7 @@ cbmGSEA2qmatrix <- function
     globalMHT=FALSE, # correct for MHT *across* signatures (default is within)
     na.col="gray",   # color for missing values in the heatmap
     verbose=TRUE,    # verbose output
-    outfile=NULL,    # save output to file
+    outfile=NULL,    # save qmatrix output to workbook file
     ...              # extra arguments to my.heatmap
 )
 {
@@ -94,7 +94,7 @@ gsea2qmatrix <- function
     pvalID="FDR q-val", # which significance measure to use (see GSEA output for choices)
     na.col="gray",      # color for missing values in the heatmap
     verbose=TRUE,       # verbose output
-    outfile=NULL,       # save output to file
+    outfile=NULL,       # save qmatrix output to workbook file
     ...                 # extra arguments to qmatrix2heatmap
 )
 {
@@ -227,6 +227,7 @@ hyper2qmatrix <- function
     rm.zero=TRUE,   # remove genesets/rows w/ no hits
                     # hclust methods
     method=c("ward.D","ward.D2","single","complete","average","mcquitty","median","centroid"),
+    outfile=NULL,   # save qmatrix output to workbook file
     ...             # extra arguments to my.heatmap
 )
 {
@@ -274,12 +275,20 @@ hyper2qmatrix <- function
             mx01 <- mx01[hc.row$order,hc.col$order]
         }
     }
+    ## save conditionally formatted Excel workbook to file
+    if ( !is.null(outfile) )
+    {
+        out <- qmatrix2workbook(mx,fdr=fdr,col=c("white","red"))
+        saveWorkbook(out,file=outfile,overwrite=TRUE)
+        VERBOSE(verbose,"Workbook saved to '",outfile,"'\n",sep="")
+    }
     return( list(mx01=mx01,mx=mx) )
 }
 #######################################################################
 ## function: QMATRIX 2 WORKBOOK
 ##
-## 
+## Save the qmatrix into a Excel workboox conditionally-formatted to
+## match the heatmap.
 #######################################################################
 qmatrix2workbook <- function
 (
@@ -327,6 +336,8 @@ qmatrix2workbook <- function
     }
     return( wb )
 }
+## this was an alternative version
+##
 qmatrix2workbook2 <- function
 (
     qmatrix,        # matrix of signed q-values
