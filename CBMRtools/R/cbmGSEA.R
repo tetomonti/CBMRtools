@@ -154,7 +154,7 @@ cbmGSEA <- function
             if (length(cntlIdx)<1) stop( sprintf("no '%s' samples",control) )
             #eDat <- eDat[,c(cntlIdx,condIdx)]
             eSet <- eSet[,c(cntlIdx,condIdx)]
-            cls <- factor(pData(eSet)[c(cntlIdx,condIdx),pheno],levels=c(control,cond))
+            cls <- factor(pData(eSet)[,pheno],levels=c(control,cond))
             clsLev <- levels(cls)
         }
         else if ( !is.null(tag) ) {
