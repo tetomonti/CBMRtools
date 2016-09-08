@@ -1,14 +1,8 @@
-#source( "~/dvlp/R/levels.R" )
-#source( "~/dvlp/R/permute.array.R" )
-#source( "~/dvlp/R/robust.sd.R" )
-#source( "~/dvlp/R/plot.markers.R" )
-#source( "~/dvlp/R/verbose.R" )
-
-# function: T.SCORE
+# function: T SCORE
 #
 #' @export 
 #
-t.score <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalized=FALSE,
+tScore <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalized=FALSE,
                      do.test=FALSE, verbose=FALSE, var.equal=FALSE, min.sd=NULL, 
                      alternative=c("two.sided","greater","less") )
 {
@@ -82,9 +76,9 @@ t.score <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalize
 
       d <- x-y
     }
-    VERBOSE( verbose, "computing paired t.score .." )
+    VERBOSE( verbose, "computing paired tScore .." )
     if ( robust ) {
-      stop( "robust paired t.score not implemented yet" )
+      stop( "robust paired tScore not implemented yet" )
     }
     else {
       if (do.test) {

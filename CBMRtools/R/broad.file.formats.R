@@ -171,7 +171,7 @@ write.gct <- function( x, file, binext=".RData", do.save=TRUE, verbose=FALSE )
 ## DIM GCT
 ##
 #' @export
-dim.gctdata <- function( x )
+dimGctdata <- function( x )
 {
   if ( class(x)!="gctdata" )
     stop( "object does not belong to gctdata class" )
@@ -370,7 +370,7 @@ read.res <- function
 ## DIM RESDATA
 ##
 #' @export
-dim.resdata <- function( x )
+dimResdata <- function( x )
 {
   if ( class(x)!="resdata" )
     stop( "object does not belong to resdata class" )

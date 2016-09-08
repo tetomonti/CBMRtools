@@ -15,7 +15,7 @@
 #' @param gSet                 a named list of genesets (i.e. vectors of gene IDs)
 #' @param minGset              minimum length of accepted genesets
 #' @param nperm                number of permutation iterations
-#' @param score                one of {"t.score","delta"}: differential score used when cls is specified
+#' @param score                one of {"tScore","delta"}: differential score used when cls is specified
 #' @param do.abs               rank genes by absolute value of score
 #' @param robust               compute robust score
 #' @param method               one of {"pearson","spearman","euclidean"}: score used when tag is specified
@@ -53,7 +53,7 @@
 #' # 2) rank shuffling (based on pre-computed ranked list)
 #'
 #' # carry out a simple t-score calculation (notice the '-', to achieve a decreasing=TRUE sort)
-#' rnkS <- -t.score(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
+#' rnkS <- -tScore(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
 #'
 #' set.seed(123)
 #' OUT2 <- cbmGSEA(rnkScore=rnkS,gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)
@@ -83,7 +83,7 @@ cbmGSEA <- function
  gSet,                       # a named list of genesets (i.e., vectors of gene IDs)
  minGset=5,                  # minimum length of accepted genesets
  nperm=100,                  # number of permutation iterations
- score=c("t.score","delta"), # differential score used when cls is specified
+ score=c("tScore","delta"), # differential score used when cls is specified
  do.abs=FALSE,               # rank genes by absolute value of score
  robust=FALSE,               # compute robust score
  method=c("pearson","spearman","euclidean"),
@@ -174,7 +174,7 @@ cbmGSEA <- function
             }
             else {
                 VERBOSE( verbose, "(based on class template) .. ")
-                # this is to have t.score and similar agree with run_limma
+                # this is to have tScore and similar agree with run_limma
                 -SCORE(eDat, cls=cls, robust=robust)
             }
         }
@@ -356,8 +356,8 @@ if ( FALSE )
                     sample(setdiff(featureNames(brca),unique(unlist(gSet))),size=100)),]
     pData(brca1) <- pData(brca1)[,"tissue_type",drop=FALSE]
     
-    ## t.score returns negative scores for the cond class and positive for the control class (opposite run_limma)
-    rnkS <- -t.score(x=exprs(brca1),cls=factor(pData(brca1)$tissue_type))
+    ## tScore returns negative scores for the cond class and positive for the control class (opposite run_limma)
+    rnkS <- -tScore(x=exprs(brca1),cls=factor(pData(brca1)$tissue_type))
     
     ## add two custom "true positive" genesets 
     gSet <- c(list(tumor50=names(rnkS)[order(rnkS,decreasing=TRUE)[1:50]],
