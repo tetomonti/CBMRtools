@@ -6,7 +6,7 @@
 \usage{
 cbmGSEA(eSet = NULL, rnkScore = NULL, pheno = NULL, tag = NULL,
   cond = NULL, control = NULL, geneId = NULL, gSet, minGset = 5,
-  nperm = 100, score = c("t.score", "delta"), do.abs = FALSE,
+  nperm = 100, score = c("tScore", "delta"), do.abs = FALSE,
   robust = FALSE, method = c("pearson", "spearman", "euclidean"),
   alternative = c("two.sided", "greater", "less"), weighted = FALSE,
   weight.p = 1, smoother = 1, clsLev = c("neg", "pos"), confound = NULL,
@@ -35,7 +35,7 @@ cbmGSEA(eSet = NULL, rnkScore = NULL, pheno = NULL, tag = NULL,
 
 \item{nperm}{number of permutation iterations}
 
-\item{score}{one of {"t.score","delta"}: differential score used when cls is specified}
+\item{score}{one of {"tScore","delta"}: differential score used when cls is specified}
 
 \item{do.abs}{rank genes by absolute value of score}
 
@@ -86,9 +86,6 @@ if ( is.null(cbmGSEA.eSet) || is.null(cbmGSEA.gSet) ) stop( "missing objects" )
 
 table(pData(cbmGSEA.eSet)$tissue_type) # expecting 8 AN's + 8 Tumor's
 
-# carry out a simple t-score calculation (notice the '-', to achieve a decreasing=TRUE sort)
-rnkS <- -t.score(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
-
 # 1) phenotype shuffling
 
 set.seed(123)
@@ -98,12 +95,17 @@ print(OUT1[,1:5])
 
 # 2) rank shuffling (based on pre-computed ranked list)
 
+# carry out a simple t-score calculation (notice the '-', to achieve a decreasing=TRUE sort)
+rnkS <- -tScore(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
+
 set.seed(123)
 OUT2 <- cbmGSEA(rnkScore=rnkS,gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)
 print(OUT2[,1:5])
+
+# ascertain that the results are the same with the two methods
 all.equal(OUT1[,"score"],OUT2[,"score"]) # same results expected
 
-# 3) gene tag shuffling (ranking by nearest neighbor)
+# 3) gene tag shuffling (ranking by nearest neighbor with respect to "MAML2")
 
 set.seed(123)
 OUT3 <- cbmGSEA(eSet=cbmGSEA.eSet,tag="MAML2",gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)

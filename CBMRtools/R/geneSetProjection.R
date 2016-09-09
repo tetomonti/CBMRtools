@@ -152,11 +152,12 @@ geneSetProjection <- function
     }
     if ( length(trtI)<1 ) {
       VERBOSE(verbose,"insufficient treatment samples: ",length(trtI),", skipping\n",sep="")
-      next
+      next 
     }
     datI <- dat[,c(ctlI,trtI)]
     clsI <- rep(0:1,times=c(length(ctlI),length(trtI))); levels(clsI) <- paste(c("ctl","trt"),0:1,sep=".")
-    prjI <- ks.projection(exprs(datI),cls=clsI,gsets=getGeneSet(GS),collapse=collapse,weighted=weighted,absolute=absolute)
+    control <- !collapse && length(intersect(grpI$control,grpI$treatment))==0
+    prjI <- ksProjection(exprs(datI),cls=clsI,gsets=getGeneSet(GS),collapse=collapse,weighted=weighted,absolute=absolute,control=control)
     PRJ <- cbind(PRJ,prjI)
 
     VERBOSE(verbose," done.\n")
@@ -185,7 +186,7 @@ geneSetProjection <- function
 ## - turn many-cases vs. many-controls into many ks-score vectors (collapse=FALSE, cls!=NULL)
 ## - turn many-cases into many ks-score vectors (cls==NULL)
 ##
-ks.projection <- function
+ksProjection <- function
 (
     dat,              # [genes x samples] data matrix
     cls=NULL,         # class template (expected coding: 0=control; 1=treatment)
@@ -222,26 +223,28 @@ ks.projection <- function
       gsets <- lapply(lapply(gsets,unique),intersect,cmn)
       gsets <- gsets[nz <- sapply(gsets,length)>=min.gset]
       if ( length(gsets)<1 ) stop( "no genesets w/ min # of genes required" )
-      VERBOSE( verbose && sum(!nz)>0, sum(!nz), "genesets removed because of too few genes.\n")
+      VERBOSE( verbose && sum(!nz)>0, "\t", sum(!nz), "genesets removed because of too few genes.\n")
+      VERBOSE( verbose, "\tDone checking.\n")
   }
   ## map from gene names to gene positions within dataset
   ## (for max efficiency, this could ideally be brought out of the function)
   ##
   gidx <- lapply( gsets, function(Z) sort(match.nona(Z,toupper(rownames(dat)))) )
   
-  ks.project <- function( dat, cls, var.equal=FALSE,absolute=FALSE)
+  ksProject <- function( dat, cls, var.equal=FALSE,absolute=FALSE,verbose=TRUE)
   {
     ## WARNING: gidx is a 'global' variable (not passed as argument)
     ##
     RNK <- rank(SCR <- tscore.4ks(dat,cls,var.equal=var.equal),ties.method="first")
     KS <- sapply(gidx, function(z)
-        ks.genescore(n.x=nrow(dat),y=RNK[z],do.pval=FALSE,weight=if(weighted) sort(SCR),absolute=absolute))
+        ksGenescore(n.x=nrow(dat),y=RNK[z],do.pval=FALSE,weight=if(weighted) sort(SCR),absolute=absolute))
+    VERBOSE(verbose,".")
     return(KS)
   }
   ## return single vector from replicates
   ##
   if ( collapse ) {
-    KS <- ks.project(dat,cls,var.equal=FALSE,absolute=absolute)
+    KS <- ksProject(dat,cls,var.equal=FALSE,absolute=absolute)
     return(KS)
   }
   ## return as many vectors as 'replicates'
@@ -249,14 +252,15 @@ ks.projection <- function
   else if ( !is.null(cls) ) {
     ctl.idx <- which(cls==0)
     trt.idx <- which(cls==1)
-    KSctl <- if (control)
-                 sapply(ctl.idx,function(z) ks.project(dat=dat[,c(ctl.idx,z)],cls=c(cls[ctl.idx],1),
-                                                       var.equal=TRUE,absolute=absolute))
-    colnames(KSctl) <- colnames(dat)[ctl.idx]
-    KStrt <- sapply(trt.idx,function(z) ks.project(dat=dat[,c(ctl.idx,z)],cls=cls[c(ctl.idx,z)],
-                                                   var.equal=TRUE,absolute=absolute))
+    if (control) {
+        KSctl <- sapply(ctl.idx,function(z) ksProject(dat=dat[,c(ctl.idx,z)],cls=c(cls[ctl.idx],1),
+                                                      var.equal=TRUE,absolute=absolute))
+        colnames(KSctl) <- colnames(dat)[ctl.idx]
+    }
+    KStrt <- sapply(trt.idx,function(z) ksProject(dat=dat[,c(ctl.idx,z)],cls=cls[c(ctl.idx,z)],
+                                                  var.equal=TRUE,absolute=absolute))
     colnames(KStrt) <- colnames(dat)[trt.idx]
-    return( cbind(KSctl,KStrt) )
+    return ( if (control) cbind(KSctl,KStrt) else KStrt )
   }
   ## no control group provided
   ##

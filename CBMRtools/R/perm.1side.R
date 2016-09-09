@@ -7,7 +7,7 @@ monotonize <- function( x, rnk=NULL )
   for ( i in 2:length(x) ) x.srt[i] <- max(x.srt[i-1],x.srt[i])
   if (is.null(rnk)) x.srt else x.srt[rank(rnk)]
 }
-perm.1side.names <- c("p", "GC.p", "maxT", "fpr", "fwer", "fdr" )
+perm.1side.names <- c("p", "maxT", "fpr", "fwer", "fdr" )
 
 perm.1side.online <- function( obs, perm )
 {
@@ -20,11 +20,10 @@ perm.1side.online <- function( obs, perm )
     
   smry <- matrix( NA, length(obs), length(perm.1side.names) )
   smry[,1] <- as.numeric( obs>=perm )            # nominal p-value
-  smry[,2] <- as.numeric( obs>=perm.srt )        # rank-based p-value
-  smry[,3] <- as.numeric( obs>=prm.monotonized ) # maxT p-value
-  smry[,4] <- cumineq( perm, obs=obs, dir=1 )    # FPR
-  smry[,5] <- as.numeric( smry[,4]>0 )           # FWER
-  smry[,6] <- smry[,4]                           # FDR
+  smry[,2] <- as.numeric( obs>=prm.monotonized ) # maxT p-value
+  smry[,3] <- cumineq( perm, obs=obs, dir=1 )    # FPR
+  smry[,4] <- as.numeric( smry[,3]>0 )           # FWER
+  smry[,5] <- smry[,3]                           # FDR
   smry
 }
 perm.1side <- function( x, y, score, nperm=100, ngenes=NULL, seed=NULL, smooth=0,
