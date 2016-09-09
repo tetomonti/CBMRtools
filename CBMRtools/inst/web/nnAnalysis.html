@@ -107,7 +107,8 @@ data(eSet.brca.100)
 <strong class='error'>Error in if (ncol(dat) != length(y)) stop(&quot;*** ncol(dat)!=length(y) ***&quot;): argument is of length zero</strong>
 <div class='input'> head(NNout1$pval)
 </div>
-<strong class='error'>Error in head(NNout1$pval): object &#39;NNout1&#39; not found</strong>
+<strong class='error'>Error in head(NNout1$pval): error in evaluating the argument &#39;x&#39; in selecting a method for function &#39;head&#39;: Error: object &#39;NNout1&#39; not found
+</strong>
 <div class='input'>
  ## passing the index (within the matrix) as argument
  ##
@@ -117,7 +118,8 @@ data(eSet.brca.100)
 <strong class='error'>Error in if (is.null(y) &amp;&amp; (y.i &gt; nrow(dat) || y.i &lt; 1)) stop(&quot;y.i out of range&quot;): missing value where TRUE/FALSE needed</strong>
 <div class='input'> head(NNout2$pval)
 </div>
-<strong class='error'>Error in head(NNout2$pval): object &#39;NNout2&#39; not found</strong>
+<strong class='error'>Error in head(NNout2$pval): error in evaluating the argument &#39;x&#39; in selecting a method for function &#39;head&#39;: Error: object &#39;NNout2&#39; not found
+</strong>
 <div class='input'> all.equal(NNout1$pval,NNout2$pval) # TRUE
 </div>
 <strong class='error'>Error in all.equal(NNout1$pval, NNout2$pval): object &#39;NNout1&#39; not found</strong>
@@ -131,7 +133,8 @@ data(eSet.brca.100)
 <strong class='error'>Error in if (is.null(y) &amp;&amp; (y.i &gt; nrow(dat) || y.i &lt; 1)) stop(&quot;y.i out of range&quot;): missing value where TRUE/FALSE needed</strong>
 <div class='input'> head(NNout3$pval)
 </div>
-<strong class='error'>Error in head(NNout3$pval): object &#39;NNout3&#39; not found</strong>
+<strong class='error'>Error in head(NNout3$pval): error in evaluating the argument &#39;x&#39; in selecting a method for function &#39;head&#39;: Error: object &#39;NNout3&#39; not found
+</strong>
 <div class='input'></div></pre>
   </div>
   <div class="span4">
@@ -148,7 +151,7 @@ data(eSet.brca.100)
       
       <footer>
       <p class="pull-right"><a href="#">Back to top</a></p>
-<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="https://getbootstrap.com/2.0.4/">bootstrap</a>.</p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>
     </div>
   </body>
