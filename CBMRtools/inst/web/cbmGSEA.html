@@ -52,7 +52,7 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre><div>cbmGSEA(eSet&nbsp;=&nbsp;NULL, rnkScore&nbsp;=&nbsp;NULL, pheno&nbsp;=&nbsp;NULL, tag&nbsp;=&nbsp;NULL, cond&nbsp;=&nbsp;NULL, control&nbsp;=&nbsp;NULL, geneId&nbsp;=&nbsp;NULL, gSet, minGset&nbsp;=&nbsp;5, nperm&nbsp;=&nbsp;100, score&nbsp;=&nbsp;c("t.score", "delta"), do.abs&nbsp;=&nbsp;FALSE, robust&nbsp;=&nbsp;FALSE, method&nbsp;=&nbsp;c("pearson", "spearman", "euclidean"), alternative&nbsp;=&nbsp;c("two.sided", "greater", "less"), weighted&nbsp;=&nbsp;FALSE, weight.p&nbsp;=&nbsp;1, smoother&nbsp;=&nbsp;1, clsLev&nbsp;=&nbsp;c("neg", "pos"), confound&nbsp;=&nbsp;NULL, seed&nbsp;=&nbsp;NULL, do.pval&nbsp;=&nbsp;!weighted, exhaustive&nbsp;=&nbsp;FALSE, do.plot&nbsp;=&nbsp;!is.null(plot.name), plot.name&nbsp;=&nbsp;NULL, plot.dev&nbsp;=&nbsp;pdf, topG&nbsp;=&nbsp;20, verbose&nbsp;=&nbsp;FALSE, ...)</div></pre>
+    <pre><div>cbmGSEA(eSet&nbsp;=&nbsp;NULL, rnkScore&nbsp;=&nbsp;NULL, pheno&nbsp;=&nbsp;NULL, tag&nbsp;=&nbsp;NULL, cond&nbsp;=&nbsp;NULL, control&nbsp;=&nbsp;NULL, geneId&nbsp;=&nbsp;NULL, gSet, minGset&nbsp;=&nbsp;5, nperm&nbsp;=&nbsp;100, score&nbsp;=&nbsp;c("tScore", "delta"), do.abs&nbsp;=&nbsp;FALSE, robust&nbsp;=&nbsp;FALSE, method&nbsp;=&nbsp;c("pearson", "spearman", "euclidean"), alternative&nbsp;=&nbsp;c("two.sided", "greater", "less"), weighted&nbsp;=&nbsp;FALSE, weight.p&nbsp;=&nbsp;1, smoother&nbsp;=&nbsp;1, clsLev&nbsp;=&nbsp;c("neg", "pos"), confound&nbsp;=&nbsp;NULL, seed&nbsp;=&nbsp;NULL, do.pval&nbsp;=&nbsp;!weighted, exhaustive&nbsp;=&nbsp;FALSE, do.plot&nbsp;=&nbsp;!is.null(plot.name), plot.name&nbsp;=&nbsp;NULL, plot.dev&nbsp;=&nbsp;pdf, topG&nbsp;=&nbsp;20, verbose&nbsp;=&nbsp;FALSE, ...)</div></pre>
     
     <h2>Arguments</h2>
     <dl>
@@ -77,7 +77,7 @@
       <dt>nperm</dt>
       <dd>number of permutation iterations</dd>
       <dt>score</dt>
-      <dd>one of "t.score","delta": differential score used when cls is specified</dd>
+      <dd>one of "tScore","delta": differential score used when cls is specified</dd>
       <dt>do.abs</dt>
       <dd>rank genes by absolute value of score</dd>
       <dt>robust</dt>
@@ -171,7 +171,7 @@ HALLMARK_ANGIOGENESIS       -0.1156716 0.35643564 0.71287129 0.71287129 0.86
 # 2) rank shuffling (based on pre-computed ranked list)
 
 # carry out a simple t-score calculation (notice the &#39;-&#39;, to achieve a decreasing=TRUE sort)
-rnkS &lt;- -t.score(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
+rnkS &lt;- -tScore(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
 
 set.seed(123)
 OUT2 &lt;- cbmGSEA(rnkScore=rnkS,gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)

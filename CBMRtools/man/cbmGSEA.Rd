@@ -6,7 +6,7 @@
 \usage{
 cbmGSEA(eSet = NULL, rnkScore = NULL, pheno = NULL, tag = NULL,
   cond = NULL, control = NULL, geneId = NULL, gSet, minGset = 5,
-  nperm = 100, score = c("t.score", "delta"), do.abs = FALSE,
+  nperm = 100, score = c("tScore", "delta"), do.abs = FALSE,
   robust = FALSE, method = c("pearson", "spearman", "euclidean"),
   alternative = c("two.sided", "greater", "less"), weighted = FALSE,
   weight.p = 1, smoother = 1, clsLev = c("neg", "pos"), confound = NULL,
@@ -35,7 +35,7 @@ cbmGSEA(eSet = NULL, rnkScore = NULL, pheno = NULL, tag = NULL,
 
 \item{nperm}{number of permutation iterations}
 
-\item{score}{one of {"t.score","delta"}: differential score used when cls is specified}
+\item{score}{one of {"tScore","delta"}: differential score used when cls is specified}
 
 \item{do.abs}{rank genes by absolute value of score}
 
@@ -96,7 +96,7 @@ print(OUT1[,1:5])
 # 2) rank shuffling (based on pre-computed ranked list)
 
 # carry out a simple t-score calculation (notice the '-', to achieve a decreasing=TRUE sort)
-rnkS <- -t.score(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
+rnkS <- -tScore(x=exprs(cbmGSEA.eSet),cls=factor(pData(cbmGSEA.eSet)$tissue_type))
 
 set.seed(123)
 OUT2 <- cbmGSEA(rnkScore=rnkS,gSet=cbmGSEA.gSet,nperm=100,verbose=TRUE,do.plot=TRUE,topG=1)
