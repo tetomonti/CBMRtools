@@ -153,12 +153,12 @@ GSPdir &lt;- geneSetProjection(dat=DAT1,
 <div class='output'>Projecting 1 groups ..
   &gt; group OSCC .. [ 31 / 315 ]
 	Checking genesets ..</div>
-<strong class='error'>Error in FUN(X[[i]], ...): could not find function &quot;ks.genescore&quot;</strong>
+<strong class='error'>Error in FUN(X[[1L]], ...): could not find function &quot;ks.genescore&quot;</strong>
 <div class='input'>
 ## shortening pathway names for better visualization
 featureNames(GSPdir) &lt;- c(&quot;WNT_BCATENIN&quot;,&quot;BCATENIN.CSNK1E&quot;,&quot;BCATENIN.CTBP1&quot;,&quot;TGF_BETA&quot;)
 </div>
-<strong class='error'>Error in featureNames(GSPdir) &lt;- c(&quot;WNT_BCATENIN&quot;, &quot;BCATENIN.CSNK1E&quot;,     &quot;BCATENIN.CTBP1&quot;, &quot;TGF_BETA&quot;): object &#39;GSPdir&#39; not found</strong>
+<strong class='error'>Error in featureNames(GSPdir) &lt;- c(&quot;WNT_BCATENIN&quot;, &quot;BCATENIN.CSNK1E&quot;, : object &#39;GSPdir&#39; not found</strong>
 <div class='input'>
 gradeID &lt;- &#39;my_grade&#39;
 stageID &lt;- &#39;my_stage&#39;
@@ -174,7 +174,8 @@ p2 &lt;- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
 </div>
 <strong class='warning'>Warning message:
 `axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</strong>
-<strong class='error'>Error in exprs(eSet): object &#39;GSPdir&#39; not found</strong>
+<strong class='error'>Error in exprs(eSet): error in evaluating the argument &#39;object&#39; in selecting a method for function &#39;exprs&#39;: Error: object &#39;GSPdir&#39; not found
+</strong>
 <div class='input'>grid.arrange(p2)
 </div>
 <strong class='error'>Error in arrangeGrob(...): object &#39;p2&#39; not found</strong>
@@ -194,7 +195,7 @@ p2 &lt;- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
       
       <footer>
       <p class="pull-right"><a href="#">Back to top</a></p>
-<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="https://getbootstrap.com/2.0.4/">bootstrap</a>.</p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>
     </div>
   </body>
