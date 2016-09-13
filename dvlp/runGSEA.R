@@ -26,7 +26,7 @@
 #' 
 #' @export
 #####################################################################################
-runGSEA <- function
+runGSEA <- function 
 (
     eSet,
     covariate,

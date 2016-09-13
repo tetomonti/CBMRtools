@@ -25,7 +25,7 @@ run_limma <- function(eset, treatment, cond, control, verbose = TRUE,
 {
     if(!(verbose %in% c(TRUE, FALSE)))
         stop("verbose must in be c(TRUE, FALSE)")
-    if(ncol(fData(eset))<1)
+    if(ncol(fData(eset))<1) 
         stop("empty fData")
     
     cat("running limma\n")
