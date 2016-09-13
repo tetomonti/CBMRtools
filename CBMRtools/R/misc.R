@@ -611,9 +611,12 @@ hcopt <- function(d, HC=NULL, method = "ward.D", members = NULL)
   if ( is.null(HC) ) {
     HC <- hclust(d,method=method,members=members)
   }
-  ORD <- order.optimal(d,merge=HC$merge)
-  HC$merge <- ORD$merge
-  HC$order <- ORD$order
+  ## using optimal ordering only with more than two items 
+  if ( length(HC$order)>2 ) {
+      ORD <- order.optimal(d,merge=HC$merge)
+      HC$merge <- ORD$merge
+      HC$order <- ORD$order
+  }
   HC
 }
 ## remove unused levels from factors and data frames (usually as a consequence of factor subsetting)
