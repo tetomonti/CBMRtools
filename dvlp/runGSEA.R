@@ -41,9 +41,14 @@ runGSEA <- function
     minG=15,                 # min geneset size
     jarFile="~/Research/Tools/java/gsea2-2.2.2.jar",
     chip="gseaftp.broadinstitute.org://pub/gsea/annotations/GENE_SYMBOL.chip",
+    gepFile="expr.txt",
+    clsFile="pheno.cls",
+    do.rm=TRUE,
     verbose=TRUE
 )
 {
+   if ( !dir.exists(outdir) ) stop( "undefined outdir: ",outdir )
+   
    testname <- paste(rptLabel,test,'vs',control,sep='_')
    testname <- gsub(' ','_',testname)
 
@@ -55,17 +60,20 @@ runGSEA <- function
                    grep(paste('^',control,'$',sep=''),pData(rdata)[[covariate]]))]
    
    ## dump expression matrix into a tab-delimited txt file
+   VERBOSE(verbose,"Writing expression data to file:",gepFile)
    write.table(rbind(c('symbols',colnames(rdata)),
                      cbind(featureNames(rdata),exprs(rdata))),
-               file='expr.txt',
+               file=gepFile,
                quote=FALSE,
                sep='\t',
                col.names=FALSE,
                row.names=FALSE)
+   VERBOSE(verbose,", done.\n")
    
    ## dump phenotypes into a cls file
+   VERBOSE(verbose,"Writing class template to file:", clsFile)
    pheno <- as.character(pData(rdata)[[covariate]])
-   con <- file('pheno.cls',open='w')
+   con <- file(clsFile,open='w')
    write(paste(length(pheno),'2 1'),con)
    write(paste('# ',test,' ',control,sep=''),con)
    classes <- ''
@@ -74,24 +82,29 @@ runGSEA <- function
    }
    write(classes,con)
    close(con)         
+   VERBOSE(verbose,", done.\n")
    
    ## keep track of the directory content (will see why below)
    lsBefore <- if ( dir.exists(outdir) ) list.files(outdir)
-   
-   ## call java gsea version
-   system(paste("java -Xmx3072m -cp ", jarFile,
-                " xtools.gsea.Gsea -res expr.txt -cls pheno.cls#", test, "_versus_", control," -gmx ", gmtFile,
+
+   CMD <- paste("java -Xmx3072m -cp ", jarFile,
+                " xtools.gsea.Gsea -res ", gepFile, " -cls ", clsFile, "#", test, "_versus_", control," -gmx ", gmtFile,
                 " -collapse false -nperm ", nperm,
                 " -permute gene_set -rnd_type no_balance -scoring_scheme weighted -rpt_label ", testname, 
                 " -metric Signal2Noise -sort real -order descending -include_only_symbols false",
                 " -make_sets true -median false -num 100 -plot_top_x ", topX,
                 " -rnd_seed timestamp -save_rnd_lists false -set_max ", maxG, " -set_min ", minG, 
-                " -zip_report false -out ", outdir, " -gui false", sep=""))
-   unlink(c("pheno.cls","expr.txt"))
+                " -zip_report false -out ", outdir, " -gui false", sep="")
+   
+   ## call java gsea version
+   VERBOSE(verbose,CMD,"\n")
+   system(CMD)
+   if (do.rm) unlink(c(clsFile,gepFile))
 
    ## determine the name of the generated directory
    lsAfter <- list.files(outdir)
    OUT <- setdiff(lsAfter,lsBefore)
+   if ( length(OUT)>1 ) stop( "more than one output directories: ", paste(OUT,sep=",") )
    VERBOSE(verbose,"output saved to:",OUT,"\n")
    
    ## determine the names and read the tabular results files' content, to be returned
@@ -106,7 +119,7 @@ runGSEA <- function
 #####################################################################################
 #' runGSEApreranked
 #' 
-#' \code{runGSEAprerankde} wrapper to call the jar version of Broad's GSEApreranked
+#' \code{runGSEApreranked} wrapper to call the jar version of Broad's GSEApreranked
 #'
 #' @param ranking      2-column (gene IDs and scores) matrix
 #' @param gmtFile      geneset compendium file (e.g., c2.cp)
@@ -146,6 +159,8 @@ runGSEApreranked <- function
     verbose=TRUE
 )
 {
+    if ( !dir.exists(outdir) ) stop( "undefined outdir: ",outdir )
+    
     if ( ncol(ranking)!=2 ) stop( "ranking must be a 2-column matrix:", ncol(ranking) )
     if ( !is.numeric(ranking[,2]) ) stop ( "2nd column of ranking must be numeric:", class(ranking[,2]) )
 
@@ -173,6 +188,8 @@ runGSEApreranked <- function
     ## determine the name of the generated directory
     lsAfter <- list.files(outdir)
     OUT <- setdiff(lsAfter,lsBefore)
+    if ( length(OUT)>1 ) stop( "more than one output directories: ", paste(OUT,sep=",") )
+    
     VERBOSE(verbose,"output saved to:",OUT,"\n")
 
     ## determine the names and read the tabular results files' content, to be returned
