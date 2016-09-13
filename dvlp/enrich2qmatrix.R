@@ -95,6 +95,7 @@ gsea2qmatrix <- function
     na.col="gray",      # color for missing values in the heatmap
     verbose=TRUE,       # verbose output
     outfile=NULL,       # save qmatrix output to workbook file
+    zero=1.0e-10,       # min p-value 
     ...                 # extra arguments to qmatrix2heatmap
 )
 {
@@ -119,9 +120,12 @@ gsea2qmatrix <- function
     mx <- matrix(NA,length(gID),length(gsea),dimnames=list(gID,names(gsea)))
     for ( i in 1:ncol(mx) ) {
         z <- gsea[[i]]
-        tmp <- rbind(z[[1]][,c('NAME',pvalID),drop=FALSE],
-                     data.frame(z[[2]][,'NAME',FALSE],-z[[2]][,pvalID,FALSE],
-                                check.names=FALSE,stringsAsFactors=FALSE))
+        up <- z[[1]][,c('NAME',pvalID),drop=FALSE] # positive sign p-values
+        up[,pvalID] <- pmax(zero,up[,pvalID])      # ..
+        dn <- z[[2]][,c('NAME',pvalID),drop=FALSE] # negative sign p-values
+        dn[,pvalID] <- -pmax(zero,dn[,pvalID])     # ..
+        tmp <- rbind(up,dn)
+        
         if ( method=="intersect" ) 
             mx[,i] <- tmp[match.nona(rownames(mx),tmp[,'NAME']),pvalID]
         else if ( method=="union" )
@@ -184,25 +188,24 @@ qmatrix2heatmap <- function
         }
     }
     ## sort rows and columns by HC
-    if ( do.sort || do.heat ) {
-      
-      #Remove gene sets that cause crash - no overlap with another gene set
-      dist.row <-dist(mx01,method="euclidean")
-      rmC <- 0
-      while(sum(is.na(dist.row)) > 0){
-        rmC <- rmC + 1
-        remGS <- names( sort( colSums( is.na( as.matrix(dist.row) ) ), decreasing = TRUE ) )[1]
-        mx01 <- mx01[rownames(mx01)!=remGS,]
-        mx <- mx[rownames(mx)!=remGS,]
-        dist.row  <- dist(mx01,method="euclidean")
-      }
-      if( rmC > 0 ){
-        VERBOSE(verbose, "Removed", rmC ,"genesets due to no overlap with another gene set(s).\n")
-      }
-      
-      hc.row <- hcopt(dist.row,method=method)
-      hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=method)
-
+    if ( do.sort || do.heat )
+    {
+        ## Remove gene sets that cause crash - no overlap with another gene set
+        dist.row <-dist(mx01,method="euclidean")
+        rmC <- 0
+        while(sum(is.na(dist.row)) > 0){
+            rmC <- rmC + 1
+            remGS <- names( sort( colSums( is.na( as.matrix(dist.row) ) ), decreasing = TRUE ) )[1]
+            mx01 <- mx01[rownames(mx01)!=remGS,]
+            mx <- mx[rownames(mx)!=remGS,]
+            dist.row  <- dist(mx01,method="euclidean")
+        }
+        if( rmC > 0 ){
+            VERBOSE(verbose, "Removed", rmC ,"genesets due to no overlap with another gene set(s).\n")
+        }
+        hc.row <- hcopt(dist.row,method=method)
+        hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=method)
+        
         if ( do.heat ) {
             ncolors <- length(fdr)*2+1
             COL <- col.gradient(c("blue","white","red"),length=ncolors)
@@ -210,7 +213,7 @@ qmatrix2heatmap <- function
             ## yucky handling of color-coding (but necessary 'cause the default is not smart enough)
             ## (if anybody has a better solution, feel free to amend)
             COL <- COL[sort(unique(as.vector(mx01)))+levs[length(levs)]+1]
-                     
+            
             ## add color used for the NA's
             if ( any(is.na(mx)) ) {
                 COL <- c(COL,col.gradient(na.col,1))
