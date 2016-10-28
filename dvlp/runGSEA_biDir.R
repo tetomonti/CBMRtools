@@ -3,7 +3,9 @@ runGSEA_biDir <- function(GSigs, # List of "GeneSig" objects
                           minGenes = 10, # Min Genes in Gene Set
                           maxGenes = 500, # Max Gene in Gene Set
                           nperm = 1000, # Number of permutations
-                          outDir # Output directory for writing gene sets
+                          metaID = "Name", # Name in MetaData slot that has a unique signature ID
+                          outDir = NULL, # Output directory for writing gene sets (optional)
+                          map = NULL # Optional table of homolog mapping with column names == to the value in metaID
                           ){
   require(CBMRtools)
   
@@ -13,7 +15,7 @@ runGSEA_biDir <- function(GSigs, # List of "GeneSig" objects
     GSigI <- GSigs[[i]]
     SigI <- GSigI@Signature
     MDI <- GSigI@MetaData
-    NameI <- as.character( MDI["Name",] )
+    NameI <- as.character( MDI[metaID,] )
     
     rnkScoreI <- qnorm(abs(SigI$P.Value)/2, 0, 1,lower.tail = FALSE) * sign(SigI$Score)
     names(rnkScoreI) <- SigI$ID
@@ -26,7 +28,7 @@ runGSEA_biDir <- function(GSigs, # List of "GeneSig" objects
       GSigJ <- GSigs[[j]]
       SigJ <- GSigJ@Signature
       MDJ <- GSigJ@MetaData
-      NameJ <- as.character( MDJ["Name",] )
+      NameJ <- as.character( MDJ[metaID,] )
       
       # Remove observations with missings IDs
       SigJ <- SigJ[!is.na(SigJ$ID),]
@@ -50,27 +52,32 @@ runGSEA_biDir <- function(GSigs, # List of "GeneSig" objects
       if(downCount > maxGenes) downJ <- downJ[1:maxGenes,]
       
       #Write gene sets to file
-      upOut <- GeneSig(
-        SigType = "gene_list",
-        MetaData = MDJ,
-        Signature = data.frame(upJ$ID, row.names = NULL)
-      )
-      write.GeneSig(upOut, paste(NameJ, "up", sep="_"), outDir)
+      if(!is.null(outDir)){
+        upOut <- GeneSig(
+          SigType = "gene_list",
+          MetaData = MDJ,
+          Signature = data.frame(upJ$ID, row.names = NULL)
+        )
+        write.GeneSig(upOut, paste(NameJ, "up", sep="_"), outDir)
       
-      downOut <- GeneSig(
-        SigType = "gene_list",
-        MetaData = MDJ,
-        Signature = data.frame(downJ$ID, row.names = NULL)
-      )
-      write.GeneSig(downOut, paste(NameJ, "down", sep="_"), outDir)
+        downOut <- GeneSig(
+          SigType = "gene_list",
+          MetaData = MDJ,
+          Signature = data.frame(downJ$ID, row.names = NULL)
+        )
+        write.GeneSig(downOut, paste(NameJ, "down", sep="_"), outDir)
+      }
       
+      if( !is.null(map)){
+        upJ <- map[map[,NameJ]%in%upJ$ID,NameI]
+        upJ <- unique( upJ[!is.na(upJ)] )
       
-      
-      upJ <- upJ$ID
-      upJ <- unique( upJ[!is.na(upJ)] )
-      
-      downJ <- downJ$ID
-      downJ <- unique( downJ[!is.na(downJ)] )
+        downJ <- map[map[,NameJ]%in%downJ$ID,NameI]
+        downJ <- unique( downJ[!is.na(downJ)] )
+      } else {
+        upJ <- upJ$ID
+        downJ <- downJ$ID
+      }
       
       indexJ <- indexJ + 1
       listJ[[indexJ]] <- upJ
