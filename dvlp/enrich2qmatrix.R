@@ -20,6 +20,7 @@ cbmGSEA2qmatrix <- function
     na.col="gray",   # color for missing values in the heatmap
     verbose=TRUE,    # verbose output
     outfile=NULL,    # save qmatrix output to workbook file
+    sheetName="sheet1", # add a new worksheet to workboo
     ...              # extra arguments to my.heatmap
 )
 {
@@ -68,7 +69,7 @@ cbmGSEA2qmatrix <- function
     
     if ( !is.null(outfile) )
     {
-        out <- qmatrix2workbook(q2h$mx,fdr=fdr,col=c("blue","white","red"))
+        out <- qmatrix2workbook(q2h$mx,fdr=fdr,col=c("blue","white","red"), sheetName = sheetName, outfile = outfile)
         saveWorkbook(out,file=outfile,overwrite=TRUE)
         VERBOSE(verbose,"Workbook saved to '",outfile,"'\n",sep="")
     }
@@ -137,7 +138,7 @@ gsea2qmatrix <- function
     
     if ( !is.null(outfile) )
     {
-        out <- qmatrix2workbook(q2h$mx,fdr=fdr,col=c("blue","white","red"))
+        out <- qmatrix2workbook(q2h$mx,fdr=fdr,col=c("blue","white","red"), sheetName = sheetName, outfile = outfile)
         saveWorkbook(out,file=outfile,overwrite=TRUE)
         VERBOSE(verbose,"Workbook saved to '",outfile,"'\n",sep="")
     }
@@ -296,7 +297,7 @@ hyper2qmatrix <- function
     ## save conditionally formatted Excel workbook to file
     if ( !is.null(outfile) )
     {
-        out <- qmatrix2workbook(mx,fdr=fdr,col=c("white","red"))
+        out <- qmatrix2workbook(mx,fdr=fdr,col=c("white","red"), sheetName = sheetName, outfile = outfile)
         saveWorkbook(out,file=outfile,overwrite=TRUE)
         VERBOSE(verbose,"Workbook saved to '",outfile,"'\n",sep="")
     }
@@ -313,7 +314,9 @@ qmatrix2workbook <- function
     qmatrix,        # matrix of signed q-values
     fdr=c(.05,.01), # FDR thresholds (must be in decreasing order)
     col=c("blue","white","red"),
-    fcol="black"    # font color
+    fcol="black",    # font color
+    sheetName,
+    outfile
 )
 {
     bi <- any(qmatrix<0)        # bi- or uni-directional q-values?
@@ -327,8 +330,17 @@ qmatrix2workbook <- function
     posCol <- if (bi) COL[length(COL):nlevs] else rev(COL)
     negCol <- if (bi) COL[1:nlevs]
     
-    shName <- "sheet1"
-    wb <- createWorkbook()
+    shName <- sheetName
+    if(file.exists(outfile)){
+      wb <- loadWorkbook(outfile)
+      shNames <- names(wb)
+      if(shName %in% shNames){
+        removeWorksheet(wb, shName)
+      }
+      
+    } else {
+      wb <- createWorkbook()
+    }
     addWorksheet(wb,shName)
     writeData(wb,shName,qmatrix,startCol=1,startRow=1,rowNames=TRUE)
 
