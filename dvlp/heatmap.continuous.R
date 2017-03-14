@@ -1,7 +1,7 @@
 library(ggplot2)
 library(data.table)
 
-#solution to vertically align ggplot2 plots
+#AlignPlots: solution to vertically align ggplot2 plots
 #source: http://stackoverflow.com/questions/26159495/align-multiple-ggplot-graphs-with-and-without-legends
 AlignPlots <- function(...) {
   LegendWidth <- function(x) x$grobs[[8]]$grobs[[1]]$widths[[4]]
@@ -29,6 +29,8 @@ AlignPlots <- function(...) {
   plots.grobs.eq.widths.aligned
 }
 
+#' @import Biobase
+#' @export
 scale_row<-function(eset){
 	rowz<-t(apply(exprs(eset), 1, function(z) 
 			scale(z))) 
@@ -37,6 +39,7 @@ scale_row<-function(eset){
 }
 
 #merge a list of color labels,breaks,values into single list
+#' @export
 merge_labels<-function(x){
 	l1 <- do.call('c', x)
 	l2<-lapply(split(l1,sub('.*\\.', '', names(l1))),
@@ -46,6 +49,7 @@ merge_labels<-function(x){
 }
 
 #helper function for extracting ggplot legend
+#' @export
 g_legend<-function(a.gplot){
     tmp <- ggplot_gtable(ggplot_build(a.gplot))
     leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
@@ -54,6 +58,7 @@ g_legend<-function(a.gplot){
 }
 
 #make a single color legend
+#' @export
 make_legend<-function(hmcolors,
 	... #other parameters in theme()
 	){
@@ -71,6 +76,7 @@ make_legend<-function(hmcolors,
 }
 
 #make a list of color legends
+#' @export
 make_legend_list<-function(x, #x in the format of named list(x1, x2...)
 	#e.g. x1 = list(col_breaks, col_values, col_labels)
 	... #other parameters in theme()
@@ -111,6 +117,7 @@ make_legend_list<-function(x, #x in the format of named list(x1, x2...)
 }
 
 #make a single color legend
+#' @export
 make_legend_continuous<-function(hmcolors,
 	clow = -3, chigh = 3, n = 25, label = "expression"
 	){
@@ -141,6 +148,7 @@ make_legend_continuous<-function(hmcolors,
 	return(p.legend)
 }
 
+#' @export
 clust_eset<-function(eset){
 	mat<-exprs(eset)
 
@@ -159,10 +167,16 @@ clust_eset<-function(eset){
 	return(list(hc = hc, hr = hr))
 }
 
-heatmap.make.groups<-function(eset, 
+#' \code{ggheat.make.groups} splits eset into list of esets based on phenotype label, do clustering within groups
+#' @param eset expression set
+#' @param labelcol column name for grouping in pData(eset)
+#' @param labelvals values to group on (e.g. factor levels of pData(eset)[, labelcol])
+#' clustFUN clustering function for eset, e.g. clust_eset
+#' @export
+ggheat.make.groups<-function(eset, 
 	labelcol,  #column name for grouping in pData(eset)
 	labelvals, #values to group on (e.g. factor levels of pData(eset)[, labelcol])
-	clustFUN #clustering function for eset
+	clustFUN #clustering output for eset
 	){
 
 	#recommended fix to keep horizontal alignment
@@ -191,7 +205,10 @@ heatmap.make.groups<-function(eset,
 }
 
 #helper function for plotting discretized heatmap
-heatmap.continuous<-function(eset, 
+#' \code{ggheat.continuous} helper function for plotting ggheatmap, see \code{ggheat.continuous.single} and 
+#' \code{ggheat.continuous.group} for examples of usage
+#' @export
+ggheat.continuous<-function(eset, 
 	hc = NA, #hcopt for column leave NA for no ordering
 	hr = NA, #hcopt for row leave NA for no ordering
 	hmcolors = NA,
@@ -369,8 +386,33 @@ heatmap.continuous<-function(eset,
 	return(p.combined)
 }
 
-#plot single heatmap
-heatmap.continuous.single<-function(eset, 
+
+
+#' \code{ggheat.continuous.single} ggheatmap function for plotting a single eset
+#' @param eset expression set 
+#' @param	hc column clustering from hclust or hcopt
+#' @param	hr row clustering from hclust or hcopt
+#' @param	hmcolors function for heatmap color gradient, default: 
+#'  hmcolors<-function(... ) scale_fill_gradient2(low = "blue", 
+#'	mid = "white", high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
+#' @param	hmtitle title of heatmap color label, default: "expression"
+#' @param	col_lab column color label to display, one or more of columns of pData(eset) 
+#' @param	col_legend named list of column color legends, names correspond to col_lab, see format:
+#' col_legend<-list(COL1 = list(col_breaks = COL1levels,
+#'								col_values = brewer.pal(length(COL1levels),"Set1"),
+#'								col_labels = COL1levels), 
+#'		COL2 = list(col_breaks = COL2levels,
+#'								col_values = brewer.pal(length(COL2levels),"Set2"),
+#'								col_labels = COL2levels))
+#' @param	ylabstr y axis title string,
+#' @param	fout filename to save plot, default NA, save as object, to display to device, use grid.arrange
+#' @param	p.heights panel heights default c(1.5, 0.5, 5),
+#' @param	xsize default 4 x axis labels (uses colnames), set to 0 to turn off display
+#' @param	ysize default 4, y axis labels (uses rownames), set to 0 to turn off display
+#' @param	ysizelab default 7, text size for y axis title (specified in ylabstr)
+#' @param	xright default 0.24, displayed width for right margin as fraction of whole plot width
+#' @export
+ggheat.continuous.single<-function(eset, 
 	hc, 
 	hr, 
 	hmcolors = NA,
@@ -383,7 +425,6 @@ heatmap.continuous.single<-function(eset,
 	xsize = 4,
 	ysize = 4, 
 	ysizelab = 7,
-	#xleft = 0.15, 
 	xright = 0.24){
 
 	#default heatmap fill gradient
@@ -398,7 +439,7 @@ heatmap.continuous.single<-function(eset,
 	col_breaks<-col_legend_vec$col_breaks
 	col_labels<-col_legend_vec$col_labels
 
-	p1<-heatmap.continuous(eset, 
+	p1<-ggheat.continuous(eset, 
 		hc, #hcopt for column leave NA for no ordering
 		hr, #hcopt for row leave NA for no ordering
 		hmcolors,
@@ -437,8 +478,32 @@ heatmap.continuous.single<-function(eset,
 	return(plist)
 }
 
-#plot ordered groups of heatmaps
-heatmap.continuous.group<-function(esetlist, 
+#' \code{ggheat.continuous.group} ggheatmap function for plotting groups of esets, within-group column clustering
+#' @param esetlist list of expression sets, see ?heatmap.make.groups for preprocessing 
+#' @param	hclist list of column clustering from hclust or hcopt
+#' @param	hrlist list of row clustering from hclust or hcopt
+#' @param	hmcolors function for heatmap color gradient, default: 
+#'  hmcolors<-function(... ) scale_fill_gradient2(low = "blue", 
+#'	mid = "white", high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
+#' @param	hmtitle title of heatmap color label, default: "expression"
+#' @param	col_lab column color label to display, one or more of columns of pData(eset) 
+#' @param	col_legend named list of column color legends, names correspond to col_lab, see format:
+#' col_legend<-list(COL1 = list(col_breaks = COL1levels,
+#'								col_values = brewer.pal(length(COL1levels),"Set1"),
+#'								col_labels = COL1levels), 
+#'		COL2 = list(col_breaks = COL2levels,
+#'								col_values = brewer.pal(length(COL2levels),"Set2"),
+#'								col_labels = COL2levels))
+#' @param	ylabstr y axis title string,
+#' @param	fout filename to save plot, default NA, save as object, to display to device, use grid.arrange
+#' @param	p.heights panel heights default c(1.5, 0.5, 5),
+#' @param	xsize default 4 x axis labels (uses colnames), set to 0 to turn off display
+#' @param	ysize default 4, y axis labels (uses rownames), set to 0 to turn off display
+#' @param	ysizelab default 7, text size for y axis title (specified in ylabstr)
+#' @param	xleft default 0.15, displayed width for left panel + margin as fraction of whole plot width
+#' @param	xright default 0.24, displayed width for right margin as fraction of whole plot width
+#' @export
+ggheat.continuous.group<-function(esetlist, 
 	hclist, 
 	hrlist, 
 	hmcolors,
@@ -474,7 +539,7 @@ heatmap.continuous.group<-function(esetlist,
 	col_breaks<-col_legend_vec$col_breaks
 	col_labels<-col_legend_vec$col_labels
 
-	p1<-heatmap.continuous(esetlist[[1]], 
+	p1<-ggheat.continuous(esetlist[[1]], 
 		hclist[[1]], #hcopt for column leave NA for no ordering
 		hrlist[[1]], #hcopt for row leave NA for no ordering
 		hmcolors,
@@ -494,7 +559,7 @@ heatmap.continuous.group<-function(esetlist,
 	nmid<-0
 
 	pmid<-lapply(2:n, function(i){
-		heatmap.continuous(esetlist[[i]], 
+		ggheat.continuous(esetlist[[i]], 
 		hclist[[i]], #hcopt for column leave NA for no ordering
 		hrlist[[i]], #hcopt for row leave NA for no ordering
 		hmcolors,

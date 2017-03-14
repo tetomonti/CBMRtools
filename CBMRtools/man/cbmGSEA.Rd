@@ -112,4 +112,3 @@ OUT3 <- cbmGSEA(eSet=cbmGSEA.eSet,tag="MAML2",gSet=cbmGSEA.gSet,nperm=100,verbos
 print(OUT3[,1:5])
 
 }
-

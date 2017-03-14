@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>ggheat.continuous.group. CBMRtools 0.1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">CBMRtools 0.1</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1><code>ggheat.continuous.group</code> ggheatmap function for plotting groups of esets, within-group column clustering</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre><div>ggheat.continuous.group(esetlist, hclist, hrlist, hmcolors, hmtitle&nbsp;=&nbsp;"expression", col_lab, col_legend, ylabstr&nbsp;=&nbsp;"", fout, p.heights&nbsp;=&nbsp;c(1.5, 0.5, 5), xsize&nbsp;=&nbsp;4, ysize&nbsp;=&nbsp;4, ysizelab&nbsp;=&nbsp;7, xleft&nbsp;=&nbsp;0.15, xright&nbsp;=&nbsp;0.24)</div></pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>esetlist</dt>
+      <dd>list of expression sets, see ?heatmap.make.groups for preprocessing</dd>
+      <dt>hclist</dt>
+      <dd>list of column clustering from hclust or hcopt</dd>
+      <dt>hrlist</dt>
+      <dd>list of row clustering from hclust or hcopt</dd>
+      <dt>hmcolors</dt>
+      <dd>function for heatmap color gradient, default: 
+ hmcolors<-function(... ) scale_fill_gradient2(low = "blue", 
+mid = "white", high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)</dd>
+      <dt>hmtitle</dt>
+      <dd>title of heatmap color label, default: "expression"</dd>
+      <dt>col_lab</dt>
+      <dd>column color label to display, one or more of columns of pData(eset)</dd>
+      <dt>col_legend</dt>
+      <dd>named list of column color legends, names correspond to col_lab, see format:
+col_legend<-list(COL1 = list(col_breaks = COL1levels,
+                            col_values = brewer.pal(length(COL1levels),"Set1"),
+                            col_labels = COL1levels), 
+    COL2 = list(col_breaks = COL2levels,
+                            col_values = brewer.pal(length(COL2levels),"Set2"),
+                            col_labels = COL2levels))</dd>
+      <dt>ylabstr</dt>
+      <dd>y axis title string,</dd>
+      <dt>fout</dt>
+      <dd>filename to save plot, default NA, save as object, to display to device, use grid.arrange</dd>
+      <dt>p.heights</dt>
+      <dd>panel heights default c(1.5, 0.5, 5),</dd>
+      <dt>xsize</dt>
+      <dd>default 4 x axis labels (uses colnames), set to 0 to turn off display</dd>
+      <dt>ysize</dt>
+      <dd>default 4, y axis labels (uses rownames), set to 0 to turn off display</dd>
+      <dt>ysizelab</dt>
+      <dd>default 7, text size for y axis title (specified in ylabstr)</dd>
+      <dt>xleft</dt>
+      <dd>default 0.15, displayed width for left panel + margin as fraction of whole plot width</dd>
+      <dt>xright</dt>
+      <dd>default 0.24, displayed width for right margin as fraction of whole plot width</dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+
+      <p><code>ggheat.continuous.group</code> ggheatmap function for plotting groups of esets, within-group column clustering</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>data(tcga.subset.400g.200s)
+dat
+</div>
+<div class='output'>ExpressionSet (storageMode: lockedEnvironment)
+assayData: 400 features, 200 samples 
+  element names: exprs 
+protocolData: none
+phenoData
+  sampleNames: 584 343 ... 702 (200 total)
+  varLabels: sampleID subtype
+  varMetadata: labelDescription
+featureData
+  featureNames: V7497|GSTM1|2944 V15590|SCGB2A2|4250 ...
+    V10519|MAG|4099 (400 total)
+  fvarLabels: gene_symbol gene_description
+  fvarMetadata: labelDescription
+experimentData: use &#39;experimentData(object)&#39;
+Annotation:  
+</div>
+<div class='input'>
+subtypelevels&lt;-levels(dat$subtype)
+
+grps&lt;-ggheat.make.groups(eset = dat, 
+	labelcol = &quot;subtype&quot;,  #column name for grouping in pData(eset)
+	labelvals = subtypelevels, #values to group on (e.g. factor levels of pData(eset)[, labelcol])
+	clustFUN = clust_eset #clustering function for eset
+	)
+
+col_legend&lt;-list(subtype = list(col_breaks = subtypelevels,
+		col_values = brewer.pal(length(subtypelevels),&quot;Set1&quot;),
+		col_labels = subtypelevels))
+
+esetlist&lt;-lapply(grps$esetlist, function(i) scale_row(i))
+
+hmcolors&lt;-function(... ) scale_fill_gradient2(low = &quot;blue&quot;, mid = &quot;white&quot;,
+       high = &quot;red&quot;, midpoint = 0, limits=c(-3,3), oob=squish, ...)
+
+p&lt;-ggheat.continuous.group(esetlist, 
+	grps$hclist, 
+	grps$hrlist, 
+	hmcolors,
+	hmtitle = &quot;row-zscore GE&quot;,
+	col_lab = &quot;subtype&quot;, 
+	col_legend = col_legend,
+	ylabstr = &quot;&quot;,
+	fout  = NA, 
+	p.heights = c(1.5, 0.5, 5),
+	xsize = 0,
+	ysize = 0, 
+	ysizelab = 7,
+	xleft = 0.10, 
+	xright = 0.24)
+</div>
+<p><img src='ggheat.continuous.group-4.png' alt='' width='540' height='400' /></p>
+<div class='input'></div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>ggheat.continuous.group</li>
+    </ul>
+    <ul>
+      
+    </ul> -->
+      
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

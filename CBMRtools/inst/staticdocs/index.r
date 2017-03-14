@@ -19,7 +19,7 @@ sd_section(
 sd_section(
 	"Datasets",
 	"Datasets used in examples",
-	c("eSet.brca.100", "gspData", "hyper", "resdata-class","cbmGSEAdata")
+	c("eSet.brca.100", "tcga.subset.400g.200s", "gspData", "hyper", "resdata-class","cbmGSEAdata")
 	)
 sd_section(
 	"Documentation related pages",
@@ -30,6 +30,6 @@ sd_section(
 sd_section(
 	"Visualization tools",
 	"Tools for visualizing data",
-	c("heatmap.ggplot2")
+	c("ggheat.continuous.single", "ggheat.continuous.group")
 	)
 

@@ -54,4 +54,3 @@ plot(apply(exprs(B[,B.sub]),1,mean),apply(NORMsub[,N.sub],1,mean),
 all.equal(apply(exprs(B[,B.sub]),1,mean),apply(NORMsub[,N.sub],1,mean)) # TRUE
  
 }
-

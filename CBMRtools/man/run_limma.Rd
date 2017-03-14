@@ -34,4 +34,3 @@ eset<-eset[, eset$ER_status \%in\% c("Positive", "Negative")]
 res<-run_limma(eset = eset, treatment = "ER_status", cond = "Positive", 
 	control = "Negative", verbose = TRUE, sort.by = "adj.P.Val", decreasing = FALSE, cutoff = 0.05)
 }
-

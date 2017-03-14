@@ -16,4 +16,3 @@ to.eSet(mat, pdat, fdat)
 \description{
 construct an eSet object
 }
-

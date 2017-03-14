@@ -8,4 +8,3 @@
 \description{
 A package for accessing general-use R scripts developed by montilab members
 }
-

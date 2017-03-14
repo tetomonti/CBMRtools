@@ -104,4 +104,3 @@ p2 <- heatmap.ggplot2(eSet=GSPdir,col.clust=TRUE,row.clust=TRUE,
 grid.arrange(p2)
 
 }
-

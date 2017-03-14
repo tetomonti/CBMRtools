@@ -19,4 +19,3 @@ collapse.probes(eset, fdat.id = "SYMBOL", method = c("single.mad",
 \description{
 collapse eSet object by non-unique row feature IDs
 }
-

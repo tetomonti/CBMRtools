@@ -41,4 +41,3 @@ data(eSet.brca.100)
 variationFilter(eSet.brca.100,score='mad',ngenes=50,do.plot=TRUE)
 
 }
-

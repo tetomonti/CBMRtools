@@ -14,4 +14,3 @@ read.xlsx(file, java.param = "-Xmx3g")
 \description{
 read from .xlsx
 }
-

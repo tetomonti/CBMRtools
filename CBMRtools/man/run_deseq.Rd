@@ -27,4 +27,3 @@ run_deseq(eset, class_id, control, treatment, verbose = TRUE,
 \description{
 Run DESeq2 on eset object
 }
-

@@ -35,4 +35,3 @@ hyperE <- hyperEnrichment(drawn=hyperSig,categories=getGeneSet(hyperGsets),ntota
 head(hyperE)
 
 }
-

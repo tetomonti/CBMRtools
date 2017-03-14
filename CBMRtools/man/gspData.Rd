@@ -19,4 +19,3 @@ data(gspData)
 Example dataset
 gene set projection input data example
 }
-

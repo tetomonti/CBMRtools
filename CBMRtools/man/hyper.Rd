@@ -19,4 +19,3 @@ data(hyper)
 Example dataset
 hyperenrichment input data example
 }
-

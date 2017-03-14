@@ -2,8 +2,8 @@
 % Please edit documentation in R/GeneSet.R
 \docType{class}
 \name{GeneSet-class}
-\alias{GeneSet}
 \alias{GeneSet-class}
+\alias{GeneSet}
 \title{GeneSet}
 \description{
 Class \code{GeneSet} represents a compendium (list) of genesets, each representing a set of gene identifiers

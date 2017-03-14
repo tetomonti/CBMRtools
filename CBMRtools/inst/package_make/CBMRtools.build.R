@@ -34,9 +34,10 @@ if ( is.na(file.info(STATICDIR)$isdir) ) system(paste('mkdir',STATICDIR))
 
 cat("Making html pages...\n")
 ## generate html pages
+##update ./inst/staticdocs/index.r for formatting of help page sections
 setwd(package.dir)
-build_site(pkg = package.dir, examples = TRUE, launch = TRUE)
+build_site(pkg = package.dir, examples = TRUE)
 
-#cat("Installing locally...\n")
+#cat("Installing locally...\n")l
 ## install CBMRtools locally
 #install.packages(package.dir, dependencies = TRUE, repos = NULL, type = "source")

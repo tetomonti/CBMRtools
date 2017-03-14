@@ -7,6 +7,16 @@
 #' @format expression set object
 NULL
 
+#' Example dataset
+#' TCGA breast cancer RNA-seq expression set (mad filtered 400 genes), log2 transformed, 200 samples, has subtype info
+#' 
+#' @docType data
+#' @name tcga.subset.400g.200s
+#' @usage data(tcga.subset.400g.200s.rda)
+#' @format expression set object
+NULL
+
+
 
 #' Example dataset
 #' gene set projection input data example

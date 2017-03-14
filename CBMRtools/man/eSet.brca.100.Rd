@@ -13,4 +13,3 @@ data(eSet.brca.100)
 Example dataset
 TCGA breast cancer RNA-seq expression set (mad filtered 100 genes), log2 transformed
 }
-

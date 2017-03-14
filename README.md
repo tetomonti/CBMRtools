@@ -26,7 +26,7 @@ From within R, run the following commands:
     require(CBMRtools)
 
 
-#reading documentaion
+#reading documentation
 documentation for this package is currently found at:
 http://smonti.bumc.bu.edu/~montilab/CBMRtoolsHtml/web/index.html
 
