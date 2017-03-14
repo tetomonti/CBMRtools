@@ -199,7 +199,7 @@ heatmap.ggplot2<-function(eSet,
 	  axis.ticks.margin = unit(0, "cm"),
 	  plot.margin = unit(c(0.1,0.1,-1.2,-0.6), "lines"), # top,right, bottom, left
 	  legend.margin =unit(0,"cm"),
-	  strip.background = element_blank(), 
+	 # strip.background = element_blank(), 
 	  panel.margin = unit(0, "cm"),
 	  panel.border = element_blank(),
 	  plot.background = element_blank(),
