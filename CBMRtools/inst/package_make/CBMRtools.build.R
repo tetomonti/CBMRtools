@@ -3,10 +3,10 @@
 
 #install.packages(devtools)
 #require(devtools)
-#install_github('hadley/staticdocs')
+#install_github('hadley/pkgdown') 
 
 require(devtools)
-require(staticdocs)
+require(pkgdown)
 
 #set path to package home directory
 package.dir <- normalizePath("../../../CBMRtools")
@@ -23,7 +23,6 @@ document(package.dir) # creates help pages
 cat("Installing..\n")
 install(package.dir, dependencies = TRUE) #installing
 
-
 library(CBMRtools)
 
 ## the directory 'staticdocs' must exist under CBMRtools/inst/ for the
@@ -34,7 +33,7 @@ if ( is.na(file.info(STATICDIR)$isdir) ) system(paste('mkdir',STATICDIR))
 
 cat("Making html pages...\n")
 ## generate html pages
-##update ./inst/staticdocs/index.r for formatting of help page sections
+## update ./inst/staticdocs/index.r for formatting of help page sections
 setwd(package.dir)
 build_site(pkg = package.dir, examples = TRUE)
 

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ggheat.continuous.group — ggheat.continuous.group • CBMRtools</title>
+<title>ggheat.continuous.group <U+2014> ggheat.continuous.group <e2><80><a2> CBMRtools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -123,12 +123,64 @@ col_legend&lt;-list(COL1 = list(col_breaks = COL1levels,
     </dl>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>tcga.subset.400g.200s</span>)
+<span class='no'>dat</span></div><div class='output co'>#&gt; ExpressionSet (storageMode: lockedEnvironment)
+#&gt; assayData: 400 features, 200 samples 
+#&gt;   element names: exprs 
+#&gt; protocolData: none
+#&gt; phenoData
+#&gt;   sampleNames: 584 343 ... 702 (200 total)
+#&gt;   varLabels: sampleID subtype
+#&gt;   varMetadata: labelDescription
+#&gt; featureData
+#&gt;   featureNames: V7497|GSTM1|2944 V15590|SCGB2A2|4250 ...
+#&gt;     V10519|MAG|4099 (400 total)
+#&gt;   fvarLabels: gene_symbol gene_description
+#&gt;   fvarMetadata: labelDescription
+#&gt; experimentData: use 'experimentData(object)'
+#&gt; Annotation:  </div><div class='input'>
+<span class='no'>subtypelevels</span><span class='kw'>&lt;-</span><span class='fu'>levels</span>(<span class='no'>dat</span>$<span class='no'>subtype</span>)
+
+<span class='no'>grps</span><span class='kw'>&lt;-</span><span class='fu'><a href='ggheat.make.groups.html'>ggheat.make.groups</a></span>(<span class='kw'>eset</span> <span class='kw'>=</span> <span class='no'>dat</span>,
+        <span class='kw'>labelcol</span> <span class='kw'>=</span> <span class='st'>"subtype"</span>,  <span class='co'>#column name for grouping in pData(eset)</span>
+        <span class='kw'>labelvals</span> <span class='kw'>=</span> <span class='no'>subtypelevels</span>, <span class='co'>#values to group on (e.g. factor levels of pData(eset)[, labelcol])</span>
+        <span class='kw'>clustFUN</span> <span class='kw'>=</span> <span class='no'>clust_eset</span> <span class='co'>#clustering function for eset</span>
+        )
+
+<span class='no'>col_legend</span><span class='kw'>&lt;-</span><span class='fu'>list</span>(<span class='kw'>subtype</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>col_breaks</span> <span class='kw'>=</span> <span class='no'>subtypelevels</span>,
+                <span class='kw'>col_values</span> <span class='kw'>=</span> <span class='fu'>brewer.pal</span>(<span class='fu'>length</span>(<span class='no'>subtypelevels</span>),<span class='st'>"Set1"</span>),
+                <span class='kw'>col_labels</span> <span class='kw'>=</span> <span class='no'>subtypelevels</span>))
+
+<span class='no'>esetlist</span><span class='kw'>&lt;-</span><span class='fu'>lapply</span>(<span class='no'>grps</span>$<span class='no'>esetlist</span>, <span class='kw'>function</span>(<span class='no'>i</span>) <span class='fu'>scale_row</span>(<span class='no'>i</span>))
+
+<span class='no'>hmcolors</span><span class='kw'>&lt;-</span><span class='kw'>function</span>(<span class='no'>...</span> ) <span class='fu'>scale_fill_gradient2</span>(<span class='kw'>low</span> <span class='kw'>=</span> <span class='st'>"blue"</span>, <span class='kw'>mid</span> <span class='kw'>=</span> <span class='st'>"white"</span>,
+       <span class='kw'>high</span> <span class='kw'>=</span> <span class='st'>"red"</span>, <span class='kw'>midpoint</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>limits</span><span class='kw'>=</span><span class='fu'>c</span>(-<span class='fl'>3</span>,<span class='fl'>3</span>), <span class='kw'>oob</span><span class='kw'>=</span><span class='no'>squish</span>, <span class='no'>...</span>)
+
+<span class='no'>p</span><span class='kw'>&lt;-</span><span class='fu'>ggheat.continuous.group</span>(<span class='no'>esetlist</span>,
+        <span class='no'>grps</span>$<span class='no'>hclist</span>,
+        <span class='no'>grps</span>$<span class='no'>hrlist</span>,
+        <span class='no'>hmcolors</span>,
+        <span class='kw'>hmtitle</span> <span class='kw'>=</span> <span class='st'>"row-zscore GE"</span>,
+        <span class='kw'>col_lab</span> <span class='kw'>=</span> <span class='st'>"subtype"</span>,
+        <span class='kw'>col_legend</span> <span class='kw'>=</span> <span class='no'>col_legend</span>,
+        <span class='kw'>ylabstr</span> <span class='kw'>=</span> <span class='st'>""</span>,
+        <span class='kw'>fout</span>  <span class='kw'>=</span> <span class='fl'>NA</span>,
+        <span class='kw'>p.heights</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1.5</span>, <span class='fl'>0.5</span>, <span class='fl'>5</span>),
+        <span class='kw'>xsize</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+        <span class='kw'>ysize</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+        <span class='kw'>ysizelab</span> <span class='kw'>=</span> <span class='fl'>7</span>,
+        <span class='kw'>xleft</span> <span class='kw'>=</span> <span class='fl'>0.10</span>,
+        <span class='kw'>xright</span> <span class='kw'>=</span> <span class='fl'>0.24</span>)</div><img src='ggheat.continuous.group-4.png' alt='' width='540' height='400' /><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
