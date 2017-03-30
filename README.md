@@ -21,7 +21,7 @@ Some dependencies you may need to install first:
 From within R, run the following commands:
 
     library(devtools)
-    PAT <- "04fe676593e46b6bda5a5d09431156e8a500349a"
+    PAT <- "GIT_REPO_KEY" #contact lia978 to request access 
     install_github("montilab/CBMRtools/CBMRtools",ref="v1.0.3", auth_token = PAT)
     require(CBMRtools)
 
@@ -29,16 +29,6 @@ From within R, run the following commands:
 #reading documentation
 documentation for this package is currently found at:
 http://smonti.bumc.bu.edu/~montilab/CBMRtoolsHtml/web/index.html
-
-#installing older tags
-From within R, run the following commands:
-
-    library(devtools)
-    PAT <- "04fe676593e46b6bda5a5d09431156e8a500349a"
-    install_github("montilab/CBMRtools/CBMRtools",ref="v1.0.0", auth_token = PAT)     
-    require(CBMRtools)
-
-You need to do this only once (or after the package is modified by yourself or others). Thereafter, you will only need to include the ‘require(CBMRtools)’ command in your R code. 
 
 See all available functions and datasets:
 
