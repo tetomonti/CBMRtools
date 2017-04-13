@@ -222,7 +222,8 @@ ggheat.continuous<-function(eset,
 	p.heights = c(1.5, 0.5, 5),
 	xsize = 4,
 	ysize = 4, 
-	ysizelab = 7
+	ysizelab = 7,
+	override.hc = NA
 	){
 
 	theme_none <- theme(
@@ -263,16 +264,49 @@ ggheat.continuous<-function(eset,
 			limits = c(min(data_col$labels$x)-0.5, max(data_col$labels$x)+0.5)) + 
 		scale_y_continuous(expand=c(0.0,0.0))+  theme_none+
 		theme(plot.margin = unit(c(0.4,0.1,0,0), "lines")) #extra padding on the top margin
+	} else 
+		HC<-NA
+
+	#add override hc if specified
+	if(suppressWarnings(!is.na(override.hc))){
+		dd_col.override<-as.dendrogram(override.hc)
+		data_col <- dendro_data(dd_col.override, draw=FALSE)
+		HC <- ggplot(segment(data_col)) + 
+		geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) +
+		scale_x_continuous( expand=c(0,0), 
+			limits = c(min(data_col$labels$x)-0.5, max(data_col$labels$x)+0.5)) + 
+		scale_y_continuous(expand=c(0.0,0.0))+  theme_none+
+		theme(plot.margin = unit(c(0.4,0.1,0,0), "lines")) #extra padding on the top margin
 	}
+	
 	#order rows
 	#by number of non-zero elements
 	if(length(hr) > 1 ){
 		dd_row<-as.dendrogram(hr)
 		row_ord<-order.dendrogram(dd_row)
 	}
-	mat<-mat[row_ord, col_ord]
+
+	matcopy<-mat
+
+	#quick fix to avoid bug in ordering
+	rn<-rownames(mat)
+	cn<-colnames(mat)
+	rownames(matcopy)<-paste("R", rn, sep = "")
+	colnames(matcopy)<-paste("C", cn, sep = "")
+	matcopy<-matcopy[row_ord, col_ord]
+	mat<-matcopy
+	rownames(mat)<-rn[row_ord]
+	colnames(mat)<-cn[col_ord]
 
 	dt <- data.table(melt(mat))
+	#factor, otherwise order might screw up if they can be coerced into numbers
+	#row levels
+	Var1levels<-rownames(mat)
+	#col levels
+	Var2levels<-colnames(mat)
+
+	dt$Var1<-factor(dt$Var1, levels= Var1levels)
+	dt$Var2<-factor(dt$Var2, levels= Var2levels)
 
 	#main heatmap
 	text.y<-element_text(size = ysize)
@@ -292,7 +326,8 @@ ggheat.continuous<-function(eset,
 	else
 		scfill<-hmcolors(guide = guide_legend(title = ""))
 
-	p<-ggplot(dt, aes(Var2,y=Var1, fill = value )) + 
+	p<-ggplot(dt, aes(Var2,y=Var1, fill = value ))+
+		#aes(Var2,y=Var1, fill = value )+
 		geom_tile( size=1) +
 		scfill + 
 		theme(axis.text.x = element_text(angle = 90, size = xsize, hjust = 1, 
@@ -328,6 +363,11 @@ ggheat.continuous<-function(eset,
 	
 	#column labels
 	columnlab<-pData(eset)[col_ord, col_lab]
+	# refactor column labels
+	for(i in colnames(columnlab)){
+		j<-as.character(columnlab[,i])
+		columnlab[,i]<-factor(j, levels = unique(j))
+	}
 	
 	if(length(col_lab)>1)
 		rownames(columnlab)<-1:nrow(columnlab)
@@ -375,8 +415,12 @@ ggheat.continuous<-function(eset,
 			guides(fill = guide_legend(title = "",
 			override.aes = list(colour = "black")))
 	}
+	if(is.na(HC)) {
+		p.heights <-p.heights[-1]
+		plist<-suppressWarnings(AlignPlots(pcol, p))
+	}
+	else plist<-suppressWarnings(AlignPlots(HC, pcol, p))
 
-	plist<-suppressWarnings(AlignPlots(HC, pcol, p))
 	plist$ncol <-1
 	plist$heights <- p.heights
 	p.combined<-do.call(arrangeGrob, plist)
@@ -464,7 +508,8 @@ ggheat.continuous.single<-function(eset,
 	xsize = 4,
 	ysize = 4, 
 	ysizelab = 7,
-	xright = 0.24){
+	xright = 0.24, 
+	override.hc = NA){
 
 	#default heatmap fill gradient
 	if(suppressWarnings(is.na(hmcolors)[1])){
@@ -492,7 +537,8 @@ ggheat.continuous.single<-function(eset,
 		p.heights,
 		xsize,
 		ysize, 
-		ysizelab
+		ysizelab,
+		override.hc
 		)
 
 	pcol.legend<-make_legend_list(col_legend, 
