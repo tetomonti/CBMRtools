@@ -22,13 +22,13 @@ From within R, run the following commands:
 
     library(devtools)
     PAT <- "GIT_REPO_KEY" #contact lia978 to request access 
-    install_github("montilab/CBMRtools/CBMRtools",ref="v1.0.3", auth_token = PAT)
+    install_github("montilab/CBMRtools/CBMRtools",ref="v1.1.1", auth_token = PAT)
     require(CBMRtools)
 
 
 #reading documentation
 documentation for this package is currently found at:
-http://smonti.bumc.bu.edu/~montilab/CBMRtoolsHtml/web/index.html
+http://montilab.bumc.bu.edu/~montilab/CBMRtoolsHtml/web/index.html
 
 See all available functions and datasets:
 
