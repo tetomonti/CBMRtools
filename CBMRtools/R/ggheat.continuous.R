@@ -32,8 +32,8 @@ AlignPlots <- function(...) {
 #' @import Biobase
 #' @export
 scale_row<-function(eset){
-	rowz<-t(apply(exprs(eset), 1, function(z) 
-			scale(z))) 
+	rowz<-t(apply(exprs(eset), 1, function(z)
+			scale(z)))
 	exprs(eset)<-rowz
 	return(eset)
 }
@@ -68,7 +68,7 @@ make_legend<-function(hmcolors,
 	scale_fill_manual(values = col_values, breaks = col_breaks, labels = col_labels,
 		guide = guide_legend(title = ""))+
 	guides(fill = guide_legend(title = "",
- 			override.aes = list(colour = "black"))) + 
+ 			override.aes = list(colour = "black"))) +
 	theme(legend.text.align = 0,
 			legend.justification = c(0,0), ...)
 	p.legend<-g_legend(p)
@@ -80,7 +80,7 @@ make_legend<-function(hmcolors,
 make_legend_list<-function(x, #x in the format of named list(x1, x2...)
 	#e.g. x1 = list(col_breaks, col_values, col_labels)
 	... #other parameters in theme()
-	){ 
+	){
 
 	g_legend<-function(a.gplot){
 	    tmp <- ggplot_gtable(ggplot_build(a.gplot))
@@ -98,10 +98,10 @@ make_legend_list<-function(x, #x in the format of named list(x1, x2...)
 		col_labels<-x[[i]]$col_labels
 
 		names(col_values)<-col_breaks
-		df<-data.frame(num=1:length(col_breaks), breaks=col_breaks, 
+		df<-data.frame(num=1:length(col_breaks), breaks=col_breaks,
 			values=col_values, labels=col_labels)
 		p<-ggplot(df, aes(x = breaks, y = breaks, fill = factor(breaks))) +
-		geom_tile(size = 1) + 
+		geom_tile(size = 1) +
 		scale_fill_manual(values = col_values, breaks = col_breaks, labels = col_labels,
 			guide = guide_legend(title = legend.title)) +
 		guides(fill = guide_legend(title = legend.title,
@@ -122,10 +122,10 @@ make_legend_continuous<-function(hmcolors,
 	clow = -3, chigh = 3, n = 25, label = "expression"
 	){
 
-	col_breaks<-clow:chigh	
-	
+	col_breaks<-clow:chigh
+
 	hmc<-hmcolors(name = label)
-	
+
 	df<-lapply(1:n, function(x){
 		res<-lapply(1:n, function(y){
 			data.frame(y = y, breaks = runif(n, clow, chigh))
@@ -157,7 +157,7 @@ clust_eset<-function(eset){
 	distC <- function(x) dist(t(x), method="euclidean")
 	dist_c<-distC(mat)
 	hc<-hcopt(dist_c, method = "ward.D")
-	
+
 	#row clustering
 	#using 1-cor as distance, ward.D agglomeration
 	distR <- function(x) stats::as.dist(1- cor(t(x)))
@@ -173,7 +173,7 @@ clust_eset<-function(eset){
 #' @param labelvals values to group on (e.g. factor levels of pData(eset)[, labelcol])
 #' clustFUN clustering function for eset, e.g. clust_eset
 #' @export
-ggheat.make.groups<-function(eset, 
+ggheat.make.groups<-function(eset,
 	labelcol,  #column name for grouping in pData(eset)
 	labelvals, #values to group on (e.g. factor levels of pData(eset)[, labelcol])
 	clustFUN #clustering output for eset
@@ -181,12 +181,12 @@ ggheat.make.groups<-function(eset,
 
 	#recommended fix to keep horizontal alignment
 	nmax<-max(sapply(colnames(eset), function(i) nchar(i)))
-	colnames(eset)<-sapply(colnames(eset), function(i) 
+	colnames(eset)<-sapply(colnames(eset), function(i)
 	paste( paste(rep("  ", nmax - nchar(i)+1), collapse = ""), i, sep = ""))
 
 	labelvec<-as.character(pData(eset)[, labelcol])
 	numvals<-sapply(labelvals, function(i) sum(which(labelvec %in% i)))
-	if(any(numvals < 3)) 
+	if(any(numvals < 3))
 		stop("one or more groups is missing or has less than 3 members")
 
 	reslist<-lapply(labelvals, function(i){
@@ -205,23 +205,23 @@ ggheat.make.groups<-function(eset,
 }
 
 #helper function for plotting discretized heatmap
-#' \code{ggheat.continuous} helper function for plotting ggheatmap, see \code{ggheat.continuous.single} and 
+#' \code{ggheat.continuous} helper function for plotting ggheatmap, see \code{ggheat.continuous.single} and
 #' \code{ggheat.continuous.group} for examples of usage
 #' @export
-ggheat.continuous<-function(eset, 
+ggheat.continuous<-function(eset,
 	hc = NA, #hcopt for column leave NA for no ordering
 	hr = NA, #hcopt for row leave NA for no ordering
 	hmcolors = NA,
-	col_lab, 
+	col_lab,
 	col_values,
-	col_breaks, 
+	col_breaks,
 	col_labels,
 	ylabstr = "",
 	type = c("left", "right", "middle", "regular"),
 	fout = NA,
 	p.heights = c(1.5, 0.5, 5),
 	xsize = 4,
-	ysize = 4, 
+	ysize = 4,
 	ysizelab = 7,
 	override.hc = NA
 	){
@@ -235,13 +235,13 @@ ggheat.continuous<-function(eset,
 	  axis.title.y=element_blank(),
 	  axis.text.x=element_blank(),
 	  axis.text.y=element_blank(),
-	  axis.line=element_blank(), 
+	  axis.line=element_blank(),
 	  axis.ticks.x=element_blank(),
 	  axis.ticks.y=element_blank(),
 	  plot.margin = unit(c(0,0.1,0,0), "lines"),
 	  legend.margin = margin(6,6,6,6),
 	  legend.key = element_rect(colour = "black"),
-	  strip.background=element_blank(), 
+	  strip.background=element_blank(),
 	  panel.spacing=unit(0, "cm"),
 	  panel.border=element_blank(),
 	  plot.background=element_blank()
@@ -258,27 +258,27 @@ ggheat.continuous<-function(eset,
 		dd_col<-as.dendrogram(hc)
 		col_ord<-order.dendrogram(dd_col)
 		data_col <- dendro_data(dd_col, draw=FALSE)
-		HC <- ggplot(segment(data_col)) + 
+		HC <- ggplot(segment(data_col)) +
 		geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) +
-		scale_x_continuous( expand=c(0,0), 
-			limits = c(min(data_col$labels$x)-0.5, max(data_col$labels$x)+0.5)) + 
+		scale_x_continuous( expand=c(0,0),
+			limits = c(min(data_col$labels$x)-0.5, max(data_col$labels$x)+0.5)) +
 		scale_y_continuous(expand=c(0.0,0.0))+  theme_none+
 		theme(plot.margin = unit(c(0.4,0.1,0,0), "lines")) #extra padding on the top margin
-	} else 
+	} else
 		HC<-NA
 
 	#add override hc if specified
 	if(suppressWarnings(!is.na(override.hc))){
 		dd_col.override<-as.dendrogram(override.hc)
 		data_col <- dendro_data(dd_col.override, draw=FALSE)
-		HC <- ggplot(segment(data_col)) + 
+		HC <- ggplot(segment(data_col)) +
 		geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) +
-		scale_x_continuous( expand=c(0,0), 
-			limits = c(min(data_col$labels$x)-0.5, max(data_col$labels$x)+0.5)) + 
+		scale_x_continuous( expand=c(0,0),
+			limits = c(min(data_col$labels$x)-0.5, max(data_col$labels$x)+0.5)) +
 		scale_y_continuous(expand=c(0.0,0.0))+  theme_none+
 		theme(plot.margin = unit(c(0.4,0.1,0,0), "lines")) #extra padding on the top margin
 	}
-	
+
 	#order rows
 	#by number of non-zero elements
 	if(length(hr) > 1 ){
@@ -313,7 +313,7 @@ ggheat.continuous<-function(eset,
 	#main heatmap
 	text.y<-element_text(size = ysize)
 	if(type %in% c("middle", "right")){
-		text.y<-element_blank()	
+		text.y<-element_blank()
 	}
 
 	#default heatmap fill gradient
@@ -324,44 +324,44 @@ ggheat.continuous<-function(eset,
 	}
 
 	if(type %in% c("left", "middle", "regular"))
-		scfill<-hmcolors(guide =FALSE) 
+		scfill<-hmcolors(guide =FALSE)
 	else
 		scfill<-hmcolors(guide = guide_legend(title = ""))
 
 	p<-ggplot(dt, aes(Var2,y=Var1, fill = value ))+
 		geom_tile( size=1) +
-		scfill + 
-		theme(axis.text.x = element_text(angle = 90, size = xsize, hjust = 1, 
-			margin=margin(0,0,0,0)), 
-			axis.text.y = text.y, 
+		scfill +
+		theme(axis.text.x = element_text(angle = 90, size = xsize, hjust = 1,
+			margin=margin(0,0,0,0)),
+			axis.text.y = text.y,
 			plot.margin = unit(c(0,0,1,0), "lines"),
 			axis.title.x = element_blank(),
 			panel.grid.minor.x = element_blank(),
 			panel.grid.minor.y = element_blank(),
 			panel.grid.major.x = element_blank(),
 			panel.grid.major.y = element_blank())+
-		scale_x_discrete(expand=c(0,0)) + 
+		scale_x_discrete(expand=c(0,0)) +
 	    scale_y_discrete(expand=c(0,0))
 
 	if(type %in% c("left", "regular")){
-		p<-p + ylab(ylabstr) 
+		p<-p + ylab(ylabstr)
 		if(ysize ==0)
 		p<-p+theme(axis.ticks.y = element_blank())
 	} else if (type %in% c("middle")){
-		p<-p + theme(axis.title.y = element_blank(), 
+		p<-p + theme(axis.title.y = element_blank(),
 			axis.ticks.y = element_blank(),
 			axis.text.y = element_blank(),
 		)
 	} else { #right, account for legend
  		p<-p + guides(fill = guide_legend(title = "",
  			override.aes = list(colour = "black")))+
- 		theme(axis.title.y = element_blank(), 
+ 		theme(axis.title.y = element_blank(),
 			axis.ticks.y = element_blank(),
 			axis.text.y = element_blank(),
-			legend.key = element_rect(colour="black", size=0.5), 
-			legend.position = "right")		
+			legend.key = element_rect(colour="black", size=0.5),
+			legend.position = "right")
 	}
-	
+
 	#column labels
 	columnlab<-pData(eset)[col_ord, col_lab]
 	# refactor column labels
@@ -369,13 +369,13 @@ ggheat.continuous<-function(eset,
 		j<-as.character(columnlab[,i])
 		columnlab[,i]<-factor(j, levels = unique(j))
 	}
-	
+
 	if(length(col_lab)>1)
 		rownames(columnlab)<-1:nrow(columnlab)
 
 	dtcol<-data.table(melt(as.matrix(columnlab)))
 	names(col_values)<-col_breaks
-	
+
 	text.lab.y<-element_text(size = ysizelab)
 	if(type %in% c("middle", "right")){
 		text.lab.y<-element_blank()
@@ -384,7 +384,7 @@ ggheat.continuous<-function(eset,
 	if(type %in% c("left", "middle", "regular"))
 		scfilllab<-scale_fill_manual(values = col_values, breaks = col_breaks, labels = col_labels,
 			guide = FALSE)
-	else 
+	else
 		scfilllab<-scale_fill_manual(values = col_values, breaks = col_breaks, labels = col_labels,
 			guide = guide_legend(title = ""))
 
@@ -392,31 +392,31 @@ ggheat.continuous<-function(eset,
 		#edge case
 		dtcol$Var2 <-rep(col_lab, nrow(dtcol))
 		lims<-c(min(dtcol$Var1)-0.5, max(dtcol$Var1)+0.5)
-		pcol<-ggplot(dtcol, aes(Var1,y=Var2, fill = value )) + 
+		pcol<-ggplot(dtcol, aes(Var1,y=Var2, fill = value )) +
 		geom_tile( size=1) +
-		scfilllab  + 
+		scfilllab  +
 		theme_none +
-		scale_x_discrete(expand=c(0,0)) + 
+		scale_x_discrete(expand=c(0,0)) +
     	scale_y_discrete(expand=c(0,0))
 
 	} else {
-		pcol<-ggplot(dtcol, aes(Var1,y=Var2, fill = value )) + 
+		pcol<-ggplot(dtcol, aes(Var1,y=Var2, fill = value )) +
 			geom_tile( size=1) +
-			scfilllab  + 
+			scfilllab  +
 			theme_none	+
-			scale_x_discrete(expand=c(0,0)) + 
+			scale_x_discrete(expand=c(0,0)) +
     		scale_y_discrete(expand=c(0,0))
 	}
-	
+
 	if(type %in% c("left", "regular")){
 		pcol<-pcol+theme(axis.text.y = element_text(size = ysizelab, hjust = 0))
 	} else if(type %in% c("right")){
-		pcol<-pcol+theme(legend.key = element_rect(colour="black", size=0.5), 
+		pcol<-pcol+theme(legend.key = element_rect(colour="black", size=0.5),
 			legend.position = "right") +
 			guides(fill = guide_legend(title = "",
 			override.aes = list(colour = "black")))
 	}
-	if(is.na(HC)) {
+	if( any(is.na(HC)) ) {
 		p.heights <-p.heights[-1]
 		plist<-suppressWarnings(AlignPlots(pcol, p))
 	}
@@ -425,25 +425,25 @@ ggheat.continuous<-function(eset,
 	plist$ncol <-1
 	plist$heights <- p.heights
 	p.combined<-do.call(arrangeGrob, plist)
-	if(!is.na(fout))	
+	if(!is.na(fout))
 		ggsave(p.combined, file = fout)
 
 	return(p.combined)
 }
 
 #' \code{ggheat.continuous.single} ggheatmap function for plotting a single eset
-#' @param eset expression set 
+#' @param eset expression set
 #' @param	hc column clustering from hclust or hcopt
 #' @param	hr row clustering from hclust or hcopt
-#' @param	hmcolors function for heatmap color gradient, default: 
-#'  hmcolors<-function(... ) scale_fill_gradient2(low = "blue", 
+#' @param	hmcolors function for heatmap color gradient, default:
+#'  hmcolors<-function(... ) scale_fill_gradient2(low = "blue",
 #'	mid = "white", high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
 #' @param	hmtitle title of heatmap color label, default: "expression"
-#' @param	col_lab column color label to display, one or more of columns of pData(eset) 
+#' @param	col_lab column color label to display, one or more of columns of pData(eset)
 #' @param	col_legend named list of column color legends, names correspond to col_lab, see format:
 #' col_legend<-list(COL1 = list(col_breaks = COL1levels,
 #'								col_values = brewer.pal(length(COL1levels),"Set1"),
-#'								col_labels = COL1levels), 
+#'								col_labels = COL1levels),
 #'		COL2 = list(col_breaks = COL2levels,
 #'								col_values = brewer.pal(length(COL2levels),"Set2"),
 #'								col_labels = COL2levels))
@@ -458,58 +458,58 @@ ggheat.continuous<-function(eset,
 #' #load expression data
 #' data(tcga.subset.400g.200s)
 #' dat
-#' 
+#'
 #' #hclust for rows and columns
 #' hc<-clust_eset(dat)
-#' 
+#'
 #' pData(dat)$hclust.groups<-as.factor(cutree(hc$hc, k = 4))
-#' 
+#'
 #' #scale expression by row
 #' dat.scaled<-scale_row(dat)
-#' 
+#'
 #' subtypelevels<-levels(dat$subtype)
-#' 
+#'
 #' #color legends for column labels
 #' col_legend<-list(subtype = list(col_breaks = subtypelevels,
 #' 		col_values = brewer.pal(length(subtypelevels),"Set1"),
-#' 		col_labels = subtypelevels), 
+#' 		col_labels = subtypelevels),
 #' 		hclust.groups = list(col_breaks = levels(pData(dat)$hclust.groups),
 #' 		col_values = sapply(c("pink", "orange", "yellow", "cyan"), to.hex),
 #' 		col_labels = levels(pData(dat)$hclust.groups)))
-#' 
+#'
 #' #heatmap fill gradient
 #' hmcolors<-function(... ) scale_fill_gradient2(low = "blue", mid = "white",
 #'        high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
-#' 
-#' p<-ggheat.continuous.single(eset = dat.scaled, 
-#' 	hc = hc$hc, 
-#' 	hr = hc$hr, 
+#'
+#' p<-ggheat.continuous.single(eset = dat.scaled,
+#' 	hc = hc$hc,
+#' 	hr = hc$hr,
 #' 	hmcolors = hmcolors,
 #' 	hmtitle = "row-zscore GE",
-#' 	col_lab = c("subtype", "hclust.groups"), 
+#' 	col_lab = c("subtype", "hclust.groups"),
 #' 	col_legend = col_legend,
 #' 	ylabstr = "",
-#' 	fout = NA, 
+#' 	fout = NA,
 #' 	p.heights = c(1.5, 0.5, 5),
 #' 	xsize = 0,
-#' 	ysize = 0, 
+#' 	ysize = 0,
 #' 	ysizelab = 7,
 #' 	xright = 0.18)
 #' @export
-ggheat.continuous.single<-function(eset, 
-	hc, 
-	hr, 
+ggheat.continuous.single<-function(eset,
+	hc,
+	hr,
 	hmcolors = NA,
 	hmtitle = "expression",
-	col_lab, 
+	col_lab,
 	col_legend,
 	ylabstr = "",
-	fout = NA, 
+	fout = NA,
 	p.heights = c(1.5, 0.5, 5),
 	xsize = 4,
-	ysize = 4, 
+	ysize = 4,
 	ysizelab = 7,
-	xright = 0.24, 
+	xright = 0.24,
 	override.hc = NA){
 
 	#default heatmap fill gradient
@@ -518,32 +518,32 @@ ggheat.continuous.single<-function(eset,
 		hmcolors<-function(... ) scale_fill_gradient2(low = "blue", mid = "white",
        high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
 	}
-	
+
 	col_legend_vec<-merge_labels(col_legend)
 	col_values<-col_legend_vec$col_values
 	col_breaks<-col_legend_vec$col_breaks
 	col_labels<-col_legend_vec$col_labels
 
-	p1<-ggheat.continuous(eset, 
+	p1<-ggheat.continuous(eset,
 		hc, #hcopt for column leave NA for no ordering
 		hr, #hcopt for row leave NA for no ordering
 		hmcolors,
-		col_lab, 
+		col_lab,
 		col_values,
-		col_breaks, 
+		col_breaks,
 		col_labels,
 		ylabstr,
 		type="regular",
 		fout =NA,
 		p.heights,
 		xsize,
-		ysize, 
+		ysize,
 		ysizelab,
 		override.hc
 		)
 
-	pcol.legend<-make_legend_list(col_legend, 
-		legend.key.size =  unit(0.2, "in"), 
+	pcol.legend<-make_legend_list(col_legend,
+		legend.key.size =  unit(0.2, "in"),
 		legend.text = element_text(size=10),
 		legend.title = element_text(colour = 'black', face = "bold", size = 10))
 
@@ -565,18 +565,18 @@ ggheat.continuous.single<-function(eset,
 }
 
 #' \code{ggheat.continuous.group} ggheatmap function for plotting groups of esets, within-group column clustering
-#' @param esetlist list of expression sets, see ?heatmap.make.groups for preprocessing 
+#' @param esetlist list of expression sets, see ?heatmap.make.groups for preprocessing
 #' @param	hclist list of column clustering from hclust or hcopt
 #' @param	hrlist list of row clustering from hclust or hcopt
-#' @param	hmcolors function for heatmap color gradient, default: 
-#'  hmcolors<-function(... ) scale_fill_gradient2(low = "blue", 
+#' @param	hmcolors function for heatmap color gradient, default:
+#'  hmcolors<-function(... ) scale_fill_gradient2(low = "blue",
 #'	mid = "white", high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
 #' @param	hmtitle title of heatmap color label, default: "expression"
-#' @param	col_lab column color label to display, one or more of columns of pData(eset) 
+#' @param	col_lab column color label to display, one or more of columns of pData(eset)
 #' @param	col_legend named list of column color legends, names correspond to col_lab, see format:
 #' col_legend<-list(COL1 = list(col_breaks = COL1levels,
 #'								col_values = brewer.pal(length(COL1levels),"Set1"),
-#'								col_labels = COL1levels), 
+#'								col_labels = COL1levels),
 #'		COL2 = list(col_breaks = COL2levels,
 #'								col_values = brewer.pal(length(COL2levels),"Set2"),
 #'								col_labels = COL2levels))
@@ -591,55 +591,55 @@ ggheat.continuous.single<-function(eset,
 #' @examples
 #' data(tcga.subset.400g.200s)
 #' dat
-#' 
+#'
 #' subtypelevels<-levels(dat$subtype)
-#' 
-#' grps<-ggheat.make.groups(eset = dat, 
+#'
+#' grps<-ggheat.make.groups(eset = dat,
 #' 	labelcol = "subtype",  #column name for grouping in pData(eset)
 #' 	labelvals = subtypelevels, #values to group on (e.g. factor levels of pData(eset)[, labelcol])
 #' 	clustFUN = clust_eset #clustering function for eset
 #' 	)
-#' 
+#'
 #' col_legend<-list(subtype = list(col_breaks = subtypelevels,
 #' 		col_values = brewer.pal(length(subtypelevels),"Set1"),
 #' 		col_labels = subtypelevels))
-#' 
+#'
 #' esetlist<-lapply(grps$esetlist, function(i) scale_row(i))
-#' 
+#'
 #' hmcolors<-function(... ) scale_fill_gradient2(low = "blue", mid = "white",
 #'        high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
-#' 
-#' p<-ggheat.continuous.group(esetlist, 
-#' 	grps$hclist, 
-#' 	grps$hrlist, 
+#'
+#' p<-ggheat.continuous.group(esetlist,
+#' 	grps$hclist,
+#' 	grps$hrlist,
 #' 	hmcolors,
 #' 	hmtitle = "row-zscore GE",
-#' 	col_lab = "subtype", 
+#' 	col_lab = "subtype",
 #' 	col_legend = col_legend,
 #' 	ylabstr = "",
-#' 	fout  = NA, 
+#' 	fout  = NA,
 #' 	p.heights = c(1.5, 0.5, 5),
 #' 	xsize = 0,
-#' 	ysize = 0, 
+#' 	ysize = 0,
 #' 	ysizelab = 7,
-#' 	xleft = 0.10, 
+#' 	xleft = 0.10,
 #' 	xright = 0.24)
-#' 
+#'
 #' @export
-ggheat.continuous.group<-function(esetlist, 
-	hclist, 
-	hrlist, 
+ggheat.continuous.group<-function(esetlist,
+	hclist,
+	hrlist,
 	hmcolors,
 	hmtitle = "expression",
-	col_lab, 
+	col_lab,
 	col_legend,
 	ylabstr = "",
-	fout, 
+	fout,
 	p.heights = c(1.5, 0.5, 5),
 	xsize = 4,
-	ysize = 4, 
+	ysize = 4,
 	ysizelab = 7,
-	xleft = 0.15, 
+	xleft = 0.15,
 	xright = 0.24){
 
 	n<-length(esetlist)
@@ -655,46 +655,46 @@ ggheat.continuous.group<-function(esetlist,
 		hmcolors<-function(... ) scale_fill_gradient2(low = "blue", mid = "white",
        high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
 	}
-	
+
 	col_legend_vec<-merge_labels(col_legend)
 	col_values<-col_legend_vec$col_values
 	col_breaks<-col_legend_vec$col_breaks
 	col_labels<-col_legend_vec$col_labels
 
-	p1<-ggheat.continuous(esetlist[[1]], 
+	p1<-ggheat.continuous(esetlist[[1]],
 		hclist[[1]], #hcopt for column leave NA for no ordering
 		hrlist[[1]], #hcopt for row leave NA for no ordering
 		hmcolors,
-		col_lab, 
+		col_lab,
 		col_values,
-		col_breaks, 
+		col_breaks,
 		col_labels,
 		ylabstr,
 		type="left",
 		fout =NA,
 		p.heights,
 		xsize,
-		ysize, 
+		ysize,
 		ysizelab
 		)
 
 	nmid<-0
 
 	pmid<-lapply(2:n, function(i){
-		ggheat.continuous(esetlist[[i]], 
+		ggheat.continuous(esetlist[[i]],
 		hclist[[i]], #hcopt for column leave NA for no ordering
 		hrlist[[i]], #hcopt for row leave NA for no ordering
 		hmcolors,
-		col_lab, 
+		col_lab,
 		col_values,
-		col_breaks, 
+		col_breaks,
 		col_labels,
 		ylabstr,
 		type ="middle",
-		fout =NA, 
+		fout =NA,
 		p.heights,
 		xsize,
-		ysize, 
+		ysize,
 		ysizelab)
 		})
 
@@ -709,8 +709,8 @@ ggheat.continuous.group<-function(esetlist,
 	f1<-(n1/ntot)*xrem
 	fmid<-sapply(nmid, function(i) (i/ntot)*xrem)
 
-	pcol.legend<-make_legend_list(col_legend, 
-		legend.key.size =  unit(0.2, "in"), 
+	pcol.legend<-make_legend_list(col_legend,
+		legend.key.size =  unit(0.2, "in"),
 		legend.text = element_text(size=10),
 		legend.title = element_text(colour = 'black', face = "bold", size = 10))
 	clow<-min(unlist(lapply(esetlist, function(i){
