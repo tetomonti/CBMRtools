@@ -291,6 +291,8 @@ ggheat.continuous<-function(eset,
 	#quick fix to avoid bug in ordering
 	rn<-rownames(mat)
 	cn<-colnames(mat)
+	if(is.null(rn)) rn <-1:nrow(mat)
+	if(is.null(cn)) cn <-1:ncol(mat)
 	rownames(matcopy)<-paste("R", rn, sep = "")
 	colnames(matcopy)<-paste("C", cn, sep = "")
 	matcopy<-matcopy[row_ord, col_ord]
@@ -327,7 +329,6 @@ ggheat.continuous<-function(eset,
 		scfill<-hmcolors(guide = guide_legend(title = ""))
 
 	p<-ggplot(dt, aes(Var2,y=Var1, fill = value ))+
-		#aes(Var2,y=Var1, fill = value )+
 		geom_tile( size=1) +
 		scfill + 
 		theme(axis.text.x = element_text(angle = 90, size = xsize, hjust = 1, 
