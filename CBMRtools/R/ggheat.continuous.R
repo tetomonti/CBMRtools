@@ -176,7 +176,8 @@ clust_eset<-function(eset){
 ggheat.make.groups<-function(eset,
 	labelcol,  #column name for grouping in pData(eset)
 	labelvals, #values to group on (e.g. factor levels of pData(eset)[, labelcol])
-	clustFUN #clustering output for eset
+	clustFUN, #clustering output for eset
+	fixRowOrd = TRUE
 	){
 
 	#recommended fix to keep horizontal alignment
@@ -198,8 +199,15 @@ ggheat.make.groups<-function(eset,
 		i$eseti)
 	hclist<-lapply(reslist, function(i)
 		i$clusti$hc)
+
 	hrlist<-lapply(reslist, function(i)
 		i$clusti$hr)
+
+	if(fixRowOrd){
+		##fixed row clustering for all samples
+		hr.all<-clustFUN(eset)$hr
+		hrlist<-lapply(1:length(labelvals), function(i){hr.all})
+	}
 
 	return(list(esetlist = esetlist, hclist = hclist, hrlist = hrlist))
 }
