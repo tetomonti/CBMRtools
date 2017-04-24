@@ -7,7 +7,7 @@
 ggheat.continuous.single(eset, hc, hr, hmcolors = NA,
   hmtitle = "expression", col_lab, col_legend, ylabstr = "", fout = NA,
   p.heights = c(1.5, 0.5, 5), xsize = 4, ysize = 4, ysizelab = 7,
-  xright = 0.24)
+  xright = 0.24, override.hc = NA)
 }
 \arguments{
 \item{eset}{expression set}
@@ -16,8 +16,8 @@ ggheat.continuous.single(eset, hc, hr, hmcolors = NA,
 
 \item{hr}{row clustering from hclust or hcopt}
 
-\item{hmcolors}{function for heatmap color gradient, default: 
- hmcolors<-function(... ) scale_fill_gradient2(low = "blue", 
+\item{hmcolors}{function for heatmap color gradient, default:
+ hmcolors<-function(... ) scale_fill_gradient2(low = "blue",
 mid = "white", high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)}
 
 \item{hmtitle}{title of heatmap color label, default: "expression"}
@@ -27,7 +27,7 @@ mid = "white", high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)}
 \item{col_legend}{named list of column color legends, names correspond to col_lab, see format:
 col_legend<-list(COL1 = list(col_breaks = COL1levels,
                             col_values = brewer.pal(length(COL1levels),"Set1"),
-                            col_labels = COL1levels), 
+                            col_labels = COL1levels),
     COL2 = list(col_breaks = COL2levels,
                             col_values = brewer.pal(length(COL2levels),"Set2"),
                             col_labels = COL2levels))}
@@ -67,7 +67,7 @@ subtypelevels<-levels(dat$subtype)
 #color legends for column labels
 col_legend<-list(subtype = list(col_breaks = subtypelevels,
 		col_values = brewer.pal(length(subtypelevels),"Set1"),
-		col_labels = subtypelevels), 
+		col_labels = subtypelevels),
 		hclust.groups = list(col_breaks = levels(pData(dat)$hclust.groups),
 		col_values = sapply(c("pink", "orange", "yellow", "cyan"), to.hex),
 		col_labels = levels(pData(dat)$hclust.groups)))
@@ -76,18 +76,18 @@ col_legend<-list(subtype = list(col_breaks = subtypelevels,
 hmcolors<-function(... ) scale_fill_gradient2(low = "blue", mid = "white",
        high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
 
-p<-ggheat.continuous.single(eset = dat.scaled, 
-	hc = hc$hc, 
-	hr = hc$hr, 
+p<-ggheat.continuous.single(eset = dat.scaled,
+	hc = hc$hc,
+	hr = hc$hr,
 	hmcolors = hmcolors,
 	hmtitle = "row-zscore GE",
-	col_lab = c("subtype", "hclust.groups"), 
+	col_lab = c("subtype", "hclust.groups"),
 	col_legend = col_legend,
 	ylabstr = "",
-	fout = NA, 
+	fout = NA,
 	p.heights = c(1.5, 0.5, 5),
 	xsize = 0,
-	ysize = 0, 
+	ysize = 0,
 	ysizelab = 7,
 	xright = 0.18)
 }

@@ -191,11 +191,11 @@ plot.norm <- function( n=1000, mean=0, sd=1, add=F, lty="solid", ...)
   }
 }
 #' @export
-plot.distn <- function( qfun, dfun, n, lty=1, add=FALSE, xlab=NULL, ylab=NULL, main=NULL, ... ) 
+plot.distn <- function( qfun, dfun, n, lty=1, add=FALSE, xlab=NULL, ylab=NULL, main=NULL, ... )
 {
   p <- (1:(n-1))/n
   q <- qfun(p,...)
-  
+
   if ( add )
     lines( q, dfun(q,...), lty=lty )
   else
@@ -220,7 +220,7 @@ cumineq <- function( prm, obs, dir=1, debug=F )
   ##
   prm <- prm[p.ord]
   obs <- obs[o.ord]
-  
+
   u.obs <- unique(obs)
   cup <- c(prm,u.obs)
   cup <- cup[order(if (dir==1) cup else -cup)]
@@ -228,7 +228,7 @@ cumineq <- function( prm, obs, dir=1, debug=F )
 
   ## return values sorted according to original order (o.rnk)
   ##
-  return ( if (debug) 
+  return ( if (debug)
              cbind( prm[o.rnk], obs[o.rnk], fp[o.rnk] )
            else
              fp[o.rnk] )
@@ -238,7 +238,7 @@ pval2fdr <- function( p, monotone=T, nh=length(p), na.rm=F )
 {
   if (length(p)==1)
     return(p)
-  
+
   if (nh<length(p)) warning( "nh<length(p)" )
 
   na.idx <- is.na(p)
@@ -256,7 +256,7 @@ pval2fdr <- function( p, monotone=T, nh=length(p), na.rm=F )
   fdr[fdr>1] <- 1
   fdr <- fdr[rank(p)]
   names(fdr) <- names(p)
-  
+
   if ( any(na.idx) ) {
     tmp <- rep(NA,length(na.idx))
     tmp[!na.idx] <- fdr
@@ -295,7 +295,7 @@ upper.case <- function( X )
 load.var <- function(file,verbose=F)
 {
   ## load a variable stored in an R-binary file
-  
+
   varlist <- c(ls(),"varlist")
   load(file=file)
   if ( length(setDiff <- setdiff(ls(),varlist))>1 ) stop( "loading more than one variable" )
@@ -357,7 +357,7 @@ repmat <- function(MX,MARGIN=2,n,each=FALSE)
   else if ( MARGIN==2 )
     return(MX[idx,])
   else
-    stop("MARGIN:",MARGIN) 
+    stop("MARGIN:",MARGIN)
 }
 which.2D <- function( x )
 {
@@ -383,7 +383,7 @@ read.delim.wsave <- function(file,do.save=T,force.read=F,verbose=T,ext=".RData",
   binfile <- paste(file.stub(file),ext,sep="")
   binfo <- file.info(binfile)
   finfo <- file.info(file)
-  
+
   #if ( !force.read && file.access(binfile,mode=4)[1]==0 )
   if ( !force.read && !is.na(binfo$size) && binfo$mtime>finfo$mtime )
   {
@@ -412,7 +412,7 @@ my.write.matrix <- function ( x, file = "", sep = "\t",
                               justify = c( "none", "left", "right"),
                               pval=NULL,
                               newline="\n",
-                              names=NULL ) 
+                              names=NULL )
 {
   justify = match.arg( justify )
   x <- as.matrix(x)
@@ -461,7 +461,7 @@ interleave <- function(n,m)
   ##    1,2,3,..n,n+1,n+2,2n,..,(m-1)*n+1,..,m*n
   ## after interleaving:
   ##    1,n+1,2n+1,..,(m-1)n+1, 2,n+2,..,(m-1)n+2,..,n, n+n,2n+n,..,(m-1)n+n
-  ## 
+  ##
   inc <- rep(n*(0:(m-1)),n)
   rep(1:n,each=m)+inc
 }
@@ -518,11 +518,11 @@ table2list <- function( tab, header=TRUE, fill=NA )
 ## write.table wrapper that adds a column header to row names column, if specified
 ##
 #' @export
-my.write.table <- function(x, file="", append=F, sep="\t", row.names=T, col.names=T, names=NULL, dec=".", 
+my.write.table <- function(x, file="", append=F, sep="\t", row.names=T, col.names=T, names=NULL, dec=".",
                            quote=F, eol="\n", na="NA", qmethod=c("escape", "double"), fileEncoding="",newline=0)
 {
   qmethod <- match.arg(qmethod)
-  
+
   if ( !is.null(names) ) {
     cat(names,sep,sep="",file=file,append=append)
     append <- TRUE
@@ -532,7 +532,7 @@ my.write.table <- function(x, file="", append=F, sep="\t", row.names=T, col.name
   if (newline>0) {
     cat( paste(rep("\n",newline),collapse=""), file=file, append=TRUE )
   }
-} 
+}
 list.append <- function( LIST, item, name=NULL )
 {
   length(LIST) <- length(LIST)+1
@@ -541,15 +541,15 @@ list.append <- function( LIST, item, name=NULL )
   LIST
 }
 #' @export
-col.gradient <- function( cols, length, cmax=255 )
+colGradient <- function( cols, length, cmax=255 )
 {
   ## e.g., to create a white-to-red gradient with 10 levels
   ##
-  ##   col.gradient(cols=c('white','red'),length=10)
+  ##   colGradient(cols=c('white','red'),length=10)
   ##
   ## or, to create a blue-to-white-to-red gradients with 9 colors (4 blue's, white, 4 red's)
   ##
-  ##   col.gradient(cols=c('blue','white','red'),length=9)
+  ##   colGradient(cols=c('blue','white','red'),length=9)
   ##
   ramp <- colorRamp(cols)
   rgb( ramp(seq(0,1,length=length)), maxColorValue=cmax )
@@ -559,7 +559,7 @@ genName <- function( stub=NULL )
   while ( TRUE ) {
     fname <- paste(stub,format(Sys.time(), "%Y%m%d_%H%M%S"),sep="")
     if ( file.access(fname)!=0 ) break
-  } 
+  }
   fname
 }
 ## map any type of vector (e.g., vector of strings) to a vector of
@@ -611,7 +611,7 @@ hcopt <- function(d, HC=NULL, method = "ward.D", members = NULL)
   if ( is.null(HC) ) {
     HC <- hclust(d,method=method,members=members)
   }
-  ## using optimal ordering only with more than two items 
+  ## using optimal ordering only with more than two items
   if ( length(HC$order)>2 ) {
       ORD <- order.optimal(d,merge=HC$merge)
       HC$merge <- ORD$merge

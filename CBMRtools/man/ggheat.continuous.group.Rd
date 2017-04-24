@@ -16,8 +16,8 @@ ggheat.continuous.group(esetlist, hclist, hrlist, hmcolors,
 
 \item{hrlist}{list of row clustering from hclust or hcopt}
 
-\item{hmcolors}{function for heatmap color gradient, default: 
- hmcolors<-function(... ) scale_fill_gradient2(low = "blue", 
+\item{hmcolors}{function for heatmap color gradient, default:
+ hmcolors<-function(... ) scale_fill_gradient2(low = "blue",
 mid = "white", high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)}
 
 \item{hmtitle}{title of heatmap color label, default: "expression"}
@@ -27,7 +27,7 @@ mid = "white", high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)}
 \item{col_legend}{named list of column color legends, names correspond to col_lab, see format:
 col_legend<-list(COL1 = list(col_breaks = COL1levels,
                             col_values = brewer.pal(length(COL1levels),"Set1"),
-                            col_labels = COL1levels), 
+                            col_labels = COL1levels),
     COL2 = list(col_breaks = COL2levels,
                             col_values = brewer.pal(length(COL2levels),"Set2"),
                             col_labels = COL2levels))}
@@ -57,7 +57,7 @@ dat
 
 subtypelevels<-levels(dat$subtype)
 
-grps<-ggheat.make.groups(eset = dat, 
+grps<-ggheat.make.groups(eset = dat,
 	labelcol = "subtype",  #column name for grouping in pData(eset)
 	labelvals = subtypelevels, #values to group on (e.g. factor levels of pData(eset)[, labelcol])
 	clustFUN = clust_eset #clustering function for eset
@@ -72,20 +72,20 @@ esetlist<-lapply(grps$esetlist, function(i) scale_row(i))
 hmcolors<-function(... ) scale_fill_gradient2(low = "blue", mid = "white",
        high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
 
-p<-ggheat.continuous.group(esetlist, 
-	grps$hclist, 
-	grps$hrlist, 
+p<-ggheat.continuous.group(esetlist,
+	grps$hclist,
+	grps$hrlist,
 	hmcolors,
 	hmtitle = "row-zscore GE",
-	col_lab = "subtype", 
+	col_lab = "subtype",
 	col_legend = col_legend,
 	ylabstr = "",
-	fout  = NA, 
+	fout  = NA,
 	p.heights = c(1.5, 0.5, 5),
 	xsize = 0,
-	ysize = 0, 
+	ysize = 0,
 	ysizelab = 7,
-	xleft = 0.10, 
+	xleft = 0.10,
 	xright = 0.24)
 
 }
