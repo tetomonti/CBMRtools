@@ -150,7 +150,7 @@ write.gct <- function( x, file, binext=".RData", do.save=TRUE, verbose=FALSE )
     stop( "object does not belong to gctdata class" )
   
   cat( "#1.2\n", file=file )
-  cat( paste(dim(x),collapse="\t"), sep="" , "\n", file=file, append=TRUE )
+  cat( paste(dimGctdata(x),collapse="\t"), sep="" , "\n", file=file, append=TRUE )
   cat( paste( c("Name\tDescription",exptnames(x)),collapse="\t"), sep="", "\n",
        file=file, append=TRUE )
   my.write.table(cbind(genenames(x),x@description,x@signal), row.names=FALSE, col.names=FALSE,

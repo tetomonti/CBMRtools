@@ -4,7 +4,7 @@
 \alias{ggheat.make.groups}
 \title{\code{ggheat.make.groups} splits eset into list of esets based on phenotype label, do clustering within groups}
 \usage{
-ggheat.make.groups(eset, labelcol, labelvals, clustFUN)
+ggheat.make.groups(eset, labelcol, labelvals, clustFUN, fixRowOrd = TRUE)
 }
 \arguments{
 \item{eset}{expression set}

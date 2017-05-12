@@ -209,7 +209,7 @@ qmatrix2heatmap <- function
         
         if ( do.heat ) {
             ncolors <- length(fdr)*2+1
-            COL <- col.gradient(c("blue","white","red"),length=ncolors)
+            COL <- colGradient(c("blue","white","red"),length=ncolors)
             
             ## yucky handling of color-coding (but necessary 'cause the default is not smart enough)
             ## (if anybody has a better solution, feel free to amend)
@@ -217,7 +217,7 @@ qmatrix2heatmap <- function
             
             ## add color used for the NA's
             if ( any(is.na(mx)) ) {
-                COL <- c(COL,col.gradient(na.col,1))
+                COL <- c(COL,colGradient(na.col,1))
                 mx01[is.na(mx01)] <- max(mx01,na.rm=TRUE)+1
             }            
             my.heatmap(mx01,Rowv=as.dendrogram(hc.row),Colv=as.dendrogram(hc.col),
@@ -287,7 +287,7 @@ hyper2qmatrix <- function
         if ( do.heat ) {
             ncolors <- length(unique(as.vector(mx01)))
             my.heatmap(mx01,Rowv=as.dendrogram(hc.row),Colv=as.dendrogram(hc.col),scale="none",
-                       col=col.gradient(c("white","red"),length=ncolors),revC=TRUE,...)
+                       col=colGradient(c("white","red"),length=ncolors),revC=TRUE,...)
         }
         if ( do.sort ) {
             mx <- mx[hc.row$order,hc.col$order]
@@ -325,7 +325,7 @@ qmatrix2workbook <- function
     
     levs <- 0:length(fdr); nlevs <- length(levs)
     ncolors <- if ( bi ) length(fdr)*2+1 else length(fdr)+1
-    COL <- col.gradient(col,length=ncolors)
+    COL <- colGradient(col,length=ncolors)
     
     posCol <- if (bi) COL[length(COL):nlevs] else rev(COL)
     negCol <- if (bi) COL[1:nlevs]
@@ -382,7 +382,7 @@ qmatrix2workbook2 <- function
     
     levs <- 0:length(fdr); nlevs <- length(levs)
     ncolors <- if ( bi ) length(fdr)*2+1 else length(fdr)+1
-    COL <- col.gradient(col,length=ncolors)
+    COL <- colGradient(col,length=ncolors)
     
     posCol <- if (bi) COL[length(COL):(nlevs+1)] else rev(COL[-1])
     negCol <- if (bi) COL[1:(nlevs-1)]

@@ -3,7 +3,7 @@
 export(VERBOSE)
 export(cbmGSEA)
 export(clust_eset)
-export(col.gradient)
+export(colGradient)
 export(collapse.probes)
 export(cumineq)
 export(dimGctdata)
