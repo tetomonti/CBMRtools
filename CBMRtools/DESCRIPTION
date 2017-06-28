@@ -21,7 +21,6 @@ Depends:
     survival,
     DESeq2
 Imports:
-    XLConnect,
     data.table,
     oligo,
     oligoClasses
