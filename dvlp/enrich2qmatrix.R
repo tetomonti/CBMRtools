@@ -20,7 +20,11 @@ cbmGSEA2qmatrix <- function
     na.col="gray",   # color for missing values in the heatmap
     verbose=TRUE,    # verbose output
     outfile=NULL,    # save qmatrix output to workbook file
-    sheetName="sheet1", # add a new worksheet to workboo
+    sheetName="sheet1", # add a new worksheet to workbook
+    annotation_col=NULL, # data frame of GSEA result annotations
+    annotation_row=NULL, # data frame of pathway annotations
+    annotation_colors=NULL, # List of names colors for annotations
+    aggMethod=c("ward.D2","ward.D","single","complete","average","mcquitty","median","centroid"),
     ...              # extra arguments to my.heatmap
 )
 {
@@ -69,7 +73,7 @@ cbmGSEA2qmatrix <- function
     
     if ( !is.null(outfile) )
     {
-        out <- qmatrix2workbook(q2h$mx,fdr=fdr,col=c("blue","white","red"), sheetName = sheetName, outfile = outfile)
+        out <- qmatrix2workbook(q2h$mx,q2h$mx01,fdr=fdr,col=c("blue","white","red"), sheetName = sheetName, outfile = outfile)
         saveWorkbook(out,file=outfile,overwrite=TRUE)
         VERBOSE(verbose,"Workbook saved to '",outfile,"'\n",sep="")
     }
@@ -161,12 +165,12 @@ qmatrix2heatmap <- function
     rm.zero=TRUE,   # remove genesets/rows w/ no hits
     verbose=TRUE,   # extra arguments to my.heatmap
                     # hclust methods
-    method=c("ward.D","ward.D2","single","complete","average","mcquitty","median","centroid"),
+    aggMethod=c("ward.D2","ward.D","single","complete","average","mcquitty","median","centroid"),
     na.col="gray",  # color for missing values in the heatmap
     ...
 )
 {
-    method <- match.arg(method)
+    aggMethod <- match.arg(aggMethod)
     
     levs <- 0:length(fdr)
     zero <- -0.000001
@@ -188,6 +192,7 @@ qmatrix2heatmap <- function
             VERBOSE(verbose, "Removed",sum(!rm.idx),"non-significant genesets.\n")
         }
     }
+    heat <- NULL
     ## sort rows and columns by HC
     if ( do.sort || do.heat )
     {
@@ -204,31 +209,41 @@ qmatrix2heatmap <- function
         if( rmC > 0 ){
             VERBOSE(verbose, "Removed", rmC ,"genesets due to no overlap with another gene set(s).\n")
         }
-        hc.row <- hcopt(dist.row,method=method)
-        hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=method)
+        hc.row <- hcopt(dist.row,method=aggMethod)
+        hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=aggMethod)
         
         if ( do.heat ) {
-            ncolors <- length(fdr)*2+1
-            COL <- colGradient(c("blue","white","red"),length=ncolors)
             
-            ## yucky handling of color-coding (but necessary 'cause the default is not smart enough)
-            ## (if anybody has a better solution, feel free to amend)
-            COL <- COL[sort(unique(as.vector(mx01)))+levs[length(levs)]+1]
+            mxMin <- min(mx01, na.rm = T)
+            mxMax <- max(mx01, na.rm = T)
+            mxU <- seq(mxMin, mxMax, by = 1)
+ 
+            mxAbsMax <- max(abs(mxU))
+            ncolors <- mxAbsMax*2+1
             
-            ## add color used for the NA's
-            if ( any(is.na(mx)) ) {
-                COL <- c(COL,colGradient(na.col,1))
-                mx01[is.na(mx01)] <- max(mx01,na.rm=TRUE)+1
-            }            
-            my.heatmap(mx01,Rowv=as.dendrogram(hc.row),Colv=as.dendrogram(hc.col),
-                       scale="none",col=COL,revC=TRUE,...)
+            COL <- col.gradient(c("blue","white","red"),length=ncolors)
+            names(COL) <- as.character(seq(-mxAbsMax, mxAbsMax, by = 1))
+            COL <- COL[names(COL) %in% mxU]
+  
+            
+            # Create heatmap
+          heat <- pheatmap(mx01,
+                     color = COL,
+                     cluster_rows = hc.row,
+                     cluster_col = hc.col,
+                     annotation_col = annotation_col,
+                     annotation_row = annotation_row,
+                     annotation_colors = annotation_colors,
+                     legend = FALSE
+                     )
+
         }
         if ( do.sort ) {
             mx <- mx[hc.row$order,hc.col$order]
             mx01 <- mx01[hc.row$order,hc.col$order]
         }
     }
-    return( list(mx=mx,mx01=mx01) )
+    return( list(mx=mx,mx01=mx01,heat=heat) )
 }
 #######################################################################
 ## function: HYPER 2 QMATRIX
@@ -245,7 +260,7 @@ hyper2qmatrix <- function
     do.heat=FALSE,  # display heatmap
     rm.zero=TRUE,   # remove genesets/rows w/ no hits
                     # hclust methods
-    method=c("ward.D","ward.D2","single","complete","average","mcquitty","median","centroid"),
+    aggMethod=c("ward.D2","ward.D","single","complete","average","mcquitty","median","centroid"),
     outfile=NULL,   # save qmatrix output to workbook file
     ...             # extra arguments to my.heatmap
 )
@@ -281,13 +296,13 @@ hyper2qmatrix <- function
     }
     ## sort rows and columns by HC
     if ( do.sort || do.heat ) {
-        hc.col <- hcopt(dist(t(mx01),method="euclidean"),method="ward.D")
-        hc.row <- hcopt(dist(mx01,method="euclidean"),method="ward.D")
+        hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=aggMethod)
+        hc.row <- hcopt(dist(mx01,method="euclidean"),method=aggMethod)
 
         if ( do.heat ) {
             ncolors <- length(unique(as.vector(mx01)))
             my.heatmap(mx01,Rowv=as.dendrogram(hc.row),Colv=as.dendrogram(hc.col),scale="none",
-                       col=colGradient(c("white","red"),length=ncolors),revC=TRUE,...)
+                       col=col.gradient(c("white","red"),length=ncolors),revC=TRUE,...)
         }
         if ( do.sort ) {
             mx <- mx[hc.row$order,hc.col$order]
@@ -312,58 +327,115 @@ hyper2qmatrix <- function
 qmatrix2workbook <- function
 (
     qmatrix,        # matrix of signed q-values
+    imatrix,        # matrix of signed integers
     fdr=c(.05,.01), # FDR thresholds (must be in decreasing order)
     col=c("blue","white","red"),
     fcol="black",    # font color
     sheetName,
-    outfile
+    outfile,
+    ...
 )
 {
-    bi <- any(qmatrix<0)        # bi- or uni-directional q-values?
-    if ( !bi && length(col)>2 ) # two colors expected when qmatrix is uni-directional
-        warning( "more than two colors input with unidirectional qmatrix?" )
+  
     
-    levs <- 0:length(fdr); nlevs <- length(levs)
-    ncolors <- if ( bi ) length(fdr)*2+1 else length(fdr)+1
-    COL <- colGradient(col,length=ncolors)
+    # Get start row
+    startRow=1
+    if(!is.null(annotation_col)){
+      startRow = 2+ncol(annotation_col)
+      cNames <- colnames(annotation_col)
+      annotation_col<- as.data.frame(annotation_col[colnames(qmatrix),])
+      rownames(annotation_col) <- colnames(qmatrix); colnames(annotation_col) <- cNames
+    }
     
-    posCol <- if (bi) COL[length(COL):nlevs] else rev(COL)
-    negCol <- if (bi) COL[1:nlevs]
+    # Get start column
+    startCol=1
+    if(!is.null(annotation_row)){
+      startCol = 2+ncol(annotation_row)
+      cNames <- colnames(annotation_row)
+      annotation_row<- as.data.frame(annotation_row[rownames(qmatrix),])
+      rownames(annotation_row) <- rownames(qmatrix); colnames(annotation_row) <- cNames
+    }
     
-    shName <- sheetName
+    
+    # Write data
     if(file.exists(outfile)){
       wb <- loadWorkbook(outfile)
       shNames <- names(wb)
-      if(shName %in% shNames){
-        removeWorksheet(wb, shName)
+      if(sheetName %in% shNames){
+        removeWorksheet(wb, sheetName)
       }
       
     } else {
       wb <- createWorkbook()
     }
-    addWorksheet(wb,shName)
-    writeData(wb,shName,qmatrix,startCol=1,startRow=1,rowNames=TRUE)
+    addWorksheet(wb,sheetName)
+    
+    # Write row names and column names
+    writeData(wb,sheetName,rownames(qmatrix),startCol=1,startRow=startRow+1, colNames = F, rowNames = F)
+    writeData(wb,sheetName,t(colnames(qmatrix)),startCol=startCol+1,startRow=1, colNames = F, rowNames = F)
+    
+    # Write data
+    writeData(wb,sheetName,qmatrix,startCol=startCol + 1,startRow=startRow + 1, colNames = F, rowNames = F)
+    
+    # Add colors to fill in heatmap
+    mxMin <- min(imatrix, na.rm = T)
+    mxMax <- max(imatrix, na.rm = T)
+    mxU <- seq(mxMin, mxMax, by = 1)
+    
+    mxAbsMax <- max(abs(mxU))
+    ncolors <- mxAbsMax*2+1
+    
+    COL <- col.gradient(col,length=ncolors)
+    names(COL) <- as.character(seq(-mxAbsMax, mxAbsMax, by = 1))
+    COL <- COL[names(COL) %in% mxU]
 
-    ## handling of the positive q-values
-    ##
-    fdr <- c(0.0,rev(fdr))
-    if( length(fdr)!=length(posCol) ) stop( "length(fdr)!=length(posCol)" )
-    for ( i in 1:length(fdr) )
+    ## Fill in colors based on significance
+    for ( i in 1:length(COL) )
     {
-        colInd <- which(qmatrix>fdr[i], arr.ind=TRUE)+1  
+        colInd <- which(imatrix == as.numeric(names(COL)[i]), arr.ind=TRUE) 
+        colInd[,1] <- colInd[,1] + startRow
+        colInd[,2] <- colInd[,2] + startCol
         if ( length(colInd)>0 ){
-            addStyle(wb, shName, style=createStyle(fgFill=posCol[i]), rows=colInd[,1], cols=colInd[,2])
+            addStyle(wb, sheetName, style=createStyle(fgFill=COL[i]), rows=colInd[,1], cols=colInd[,2])
         }
     }
-    ## if bi-directional, handling of the negative q-values
-    ##
-    if ( bi ) for ( i in 1:length(fdr) )
-    {
-        colInd <- which(qmatrix < -fdr[i], arr.ind=TRUE)+1  
-        if ( length(colInd)>0 ){
-            addStyle(wb, shName, style=createStyle(fgFill=negCol[i]), rows=colInd[,1], cols=colInd[,2])
+    
+    # Add values to row annotation
+    if(!is.null(annotation_row)){
+      writeData(wb,sheetName,annotation_row,startCol=startCol,startRow=startRow,rowNames=FALSE)
+      if(!is.null(annotation_colors)){
+        for(i in 1:ncol(annotation_row)){
+          anCol <- annotation_colors[[colnames(annotation_row)[i]]]
+          for(j in 1:length(anCol)){
+            rowInd <- which(annotation_row[,i] == names(anCol)[j]) + startRow
+            if ( length(rowInd)>0 ){
+              addStyle(wb, sheetName, style=createStyle(fgFill=anCol[j]), rows=rowInd, cols=(startCol + (i-1)))
+            }
+          }
         }
+      }
     }
+    
+    # Add values to column annotation
+    if(!is.null(annotation_col)){
+      writeData(wb,sheetName, t(annotation_col),startCol=startCol+1, startRow=i+1, colNames = F, rowNames = F)
+      writeData(wb,sheetName, colnames(annotation_col), startCol=startCol+nrow(annotation_col)+1, startRow=i+1, colNames = F, rowNames = F)
+      if(!is.null(annotation_colors)){
+        for(i in 1:ncol(annotation_col)){
+          anCol <- annotation_colors[[colnames(annotation_col)[i]]]
+          for(j in 1:length(anCol)){
+            colInd <- which(annotation_col[,i] == names(anCol)[j]) + startCol
+            if ( length(colInd)>0 ){
+              addStyle(wb, sheetName, style=createStyle(fgFill=anCol[j]), rows=i+1, cols=colInd)
+            }
+          }
+        }
+      }
+    }
+    
+    # Freeze header cells
+    freezePane(wb, sheetName, firstActiveRow = startRow+1, firstActiveCol = startCol+1)
+    
     return( wb )
 }
 ## this was an alternative version
@@ -382,7 +454,7 @@ qmatrix2workbook2 <- function
     
     levs <- 0:length(fdr); nlevs <- length(levs)
     ncolors <- if ( bi ) length(fdr)*2+1 else length(fdr)+1
-    COL <- colGradient(col,length=ncolors)
+    COL <- col.gradient(col,length=ncolors)
     
     posCol <- if (bi) COL[length(COL):(nlevs+1)] else rev(COL[-1])
     negCol <- if (bi) COL[1:(nlevs-1)]
