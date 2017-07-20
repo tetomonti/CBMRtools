@@ -24,6 +24,9 @@ cbmGSEA2qmatrix <- function
     annotation_col=NULL, # data frame of GSEA result annotations
     annotation_row=NULL, # data frame of pathway annotations
     annotation_colors=NULL, # List of names colors for annotations
+    show_row_labels = TRUE, # Whether or not to show gene set labels in heatmap (they are often v long)
+    row_label_size = 10, # Numeric argument for row label size
+    col_label_size = 10, # Numeric argument for col label size
     aggMethod=c("ward.D2","ward.D","single","complete","average","mcquitty","median","centroid"),
     ...              
 )
@@ -69,7 +72,7 @@ cbmGSEA2qmatrix <- function
         mx <- absMX
         VERBOSE(verbose, " done, min(fdr):", min(abs(mx),na.rm=TRUE), "max(fdr):", max(mx,na.rm=TRUE),"\n")
     }
-    q2h <- qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,rm.zero=rm.zero,na.col=na.col,annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, aggMethod = aggMethod, ...)
+    q2h <- qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,rm.zero=rm.zero,na.col=na.col,annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, aggMethod = aggMethod, show_row_labels = show_row_labels, row_label_size = row_label_size, col_label_size = col_label_size, ...)
     
     if ( !is.null(outfile) )
     {
@@ -170,6 +173,9 @@ qmatrix2heatmap <- function
     annotation_col=NULL, # data frame of GSEA result annotations
     annotation_row=NULL, # data frame of pathway annotations
     annotation_colors=NULL, # List of names colors for annotations
+    show_row_labels = TRUE,
+    row_label_size = 10,
+    col_label_size = 10,
     ...
 )
 {
@@ -228,17 +234,19 @@ qmatrix2heatmap <- function
             COL <- col.gradient(c("blue","white","red"),length=ncolors)
             names(COL) <- as.character(seq(-mxAbsMax, mxAbsMax, by = 1))
             COL <- COL[names(COL) %in% mxU]
-  
             
             # Create heatmap
-          heat <- pheatmap(mx01,
+            heat <- pheatmap(mx01,
                      color = COL,
                      cluster_rows = hc.row,
                      cluster_col = hc.col,
                      annotation_col = annotation_col,
                      annotation_row = annotation_row,
                      annotation_colors = annotation_colors,
-                     legend = FALSE
+                     legend = FALSE,
+                     show_rownames = show_row_labels,
+                     fontsize_row = row_label_size,
+                     fontsize_col = col_label_size
                      )
 
         }
@@ -271,6 +279,9 @@ hyper2qmatrix <- function
     annotation_col=NULL, # data frame of GSEA result annotations
     annotation_row=NULL, # data frame of pathway annotations
     annotation_colors=NULL, # List of names colors for annotations
+    show_row_labels = TRUE,
+    row_label_size = 10,
+    col_label_size = 10,
     ...             
 )
 {
@@ -300,7 +311,7 @@ hyper2qmatrix <- function
       mx <- absMX
       VERBOSE(verbose, " done, min(fdr):", min(abs(mx),na.rm=TRUE), "max(fdr):", max(mx,na.rm=TRUE),"\n")
     }
-    q2h <- qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,rm.zero=rm.zero,na.col=na.col,annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, aggMethod = aggMethod, ...)
+    q2h <- qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,rm.zero=rm.zero,na.col=na.col,annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, aggMethod = aggMethod, show_row_labels = show_row_labels, row_label_size = row_label_size, col_label_size = col_label_size, ...)
     
     if ( !is.null(outfile) )
     {
