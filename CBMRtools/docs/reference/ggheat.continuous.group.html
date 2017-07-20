@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ggheat.continuous.group <U+2014> ggheat.continuous.group <e2><80><a2> CBMRtools</title>
+<title><code>ggheat.continuous.group</code> ggheatmap function for plotting groups of esets, within-group column clustering <U+2014> ggheat.continuous.group <e2><80><a2> CBMRtools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -23,9 +23,10 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -51,6 +52,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="..//index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -68,59 +75,90 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>ggheat.continuous.group</h1>
+    <h1><code>ggheat.continuous.group</code> ggheatmap function for plotting groups of esets, within-group column clustering</h1>
     </div>
 
     
     <p><code>ggheat.continuous.group</code> ggheatmap function for plotting groups of esets, within-group column clustering</p>
     
 
-    <pre><span class='fu'>ggheat.continuous.group</span>(<span class='no'>esetlist</span>, <span class='no'>hclist</span>, <span class='no'>hrlist</span>, <span class='no'>hmcolors</span>,
+    <pre class="usage"><span class='fu'>ggheat.continuous.group</span>(<span class='no'>esetlist</span>, <span class='no'>hclist</span>, <span class='no'>hrlist</span>, <span class='no'>hmcolors</span>,
   <span class='kw'>hmtitle</span> <span class='kw'>=</span> <span class='st'>"expression"</span>, <span class='no'>col_lab</span>, <span class='no'>col_legend</span>, <span class='kw'>ylabstr</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>fout</span>,
   <span class='kw'>p.heights</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1.5</span>, <span class='fl'>0.5</span>, <span class='fl'>5</span>), <span class='kw'>xsize</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>ysize</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>ysizelab</span> <span class='kw'>=</span> <span class='fl'>7</span>,
   <span class='kw'>xleft</span> <span class='kw'>=</span> <span class='fl'>0.15</span>, <span class='kw'>xright</span> <span class='kw'>=</span> <span class='fl'>0.24</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>esetlist</dt>
-      <dd><p>list of expression sets, see ?heatmap.make.groups for preprocessing</p></dd>
-      <dt>hclist</dt>
-      <dd><p>list of column clustering from hclust or hcopt</p></dd>
-      <dt>hrlist</dt>
-      <dd><p>list of row clustering from hclust or hcopt</p></dd>
-      <dt>hmcolors</dt>
-      <dd><p>function for heatmap color gradient, default:
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>esetlist</th>
+      <td><p>list of expression sets, see ?heatmap.make.groups for preprocessing</p></td>
+    </tr>
+    <tr>
+      <th>hclist</th>
+      <td><p>list of column clustering from hclust or hcopt</p></td>
+    </tr>
+    <tr>
+      <th>hrlist</th>
+      <td><p>list of row clustering from hclust or hcopt</p></td>
+    </tr>
+    <tr>
+      <th>hmcolors</th>
+      <td><p>function for heatmap color gradient, default:
  hmcolors&lt;-function(... ) scale_fill_gradient2(low = "blue",
-mid = "white", high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)</p></dd>
-      <dt>hmtitle</dt>
-      <dd><p>title of heatmap color label, default: "expression"</p></dd>
-      <dt>col_lab</dt>
-      <dd><p>column color label to display, one or more of columns of pData(eset)</p></dd>
-      <dt>col_legend</dt>
-      <dd><p>named list of column color legends, names correspond to col_lab, see format:
+mid = "white", high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)</p></td>
+    </tr>
+    <tr>
+      <th>hmtitle</th>
+      <td><p>title of heatmap color label, default: "expression"</p></td>
+    </tr>
+    <tr>
+      <th>col_lab</th>
+      <td><p>column color label to display, one or more of columns of pData(eset)</p></td>
+    </tr>
+    <tr>
+      <th>col_legend</th>
+      <td><p>named list of column color legends, names correspond to col_lab, see format:
 col_legend&lt;-list(COL1 = list(col_breaks = COL1levels,
                             col_values = brewer.pal(length(COL1levels),"Set1"),
                             col_labels = COL1levels),
     COL2 = list(col_breaks = COL2levels,
                             col_values = brewer.pal(length(COL2levels),"Set2"),
-                            col_labels = COL2levels))</p></dd>
-      <dt>ylabstr</dt>
-      <dd><p>y axis title string,</p></dd>
-      <dt>fout</dt>
-      <dd><p>filename to save plot, default NA, save as object, to display to device, use grid.arrange</p></dd>
-      <dt>p.heights</dt>
-      <dd><p>panel heights default c(1.5, 0.5, 5),</p></dd>
-      <dt>xsize</dt>
-      <dd><p>default 4 x axis labels (uses colnames), set to 0 to turn off display</p></dd>
-      <dt>ysize</dt>
-      <dd><p>default 4, y axis labels (uses rownames), set to 0 to turn off display</p></dd>
-      <dt>ysizelab</dt>
-      <dd><p>default 7, text size for y axis title (specified in ylabstr)</p></dd>
-      <dt>xleft</dt>
-      <dd><p>default 0.15, displayed width for left panel + margin as fraction of whole plot width</p></dd>
-      <dt>xright</dt>
-      <dd><p>default 0.24, displayed width for right margin as fraction of whole plot width</p></dd>
-    </dl>
+                            col_labels = COL2levels))</p></td>
+    </tr>
+    <tr>
+      <th>ylabstr</th>
+      <td><p>y axis title string,</p></td>
+    </tr>
+    <tr>
+      <th>fout</th>
+      <td><p>filename to save plot, default NA, save as object, to display to device, use grid.arrange</p></td>
+    </tr>
+    <tr>
+      <th>p.heights</th>
+      <td><p>panel heights default c(1.5, 0.5, 5),</p></td>
+    </tr>
+    <tr>
+      <th>xsize</th>
+      <td><p>default 4 x axis labels (uses colnames), set to 0 to turn off display</p></td>
+    </tr>
+    <tr>
+      <th>ysize</th>
+      <td><p>default 4, y axis labels (uses rownames), set to 0 to turn off display</p></td>
+    </tr>
+    <tr>
+      <th>ysizelab</th>
+      <td><p>default 7, text size for y axis title (specified in ylabstr)</p></td>
+    </tr>
+    <tr>
+      <th>xleft</th>
+      <td><p>default 0.15, displayed width for left panel + margin as fraction of whole plot width</p></td>
+    </tr>
+    <tr>
+      <th>xright</th>
+      <td><p>default 0.24, displayed width for right margin as fraction of whole plot width</p></td>
+    </tr>
+    </table>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -171,7 +209,7 @@ col_legend&lt;-list(COL1 = list(col_breaks = COL1levels,
         <span class='kw'>ysize</span> <span class='kw'>=</span> <span class='fl'>0</span>,
         <span class='kw'>ysizelab</span> <span class='kw'>=</span> <span class='fl'>7</span>,
         <span class='kw'>xleft</span> <span class='kw'>=</span> <span class='fl'>0.10</span>,
-        <span class='kw'>xright</span> <span class='kw'>=</span> <span class='fl'>0.24</span>)</div><img src='ggheat.continuous.group-4.png' alt='' width='540' height='400' /><div class='input'>
+        <span class='kw'>xright</span> <span class='kw'>=</span> <span class='fl'>0.24</span>)</div><div class='img'><img src='ggheat.continuous.group-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

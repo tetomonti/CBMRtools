@@ -23,9 +23,10 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -51,6 +52,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="..//index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -76,7 +83,7 @@
 expression set object</p>
     
 
-    <pre><span class='fu'>heatmap.ggplot2</span>(<span class='no'>eSet</span>, <span class='kw'>brewer.pal.name</span> <span class='kw'>=</span> <span class='st'>"RdBu"</span>, <span class='kw'>brewer.pal.rev</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+    <pre class="usage"><span class='fu'>heatmap.ggplot2</span>(<span class='no'>eSet</span>, <span class='kw'>brewer.pal.name</span> <span class='kw'>=</span> <span class='st'>"RdBu"</span>, <span class='kw'>brewer.pal.rev</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>brewer.numColors</span> <span class='kw'>=</span> <span class='fl'>11</span>, <span class='kw'>col.legend.brewer</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>row.legend.brewer</span> <span class='kw'>=</span> <span class='st'>""</span>,
   <span class='kw'>col.clust</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>row.clust</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>col.clust.hc</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
   <span class='kw'>row.clust.hc</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>col.lab</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>row.lab</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>heatmap.y.text</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
@@ -88,66 +95,125 @@ expression set object</p>
   <span class='kw'>grid.widths</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>show</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>eSet</dt>
-      <dd><p>expression set object to plot</p></dd>
-      <dt>brewer.pal.name</dt>
-      <dd><p>name of colorbrewer, see options at RColorBrewer::display.brewer.all()</p></dd>
-      <dt>brewer.pal.rev</dt>
-      <dd><p>reverse colorbrewer (TRUE or FALSE)</p></dd>
-      <dt>brewer.numColors</dt>
-      <dd><p>number of colors for heatmap palette default 11</p></dd>
-      <dt>col.legend.brewer</dt>
-      <dd><p>string vector of hexdecimal values for column labels, see example p3 and p4 for how to determine annotation labels and assigning colors</p></dd>
-      <dt>row.legend.brewer</dt>
-      <dd><p>string vector of hexdecimal values for row labels</p></dd>
-      <dt>col.clust</dt>
-      <dd><p>perform column-wise hierarchical clustering (TRUE or FALSE)</p></dd>
-      <dt>row.clust</dt>
-      <dd><p>perform row-wise hierarchical clustering (TRUE or FALSE)</p></dd>
-      <dt>col.clust.hc</dt>
-      <dd><p>hc object to be passed to as.dendrogram, available when col.clust = TRUE, default NA: hc.col = hcopt(stats::dist(t(x)), method="ward.D")</p></dd>
-      <dt>row.clust.hc</dt>
-      <dd><p>hc object to be passed to as.dendrogram, available when row.clust = TRUE, default NA: hc.row = hcopt(stats::as.dist(1-cor(t(x))),method="ward.D")</p></dd>
-      <dt>col.lab</dt>
-      <dd><p>column labels to include: subset of pData colnames character vector</p></dd>
-      <dt>row.lab</dt>
-      <dd><p>row labels to include: subset of fData colnames character vector</p></dd>
-      <dt>heatmap.y.text</dt>
-      <dd><p>include y axis labels for heatmap, uses rownames(eSet) (TRUE or FALSE)</p></dd>
-      <dt>heatmap.x.text</dt>
-      <dd><p>include x axis labels for heatmap, uses colnames(eSet)) (TRUE or FALSE)</p></dd>
-      <dt>heatmap.y.text.size</dt>
-      <dd><p>text size for y axis labels</p></dd>
-      <dt>heatmap.x.text.size</dt>
-      <dd><p>text size for x axis labels</p></dd>
-      <dt>heatmap.colorlegend.name</dt>
-      <dd><p>name for heatmap color legend</p></dd>
-      <dt>title.text</dt>
-      <dd><p>main title for the plot</p></dd>
-      <dt>col.legend.name</dt>
-      <dd><p>character vector for subset of col.lab to include in color legend</p></dd>
-      <dt>row.legend.name</dt>
-      <dd><p>character vector for subset of row.lab to include in color legend</p></dd>
-      <dt>legend.lab.max.char</dt>
-      <dd><p>number of characters limit for legend labels, default = 15</p></dd>
-      <dt>row.scaling</dt>
-      <dd><p>how should rows be scaled ("none", "quantile", "z-score.all", or "z-score.capped")</p></dd>
-      <dt>z.norm</dt>
-      <dd><p>heatmap colors reflect z-scores rather than original values, can be TRUE if row.scaling is "none"</p></dd>
-      <dt>cuttree.col</dt>
-      <dd><p>number of clusters for columns, default 0: do not show cluster assignment</p></dd>
-      <dt>cuttree.row</dt>
-      <dd><p>number of clusters for rows, default 0: do not show cluster assignment</p></dd>
-      <dt>verbose</dt>
-      <dd><p>return additional clustred annotation information as well as heatmap</p></dd>
-      <dt>grid.heights</dt>
-      <dd><p>numeric vector of length 7 representing heights of subpanels, leave NA for default</p></dd>
-      <dt>grid.widths</dt>
-      <dd><p>numeric vector of length 4 represeting weights of subpanels, leave NA for default</p></dd>
-      <dt>show</dt>
-      <dd><p>prints the heatmap within execution of the function (TRUE or FALSE)</p></dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>eSet</th>
+      <td><p>expression set object to plot</p></td>
+    </tr>
+    <tr>
+      <th>brewer.pal.name</th>
+      <td><p>name of colorbrewer, see options at RColorBrewer::display.brewer.all()</p></td>
+    </tr>
+    <tr>
+      <th>brewer.pal.rev</th>
+      <td><p>reverse colorbrewer (TRUE or FALSE)</p></td>
+    </tr>
+    <tr>
+      <th>brewer.numColors</th>
+      <td><p>number of colors for heatmap palette default 11</p></td>
+    </tr>
+    <tr>
+      <th>col.legend.brewer</th>
+      <td><p>string vector of hexdecimal values for column labels, see example p3 and p4 for how to determine annotation labels and assigning colors</p></td>
+    </tr>
+    <tr>
+      <th>row.legend.brewer</th>
+      <td><p>string vector of hexdecimal values for row labels</p></td>
+    </tr>
+    <tr>
+      <th>col.clust</th>
+      <td><p>perform column-wise hierarchical clustering (TRUE or FALSE)</p></td>
+    </tr>
+    <tr>
+      <th>row.clust</th>
+      <td><p>perform row-wise hierarchical clustering (TRUE or FALSE)</p></td>
+    </tr>
+    <tr>
+      <th>col.clust.hc</th>
+      <td><p>hc object to be passed to as.dendrogram, available when col.clust = TRUE, default NA: hc.col = hcopt(stats::dist(t(x)), method="ward.D")</p></td>
+    </tr>
+    <tr>
+      <th>row.clust.hc</th>
+      <td><p>hc object to be passed to as.dendrogram, available when row.clust = TRUE, default NA: hc.row = hcopt(stats::as.dist(1-cor(t(x))),method="ward.D")</p></td>
+    </tr>
+    <tr>
+      <th>col.lab</th>
+      <td><p>column labels to include: subset of pData colnames character vector</p></td>
+    </tr>
+    <tr>
+      <th>row.lab</th>
+      <td><p>row labels to include: subset of fData colnames character vector</p></td>
+    </tr>
+    <tr>
+      <th>heatmap.y.text</th>
+      <td><p>include y axis labels for heatmap, uses rownames(eSet) (TRUE or FALSE)</p></td>
+    </tr>
+    <tr>
+      <th>heatmap.x.text</th>
+      <td><p>include x axis labels for heatmap, uses colnames(eSet)) (TRUE or FALSE)</p></td>
+    </tr>
+    <tr>
+      <th>heatmap.y.text.size</th>
+      <td><p>text size for y axis labels</p></td>
+    </tr>
+    <tr>
+      <th>heatmap.x.text.size</th>
+      <td><p>text size for x axis labels</p></td>
+    </tr>
+    <tr>
+      <th>heatmap.colorlegend.name</th>
+      <td><p>name for heatmap color legend</p></td>
+    </tr>
+    <tr>
+      <th>title.text</th>
+      <td><p>main title for the plot</p></td>
+    </tr>
+    <tr>
+      <th>col.legend.name</th>
+      <td><p>character vector for subset of col.lab to include in color legend</p></td>
+    </tr>
+    <tr>
+      <th>row.legend.name</th>
+      <td><p>character vector for subset of row.lab to include in color legend</p></td>
+    </tr>
+    <tr>
+      <th>legend.lab.max.char</th>
+      <td><p>number of characters limit for legend labels, default = 15</p></td>
+    </tr>
+    <tr>
+      <th>row.scaling</th>
+      <td><p>how should rows be scaled ("none", "quantile", "z-score.all", or "z-score.capped")</p></td>
+    </tr>
+    <tr>
+      <th>z.norm</th>
+      <td><p>heatmap colors reflect z-scores rather than original values, can be TRUE if row.scaling is "none"</p></td>
+    </tr>
+    <tr>
+      <th>cuttree.col</th>
+      <td><p>number of clusters for columns, default 0: do not show cluster assignment</p></td>
+    </tr>
+    <tr>
+      <th>cuttree.row</th>
+      <td><p>number of clusters for rows, default 0: do not show cluster assignment</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>return additional clustred annotation information as well as heatmap</p></td>
+    </tr>
+    <tr>
+      <th>grid.heights</th>
+      <td><p>numeric vector of length 7 representing heights of subpanels, leave NA for default</p></td>
+    </tr>
+    <tr>
+      <th>grid.widths</th>
+      <td><p>numeric vector of length 4 represeting weights of subpanels, leave NA for default</p></td>
+    </tr>
+    <tr>
+      <th>show</th>
+      <td><p>prints the heatmap within execution of the function (TRUE or FALSE)</p></td>
+    </tr>
+    </table>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -168,11 +234,11 @@ expression set object</p>
 <span class='kw'>row.scaling</span> <span class='kw'>=</span> <span class='st'>"z-score.capped"</span>,
 <span class='kw'>z.norm</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
 <span class='kw'>cuttree.col</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>cuttree.row</span> <span class='kw'>=</span> <span class='fl'>3</span>,
-<span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>show</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: `axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `panel.margin` is deprecated. Please use `panel.spacing` property instead</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `legend.margin` must be specified using `margin()`. For the old behavior use legend.spacing</span></div><div class='input'><span class='fu'>grid.arrange</span>(<span class='no'>p1</span>)</div><img src='heatmap.ggplot2-6.png' alt='' width='540' height='400' /><div class='input'>
+<span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>show</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: `axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `panel.margin` is deprecated. Please use `panel.spacing` property instead</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `legend.margin` must be specified using `margin()`. For the old behavior use legend.spacing</span></div><div class='input'><span class='fu'>grid.arrange</span>(<span class='no'>p1</span>)</div><div class='img'><img src='heatmap.ggplot2-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 
 <span class='no'>x</span><span class='kw'>&lt;-</span><span class='fu'>exprs</span>(<span class='no'>eSet1</span>)
-<span class='no'>hc.row</span><span class='kw'>&lt;-</span><span class='fu'>hcopt</span>(<span class='kw'>stats</span><span class='kw'>::</span><span class='fu'>as.dist</span>(<span class='fl'>1</span>-<span class='fu'>cor</span>(<span class='fu'>t</span>(<span class='no'>x</span>))),<span class='kw'>method</span><span class='kw'>=</span><span class='st'>"ward.D"</span>)
-<span class='no'>hc.col</span> <span class='kw'>&lt;-</span> <span class='fu'>hcopt</span>(<span class='kw'>stats</span><span class='kw'>::</span><span class='fu'>dist</span>(<span class='fu'>t</span>(<span class='no'>x</span>), <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"euclidean"</span>), <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"ward.D"</span>)
+<span class='no'>hc.row</span><span class='kw'>&lt;-</span><span class='fu'>hcopt</span>(<span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/stats/topics/dist'>as.dist</a></span>(<span class='fl'>1</span>-<span class='fu'>cor</span>(<span class='fu'>t</span>(<span class='no'>x</span>))),<span class='kw'>method</span><span class='kw'>=</span><span class='st'>"ward.D"</span>)
+<span class='no'>hc.col</span> <span class='kw'>&lt;-</span> <span class='fu'>hcopt</span>(<span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/stats/topics/dist'>dist</a></span>(<span class='fu'>t</span>(<span class='no'>x</span>), <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"euclidean"</span>), <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"ward.D"</span>)
 
 <span class='co'>#Adding custom hclust object in col.clust.hc and row.clust.hc</span>
 <span class='no'>p2</span> <span class='kw'>&lt;-</span> <span class='fu'>heatmap.ggplot2</span>(<span class='kw'>eSet</span><span class='kw'>=</span><span class='no'>eSet1</span>, <span class='kw'>col.clust</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>row.clust</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -187,7 +253,7 @@ expression set object</p>
 <span class='kw'>z.norm</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
 <span class='kw'>cuttree.col</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>cuttree.row</span> <span class='kw'>=</span> <span class='fl'>3</span>,
 <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>show</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: `axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `panel.margin` is deprecated. Please use `panel.spacing` property instead</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `legend.margin` must be specified using `margin()`. For the old behavior use legend.spacing</span></div><div class='input'><span class='fu'>grid.newpage</span>()
-<span class='fu'>grid.arrange</span>(<span class='no'>p2</span>)</div><img src='heatmap.ggplot2-12.png' alt='' width='540' height='400' /><div class='input'>
+<span class='fu'>grid.arrange</span>(<span class='no'>p2</span>)</div><div class='img'><img src='heatmap.ggplot2-2.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 
 <span class='co'>#Saving plot in verbose format</span>
 <span class='no'>p3</span> <span class='kw'>&lt;-</span> <span class='fu'>heatmap.ggplot2</span>(<span class='kw'>eSet</span><span class='kw'>=</span><span class='no'>eSet1</span>, <span class='kw'>col.clust</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>row.clust</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -202,7 +268,7 @@ expression set object</p>
 <span class='kw'>z.norm</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
 <span class='kw'>cuttree.col</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>cuttree.row</span> <span class='kw'>=</span> <span class='fl'>3</span>,
 <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>show</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: `axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `panel.margin` is deprecated. Please use `panel.spacing` property instead</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `legend.margin` must be specified using `margin()`. For the old behavior use legend.spacing</span></div><div class='input'><span class='fu'>grid.newpage</span>()
-<span class='fu'>grid.arrange</span>(<span class='no'>p3</span>$<span class='no'>heatmap</span>)</div><img src='heatmap.ggplot2-18.png' alt='' width='540' height='400' /><div class='input'>
+<span class='fu'>grid.arrange</span>(<span class='no'>p3</span>$<span class='no'>heatmap</span>)</div><div class='img'><img src='heatmap.ggplot2-3.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 
 <span class='co'>#Adding custom colors to column and row annotation labels</span>
 <span class='fu'>print</span>(<span class='no'>p3</span>$<span class='no'>meta.c</span>$<span class='no'>id</span>)</div><div class='output co'>#&gt;   [1] 4        4        2        2        2        2        2        3       
@@ -244,7 +310,7 @@ expression set object</p>
 <span class='kw'>z.norm</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
 <span class='kw'>cuttree.col</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>cuttree.row</span> <span class='kw'>=</span> <span class='fl'>3</span>,
 <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>show</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: `axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `panel.margin` is deprecated. Please use `panel.spacing` property instead</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `legend.margin` must be specified using `margin()`. For the old behavior use legend.spacing</span></div><div class='input'><span class='fu'>grid.newpage</span>()
-<span class='fu'>grid.arrange</span>(<span class='no'>p4</span>)</div><img src='heatmap.ggplot2-28.png' alt='' width='540' height='400' /><div class='input'>
+<span class='fu'>grid.arrange</span>(<span class='no'>p4</span>)</div><div class='img'><img src='heatmap.ggplot2-4.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 
 
 </div></pre>

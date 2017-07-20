@@ -23,9 +23,10 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -51,6 +52,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="..//index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -75,20 +82,27 @@
     <p>collapse eSet object by non-unique row feature IDs</p>
     
 
-    <pre><span class='fu'>collapse.probes</span>(<span class='no'>eset</span>, <span class='kw'>fdat.id</span> <span class='kw'>=</span> <span class='st'>"SYMBOL"</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"single.mad"</span>,
+    <pre class="usage"><span class='fu'>collapse.probes</span>(<span class='no'>eset</span>, <span class='kw'>fdat.id</span> <span class='kw'>=</span> <span class='st'>"SYMBOL"</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"single.mad"</span>,
   <span class='st'>"summarize.mean"</span>, <span class='st'>"summarize.median"</span>, <span class='st'>"summarize.max"</span>, <span class='st'>"summarize.min"</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>fdat.id</dt>
-      <dd><p>feature id to collapse on</p></dd>
-      <dt>method</dt>
-      <dd><p>= "single" or "summarize" followed by "." followed by "mean", "median", "max" or "min", e.g. "single.mean"
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>fdat.id</th>
+      <td><p>feature id to collapse on</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>= "single" or "summarize" followed by "." followed by "mean", "median", "max" or "min", e.g. "single.mean"
 "single" chooses one probe for ambiguous probes with maximum of summary function across row, 
-"summarize" aggregates summary metric across multiple rows for each column index</p></dd>
-      <dt>eSet</dt>
-      <dd><p>expression set object</p></dd>
-    </dl>
+"summarize" aggregates summary metric across multiple rows for each column index</p></td>
+    </tr>
+    <tr>
+      <th>eSet</th>
+      <td><p>expression set object</p></td>
+    </tr>
+    </table>
     
 
   </div>
