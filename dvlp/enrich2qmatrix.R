@@ -25,7 +25,7 @@ cbmGSEA2qmatrix <- function
     annotation_row=NULL, # data frame of pathway annotations
     annotation_colors=NULL, # List of names colors for annotations
     aggMethod=c("ward.D2","ward.D","single","complete","average","mcquitty","median","centroid"),
-    ...              # extra arguments to my.heatmap
+    ...              
 )
 {
     ## each element of the variable cgsea corresponds to a distinct cbmGSEA
@@ -69,11 +69,11 @@ cbmGSEA2qmatrix <- function
         mx <- absMX
         VERBOSE(verbose, " done, min(fdr):", min(abs(mx),na.rm=TRUE), "max(fdr):", max(mx,na.rm=TRUE),"\n")
     }
-    q2h <- qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,rm.zero=rm.zero,na.col=na.col,...)
+    q2h <- qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,rm.zero=rm.zero,na.col=na.col,annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, aggMethod = aggMethod, ...)
     
     if ( !is.null(outfile) )
     {
-        out <- qmatrix2workbook(q2h$mx,q2h$mx01,fdr=fdr,col=c("blue","white","red"), sheetName = sheetName, outfile = outfile)
+        out <- qmatrix2workbook(q2h$mx,q2h$mx01,col=c("blue","white","red"), sheetName = sheetName, outfile = outfile, annotation_row = annotation_row, annotation_col = annotation_col, annotation_colors = annotation_colors)
         saveWorkbook(out,file=outfile,overwrite=TRUE)
         VERBOSE(verbose,"Workbook saved to '",outfile,"'\n",sep="")
     }
@@ -138,7 +138,7 @@ gsea2qmatrix <- function
         else
             stop("unrecognized method:",method)
     }
-    q2h <- qmatrix2heatmap(mx=mx, fdr=fdr, do.sort=do.sort, do.heat=do.heat, rm.zero=rm.zero, na.col=na.col,...)
+    q2h <- qmatrix2heatmap(mx=mx, fdr=fdr, do.sort=do.sort, do.heat=do.heat, rm.zero=rm.zero, na.col=na.col, annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, ...)
     
     if ( !is.null(outfile) )
     {
@@ -167,9 +167,13 @@ qmatrix2heatmap <- function
                     # hclust methods
     aggMethod=c("ward.D2","ward.D","single","complete","average","mcquitty","median","centroid"),
     na.col="gray",  # color for missing values in the heatmap
+    annotation_col=NULL, # data frame of GSEA result annotations
+    annotation_row=NULL, # data frame of pathway annotations
+    annotation_colors=NULL, # List of names colors for annotations
     ...
 )
 {
+    require(pheatmap)
     aggMethod <- match.arg(aggMethod)
     
     levs <- 0:length(fdr)
@@ -259,17 +263,22 @@ hyper2qmatrix <- function
     do.sort=TRUE,   # sort matrices by HC
     do.heat=FALSE,  # display heatmap
     rm.zero=TRUE,   # remove genesets/rows w/ no hits
-                    # hclust methods
-    aggMethod=c("ward.D2","ward.D","single","complete","average","mcquitty","median","centroid"),
+    globalMHT = FALSE, # correct for MHT *across* signatures (default is within)
+    aggMethod=c("ward.D2","ward.D","single","complete","average","mcquitty","median","centroid"), # hclust methods
     outfile=NULL,   # save qmatrix output to workbook file
-    ...             # extra arguments to my.heatmap
+    sheetName = "sheet1",
+    verbose = TRUE,
+    annotation_col=NULL, # data frame of GSEA result annotations
+    annotation_row=NULL, # data frame of pathway annotations
+    annotation_colors=NULL, # List of names colors for annotations
+    ...             
 )
 {
     if ( length(fdr)>1 && any(diff(fdr)>0) )
         stop( "fdr must be in decreasing order" )
     if ( length(unique(hyper[,"set"]))==1 )
         stop( "hyper must contain results for at least two signatures")
-    method <- match.arg(method)
+    aggMethod <- match.arg(aggMethod)
     
     SIG <- unique(hyper[,"set"])
     gsets <- hyper[hyper[,"set"]==SIG[1],"category"]
@@ -278,45 +287,28 @@ hyper2qmatrix <- function
         as.numeric(tmp[match.nona(gsets,tmp[,"category"]),"fdr"])
     });
     rownames(mx) <- gsets
-    mx01 <- mx
-    for ( i in 1:length(fdr) ) {
-        mx01[mx<=fdr[i]] <- i
+    
+    ## if global multiple hypothesis correction (MHT), take the uncorrected
+    ## p-values across signatures and carry out a global FDR correction
+    ##
+    if ( globalMHT ) {
+      VERBOSE(verbose, "carrying out global MHT ..")
+      absMX <- abs(mx)
+      absMX[,] <- p.adjust(as.vector(absMX),method="BH")
+      mx[is.na(mx)] <- 999 # remove NA's (necessary for 'mx<0' test)
+      absMX[mx<0] <- -absMX[mx<0]
+      mx <- absMX
+      VERBOSE(verbose, " done, min(fdr):", min(abs(mx),na.rm=TRUE), "max(fdr):", max(mx,na.rm=TRUE),"\n")
     }
-    mx01[mx>fdr[1]] <- 0
-
-    if ( rm.zero ) {
-        keep.idx <- apply(mx01!=0,1,any)
-        if ( sum(keep.idx)==0 ) {
-            warning("no significant genesets found")
-        }
-        else {
-            mx01 <- mx01[keep.idx,,drop=FALSE]
-            mx <- mx[keep.idx,,drop=FALSE]
-        }
-    }
-    ## sort rows and columns by HC
-    if ( do.sort || do.heat ) {
-        hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=aggMethod)
-        hc.row <- hcopt(dist(mx01,method="euclidean"),method=aggMethod)
-
-        if ( do.heat ) {
-            ncolors <- length(unique(as.vector(mx01)))
-            my.heatmap(mx01,Rowv=as.dendrogram(hc.row),Colv=as.dendrogram(hc.col),scale="none",
-                       col=col.gradient(c("white","red"),length=ncolors),revC=TRUE,...)
-        }
-        if ( do.sort ) {
-            mx <- mx[hc.row$order,hc.col$order]
-            mx01 <- mx01[hc.row$order,hc.col$order]
-        }
-    }
-    ## save conditionally formatted Excel workbook to file
+    q2h <- qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,rm.zero=rm.zero,na.col=na.col,annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, aggMethod = aggMethod, ...)
+    
     if ( !is.null(outfile) )
     {
-        out <- qmatrix2workbook(mx,fdr=fdr,col=c("white","red"), sheetName = sheetName, outfile = outfile)
-        saveWorkbook(out,file=outfile,overwrite=TRUE)
-        VERBOSE(verbose,"Workbook saved to '",outfile,"'\n",sep="")
+      out <- qmatrix2workbook(q2h$mx,q2h$mx01,col=c("blue","white","red"), sheetName = sheetName, outfile = outfile, annotation_row = annotation_row, annotation_col = annotation_col, annotation_colors = annotation_colors)
+      saveWorkbook(out,file=outfile,overwrite=TRUE)
+      VERBOSE(verbose,"Workbook saved to '",outfile,"'\n",sep="")
     }
-    return( list(mx01=mx01,mx=mx) )
+    return( q2h )
 }
 #######################################################################
 ## function: QMATRIX 2 WORKBOOK
@@ -328,16 +320,18 @@ qmatrix2workbook <- function
 (
     qmatrix,        # matrix of signed q-values
     imatrix,        # matrix of signed integers
-    fdr=c(.05,.01), # FDR thresholds (must be in decreasing order)
     col=c("blue","white","red"),
     fcol="black",    # font color
     sheetName,
     outfile,
+    annotation_row = NULL,
+    annotation_col = NULL, 
+    annotation_colors = NULL,
     ...
 )
 {
   
-    
+    require(openxlsx)
     # Get start row
     startRow=1
     if(!is.null(annotation_col)){
@@ -436,6 +430,8 @@ qmatrix2workbook <- function
     # Freeze header cells
     freezePane(wb, sheetName, firstActiveRow = startRow+1, firstActiveCol = startCol+1)
     
+    # Save workbook
+    saveWorkbook(wb, outfile, overwrite = T)
     return( wb )
 }
 ## this was an alternative version
@@ -511,56 +507,89 @@ if ( FALSE )
 
     ## upload MSigDB's hallmark geneset compendium (stored locally)
     gSet <- new("GeneSet",file.path(GSPATH,"h.all.v5.1.symbols.gmt"))
-
+    
     ## loading pre-computed list of diffanal results
     DIF <- readRDS(file.path(PATH,"results/rds/DIF2.RDS"))
     names(DIF)
     ##  [1] "MDA.AhR" "MDA.CYP" "SUM.AhR" "SUM.CYP" "AhR"     "CYP"     "CB113"  
     ##  [8] "BaP"     "PYO"     "CH"     
-
+    
     ## loading pre-computed list of cbmGSEA results (this takes a long time to compute)
     cGSEA <- readRDS(file.path(PATH,"results/rds/cbmGSEA.RDS"))
     names(cGSEA)
     ## [1] "h.all"  "c2.cp"  "c3.all" "c2.cgp"
-
+    
     ## extract the hallmarks results (hGSEA is a list of data.frames, one per signature)
     hGSEA <- cGSEA[['h.all']]
     names(hGSEA)
     ## [1] "MDA.AhR" "MDA.CYP" "SUM.AhR" "SUM.CYP" "AhR"     "CYP"     "CB113"  
     ## [8] "BaP"     "PYO"     "CH"     
-
+    
+    # Run without annotations
     png("ahr.hallmarks.png")
-    OUT <- cbmGSEA2qmatrix(hGSEA,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,margins=c(6,15))
+    OUT <- cbmGSEA2qmatrix(hGSEA,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE)
     dev.off()
-
-    wOUT1 <- qmatrix2workbook(OUT$mx,col=c("blue","white","red"),fdr=c(0.05,0.01))
-    saveWorkbook(wOUT1,file="wOUT1.xlsx")
-    wOUT2 <- qmatrix2workbook(OUT$mx,col=c("blue","white","red"),fdr=c(0.10,0.05,0.01))
-    saveWorkbook(wOUT2,file="wOUT2.xlsx")
+    
+    # Run with row and column annotations
+    
+    # Row annotation
+    annot_row <- data.frame(source = rep("Hallmarks", length(names(gSet@geneset))), row.names = names(gSet@geneset))
+    
+    # Column annotation (This is a meaningless example)
+    annot_col <- data.frame(pert = sub("MDA[.]|SUM[.]", "",names(hGSEA)), row.names = names(hGSEA))
+    annot_col$first_letter <- substr(names(hGSEA), 1, 1)
+    
+    # Add colors
+    annot_colors <- list(source = "green",
+                         pert = brewer.pal(length(unique(annot_col$pert)), "Set1"),
+                         first_letter = brewer.pal(length(unique(annot_col$first_letter)), "Set2"))
+    names(annot_colors$source) <- "Hallmarks"
+    names(annot_colors$pert) <- unique(annot_col$pert)
+    names(annot_colors$first_letter) <- unique(annot_col$first_letter)
+    
+    png("ahr.hallmarks_annotated.png")
+    OUTa <- cbmGSEA2qmatrix(hGSEA,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE, annotation_col = annot_col, annotation_row = annot_row, annotation_colors = annot_colors)
+    dev.off()
+    
+    # Add sheet w/out annotations
+    wOUT1 <- qmatrix2workbook(OUT$mx,OUT$mx01,outfile = "wOUT1.xlsx", sheet = "TESTSHEET1")
+    
+    wOUT2 <- qmatrix2workbook(OUT$mx,OUT$mx01,outfile = "wOUT1.xlsx", sheet = "TESTSHEET2", annotation_row = annot_row, annotation_col = annot_col, annotation_colors = annot_colors)
+    
     
     ## let's test with different genesets
     hGSEA1 <- hGSEA
     for ( i in 1:length(hGSEA1) ) # remove a (different) geneset from each data.frame
-        hGSEA1[[i]] <- hGSEA[[i]][-i,]
-
+      hGSEA1[[i]] <- hGSEA[[i]][-i,]
+    
     ## take the intersection
-    OUT1 <- cbmGSEA2qmatrix(hGSEA1,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,margins=c(6,15),method="intersect")
-
+    OUT1 <- cbmGSEA2qmatrix(hGSEA1,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,method="intersect")
+    
     ## take the union (there should be rows with missing values, color-coded 'gray' by default)
-    OUT2 <- cbmGSEA2qmatrix(hGSEA1,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,margins=c(6,15),method="union")
-
+    OUT2 <- cbmGSEA2qmatrix(hGSEA1,fdr=c(0.10,0.05,0.01),do.heat=TRUE,globalMHT=TRUE,method="union")
+    
     ## TEST HYPER-ENRICHMENT VISUALIZATION
-
+    
     SIG <- diffanal2signatures(DIF, maxFDR=0.05, minFC=1.5)
-    gSet <- new("GeneSet","~/Research/CancerGenomeAnalysisData/annot/h.all.v5.1.symbols.gmt")
     hOut <- hyperEnrichment(SIG,categories=getGeneSet(gSet),ntotal=22981)
-    tmp <- hyper2qmatrix(hOut,fdr=c(.05,.01),do.heat=TRUE,margins=c(9,20))
+    tmp <- hyper2qmatrix(hOut,fdr=c(.05,.01),do.heat=TRUE)
     my.write.table(tmp$mx,names="GeneSet",file="HYPERtable.xls")
-
+    
     ## TESTING qmatrix2workbook
-
+    
     require(openxlsx)
-    wb1 <- qmatrix2workbook(tmp$mx,col=c("white","red"))
-    wb2 <- qmatrix2workbook2(tmp$mx,col=c("white","red"))
-    saveWorkbook(wb,"test.xlsx",overwrite=TRUE)
-}
+    wb1 <- qmatrix2workbook(tmp$mx,tmp$mx01, outfile = "wOUT1.xlsx", sheetName = "TESTSHEET3")
+    
+    ## Test again but with annotations
+    # Column annotation (This is a meaningless example)
+    annot_col <- data.frame(dir = gsub("[[:alnum:]]*[.]", "",unique(hOut[,1])), row.names = unique(hOut[,1]))
+    
+    # Add colors
+    annot_colors <- list(source = "green",
+                         dir = c("red", "blue"))
+    
+    names(annot_colors$source) <- "Hallmarks"
+    names(annot_colors$dir) <- c("up", "dn")
+    
+    # Create qmatrix, heatmap, and worksheet
+    tmp1 <- hyper2qmatrix(hOut,fdr=c(.05,.01),do.heat=TRUE,outfile = "wOUT1.xlsx", sheetName = "TESTSHEET4", annotation_col = annot_col, annotation_row = annot_row, annotation_colors = annot_colors)
