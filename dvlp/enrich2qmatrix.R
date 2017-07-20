@@ -593,3 +593,4 @@ if ( FALSE )
     
     # Create qmatrix, heatmap, and worksheet
     tmp1 <- hyper2qmatrix(hOut,fdr=c(.05,.01),do.heat=TRUE,outfile = "wOUT1.xlsx", sheetName = "TESTSHEET4", annotation_col = annot_col, annotation_row = annot_row, annotation_colors = annot_colors)
+}
