@@ -106,6 +106,7 @@ make.dir <- function( dname )
 {
   if ( is.na(file.info(dname)$isdir) ) system(paste('mkdir',dname))
 }
+#' @export
 file.ext <- function( filen, w.sep=F )
 {
   ext <- rev(unlist(strsplit( filen, "\\.")))[1]

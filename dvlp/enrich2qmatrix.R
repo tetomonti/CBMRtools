@@ -406,7 +406,7 @@ qmatrix2workbook <- function
         }
     }
 
-    # Add values to row annotation
+    ## Add values to row annotation
     if(!is.null(annotation_row)){
       writeData(wb,sheetName,annotation_row,startCol=startCol,startRow=startRow,rowNames=FALSE)
       if(!is.null(annotation_colors)){
@@ -422,7 +422,7 @@ qmatrix2workbook <- function
       }
     }
 
-    # Add values to column annotation
+    ## Add values to column annotation
     if(!is.null(annotation_col)){
       writeData(wb,sheetName, t(annotation_col),startCol=startCol+1, startRow=i+1, colNames = F, rowNames = F)
       writeData(wb,sheetName, colnames(annotation_col), startCol=startCol+nrow(annotation_col)+1, startRow=i+1, colNames = F, rowNames = F)
