@@ -74,7 +74,7 @@ cbmGSEA2qmatrix <- function
 
     if ( !is.null(outfile) )
     {
-        out <- qmatrix2workbook(q2h$mx,q2h$mx01,col=c("blue","white","red"), sheetName = sheetName, outfile = outfile, annotation_row = annotation_row, annotation_col = annotation_col, annotation_colors = annotation_colors)
+        out <- qmatrix2workbook(qmatrix=q2h$mx,imatrix=q2h$mx01,col=c("blue","white","red"), sheetName = sheetName, outfile = outfile, annotation_row = annotation_row, annotation_col = annotation_col, annotation_colors = annotation_colors)
         saveWorkbook(out,file=outfile,overwrite=TRUE)
         VERBOSE(verbose,"Workbook saved to '",outfile,"'\n",sep="")
     }
@@ -90,19 +90,24 @@ cbmGSEA2qmatrix <- function
 #######################################################################
 gsea2qmatrix <- function
 (
-    gsea,               # list of lists (each with 2 data.frames, the up and down genesets, as output by gsea)
-    fdr=c(.05,.01),     # FDR thresholds (must be in decreasing order)
+    gsea,                # list of lists (each with 2 data.frames, the up and down genesets, as output by gsea)
+    fdr=c(.05,.01),      # FDR thresholds (must be in decreasing order)
     method=c("union","intersect"),
-                        # union or intersection of genesets across signatures
-    do.sort=TRUE,       # sort matrices by HC
-    do.heat=FALSE,      # display heatmap
-    rm.zero=TRUE,       # remove genesets/rows w/ no hits
-    pvalID="FDR q-val", # which significance measure to use (see GSEA output for choices)
-    na.col="gray",      # color for missing values in the heatmap
-    verbose=TRUE,       # verbose output
-    outfile=NULL,       # save qmatrix output to workbook file
-    zero=1.0e-10,       # min p-value
-    ...                 # extra arguments to qmatrix2heatmap
+                         # union or intersection of genesets across signatures
+    do.sort=TRUE,        # sort matrices by HC
+    do.heat=FALSE,       # display heatmap
+    rm.zero=TRUE,        # remove genesets/rows w/ no hits
+    pvalID="FDR q-val",  # which significance measure to use (see GSEA output for choices)
+    na.col="gray",       # color for missing values in the heatmap
+    zero=1.0e-10,        # min p-value
+    verbose=TRUE,        # verbose output
+    outfile=NULL,        # save qmatrix output to workbook file
+    heatfile=NULL,       # save heatmap to given file
+    sheetName="sheet1",  # add a new worksheet to workbook
+    annotation_col=NULL, # data frame of GSEA result annotations
+    annotation_row=NULL, # data frame of pathway annotations
+    annotation_colors=NULL, # List of names colors for annotations
+    ...                  # extra arguments to qmatrix2heatmap
 )
 {
     ## each element of the list gsea corresponds to a distinct GSEA
@@ -117,7 +122,7 @@ gsea2qmatrix <- function
     method <- match.arg(method)
     combineFun <- match.fun(method)
 
-    VERBOSE(verbose,"Generating qmatrix based on",method,"..")
+    VERBOSE(verbose,"Generating qmatrix based on", method, "..")
 
     ## extract all the geneset IDs in common among all GSEA runs
     gID <- Reduce(combineFun,lapply(gsea,function(Z) c(Z[[1]][,'NAME'],Z[[2]][,'NAME'])))
@@ -139,11 +144,14 @@ gsea2qmatrix <- function
         else
             stop("unrecognized method:",method)
     }
-    q2h <- qmatrix2heatmap(mx=mx, fdr=fdr, do.sort=do.sort, do.heat=do.heat, rm.zero=rm.zero, na.col=na.col, annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, ...)
+    q2h <- qmatrix2heatmap(mx=mx, fdr=fdr, do.sort=do.sort, do.heat=do.heat, heatfile=heatfile, rm.zero=rm.zero, na.col=na.col, annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, ...)
 
-    if ( !is.null(outfile) )
+    nsig <- sum(apply(mx<=fdr[1],1,any,na.rm=TRUE)) # count num. of genesets with significant enrichment
+
+    if ( !is.null(outfile) && nsig>0 )
     {
-        out <- qmatrix2workbook(q2h$mx,fdr=fdr,col=c("blue","white","red"), sheetName = sheetName, outfile = outfile)
+        ##out <- qmatrix2workbook(q2h$mx,fdr=fdr,col=c("blue","white","red"), sheetName=sheetName, outfile=outfile)
+        out <- qmatrix2workbook(qmatrix=q2h$mx,imatrix=q2h$mx01,col=c("blue","white","red"), sheetName = sheetName, outfile = outfile, annotation_row = annotation_row, annotation_col = annotation_col, annotation_colors = annotation_colors)
         saveWorkbook(out,file=outfile,overwrite=TRUE)
         VERBOSE(verbose,"Workbook saved to '",outfile,"'\n",sep="")
     }
