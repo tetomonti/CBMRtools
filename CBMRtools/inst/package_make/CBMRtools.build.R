@@ -40,3 +40,7 @@ build_site(pkg = package.dir, examples = TRUE)
 #cat("Installing locally...\n")l
 ## install CBMRtools locally
 #install.packages(package.dir, dependencies = TRUE, repos = NULL, type = "source")
+
+
+##build tar.gz 
+system("R CMD build ../CBMRtools")
