@@ -23,9 +23,10 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -51,6 +52,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="..//index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -82,29 +89,46 @@ point there are several replicates for both the control and the
 treated.</p>
     
 
-    <pre><span class='fu'>geneSetProjection</span>(<span class='no'>dat</span>, <span class='no'>pairing</span>, <span class='no'>GS</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ks"</span>, <span class='st'>"logistic"</span>, <span class='st'>"median"</span>,
+    <pre class="usage"><span class='fu'>geneSetProjection</span>(<span class='no'>dat</span>, <span class='no'>pairing</span>, <span class='no'>GS</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ks"</span>, <span class='st'>"logistic"</span>, <span class='st'>"median"</span>,
   <span class='st'>"mean"</span>), <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>weighted</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>absolute</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>min.gset</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>dat</dt>
-      <dd><p>ExpressionSet data object ( require(biobase) )</p></dd>
-      <dt>pairing</dt>
-      <dd><p>list with pairing between treatment and control (see format below)</p></dd>
-      <dt>method</dt>
-      <dd><p>one of "ks","logistic","median","mean" (only ks implemented so far)</p></dd>
-      <dt>collapse</dt>
-      <dd><p>collapse multiple replicates into a single output vector (TRUE)</p></dd>
-      <dt>weighted</dt>
-      <dd><p>gsea-like weighting of KS score (TRUE)</p></dd>
-      <dt>absolute</dt>
-      <dd><p>use absolute values when calculating the KS score ignoring up and down (FALSE)</p></dd>
-      <dt>verbose</dt>
-      <dd><p>verbosity on/off (TRUE)</p></dd>
-      <dt>gsets</dt>
-      <dd><p>GeneSet data object (see GeneSet.R)</p></dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>dat</th>
+      <td><p>ExpressionSet data object ( require(biobase) )</p></td>
+    </tr>
+    <tr>
+      <th>pairing</th>
+      <td><p>list with pairing between treatment and control (see format below)</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>one of "ks","logistic","median","mean" (only ks implemented so far)</p></td>
+    </tr>
+    <tr>
+      <th>collapse</th>
+      <td><p>collapse multiple replicates into a single output vector (TRUE)</p></td>
+    </tr>
+    <tr>
+      <th>weighted</th>
+      <td><p>gsea-like weighting of KS score (TRUE)</p></td>
+    </tr>
+    <tr>
+      <th>absolute</th>
+      <td><p>use absolute values when calculating the KS score ignoring up and down (FALSE)</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>verbosity on/off (TRUE)</p></td>
+    </tr>
+    <tr>
+      <th>gsets</th>
+      <td><p>GeneSet data object (see GeneSet.R)</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -177,7 +201,7 @@ across all treatment groups (if collapse=FALSE)</p>
                       <span class='kw'>verbose</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>show</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: `axis.ticks.margin` is deprecated. Please set `margin` property  of `axis.text` instead</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `panel.margin` is deprecated. Please use `panel.spacing` property instead</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `legend.margin` must be specified using `margin()`. For the old behavior use legend.spacing</span></div><div class='output co'>#&gt; TableGrob (2 x 1) "arrange": 2 grobs
 #&gt;   z     cells    name               grob
 #&gt; 1 1 (1-1,1-1) arrange text[GRID.text.12]
-#&gt; 2 2 (2-2,1-1) arrange    gtable[arrange]</div><div class='input'><span class='fu'>grid.arrange</span>(<span class='no'>p2</span>)</div><img src='geneSetProjection-9.png' alt='' width='540' height='400' /><div class='input'>
+#&gt; 2 2 (2-2,1-1) arrange    gtable[arrange]</div><div class='input'><span class='fu'>grid.arrange</span>(<span class='no'>p2</span>)</div><div class='img'><img src='geneSetProjection-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

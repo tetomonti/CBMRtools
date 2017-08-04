@@ -23,9 +23,10 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -51,6 +52,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="..//index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -75,29 +82,44 @@
     <p>subset an expression dataset by extracting genes based on their level of variation</p>
     
 
-    <pre><span class='fu'>variationFilter</span>(<span class='no'>dat</span>, <span class='kw'>score</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"mad"</span>, <span class='st'>"sd"</span>, <span class='st'>"cv"</span>), <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"top"</span>, <span class='st'>"bottom"</span>),
+    <pre class="usage"><span class='fu'>variationFilter</span>(<span class='no'>dat</span>, <span class='kw'>score</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"mad"</span>, <span class='st'>"sd"</span>, <span class='st'>"cv"</span>), <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"top"</span>, <span class='st'>"bottom"</span>),
   <span class='kw'>transform</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"none"</span>, <span class='st'>"log2"</span>, <span class='st'>"exp2"</span>, <span class='st'>"log"</span>, <span class='st'>"exp"</span>), <span class='kw'>ngenes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>min.score</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min.log</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>rnd</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>do.plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='st'>"."</span>,
   <span class='kw'>lgnd.coord</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>do.log</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>qnt.lev</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>min.qnt</span> <span class='kw'>=</span> -<span class='fl'>Inf</span>,
   <span class='kw'>no.affx</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>dat</dt>
-      <dd><p>an expressionSet object</p></dd>
-      <dt>score</dt>
-      <dd><p>type of variation measure to use (can be 'mad', 'sd', or 'cv')</p></dd>
-      <dt>dir</dt>
-      <dd><p>direction of the gene ranking ('top': highest varying genes; 'bottom': lowest varying genes)</p></dd>
-      <dt>transform</dt>
-      <dd><p>transform the data before measuring variation</p></dd>
-      <dt>ngenes</dt>
-      <dd><p>number of top (or bottom) genes to extract</p></dd>
-      <dt>do.plot</dt>
-      <dd><p>plot the center vs. scale plot with selected genes highlighted</p></dd>
-      <dt>do.log</dt>
-      <dd><p>indicates whether to log the "x", "y", or "xy" axes, or "" none</p></dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>dat</th>
+      <td><p>an expressionSet object</p></td>
+    </tr>
+    <tr>
+      <th>score</th>
+      <td><p>type of variation measure to use (can be 'mad', 'sd', or 'cv')</p></td>
+    </tr>
+    <tr>
+      <th>dir</th>
+      <td><p>direction of the gene ranking ('top': highest varying genes; 'bottom': lowest varying genes)</p></td>
+    </tr>
+    <tr>
+      <th>transform</th>
+      <td><p>transform the data before measuring variation</p></td>
+    </tr>
+    <tr>
+      <th>ngenes</th>
+      <td><p>number of top (or bottom) genes to extract</p></td>
+    </tr>
+    <tr>
+      <th>do.plot</th>
+      <td><p>plot the center vs. scale plot with selected genes highlighted</p></td>
+    </tr>
+    <tr>
+      <th>do.log</th>
+      <td><p>indicates whether to log the "x", "y", or "xy" axes, or "" none</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -113,7 +135,7 @@
 
 <span class='fu'>variationFilter</span>(<span class='no'>eSet.brca.100</span>,<span class='kw'>score</span><span class='kw'>=</span><span class='st'>'mad'</span>,<span class='kw'>ngenes</span><span class='kw'>=</span><span class='fl'>50</span>,<span class='kw'>do.plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; Variation filtering based on mad .. done.
 #&gt; Selecting top 50 by mad .. done, 50 genes selected.
-#&gt; Creating scatter plot .. </div><img src='variationFilter-3.png' alt='' width='540' height='400' /><div class='output co'>#&gt; done.</div><div class='output co'>#&gt; ExpressionSet (storageMode: lockedEnvironment)
+#&gt; Creating scatter plot .. </div><div class='img'><img src='variationFilter-1.png' alt='' width='700' height='432.632880098887' /></div><div class='output co'>#&gt; done.</div><div class='output co'>#&gt; ExpressionSet (storageMode: lockedEnvironment)
 #&gt; assayData: 50 features, 977 samples 
 #&gt;   element names: exprs 
 #&gt; protocolData: none

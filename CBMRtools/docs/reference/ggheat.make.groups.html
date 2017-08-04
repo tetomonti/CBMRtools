@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ggheat.make.groups <U+2014> ggheat.make.groups <e2><80><a2> CBMRtools</title>
+<title><code>ggheat.make.groups</code> splits eset into list of esets based on phenotype label, do clustering within groups <U+2014> ggheat.make.groups <e2><80><a2> CBMRtools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -23,9 +23,10 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -51,6 +52,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="..//index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -68,25 +75,32 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>ggheat.make.groups</h1>
+    <h1><code>ggheat.make.groups</code> splits eset into list of esets based on phenotype label, do clustering within groups</h1>
     </div>
 
     
     <p><code>ggheat.make.groups</code> splits eset into list of esets based on phenotype label, do clustering within groups</p>
     
 
-    <pre><span class='fu'>ggheat.make.groups</span>(<span class='no'>eset</span>, <span class='no'>labelcol</span>, <span class='no'>labelvals</span>, <span class='no'>clustFUN</span>, <span class='kw'>fixRowOrd</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>ggheat.make.groups</span>(<span class='no'>eset</span>, <span class='no'>labelcol</span>, <span class='no'>labelvals</span>, <span class='no'>clustFUN</span>, <span class='kw'>fixRowOrd</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>eset</dt>
-      <dd><p>expression set</p></dd>
-      <dt>labelcol</dt>
-      <dd><p>column name for grouping in pData(eset)</p></dd>
-      <dt>labelvals</dt>
-      <dd><p>values to group on (e.g. factor levels of pData(eset)[, labelcol])
-clustFUN clustering function for eset, e.g. clust_eset</p></dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>eset</th>
+      <td><p>expression set</p></td>
+    </tr>
+    <tr>
+      <th>labelcol</th>
+      <td><p>column name for grouping in pData(eset)</p></td>
+    </tr>
+    <tr>
+      <th>labelvals</th>
+      <td><p>values to group on (e.g. factor levels of pData(eset)[, labelcol])
+clustFUN clustering function for eset, e.g. clust_eset</p></td>
+    </tr>
+    </table>
     
 
   </div>

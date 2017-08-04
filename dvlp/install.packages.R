@@ -25,7 +25,7 @@ pkgs <- c("mclust",
           "devtools",
           "roxygen2",
           "rmarkdown",
-          "xlsx",
+#          "xlsx",
           "XLConnect",
           "openxlsx",
           "data.table",
@@ -33,6 +33,7 @@ pkgs <- c("mclust",
 install.packages(pkgs,repos="http://cran.r-project.org")
 require(devtools)
 install_github('hadley/staticdocs')
+install_github('hadley/pkgdown')
 
 source("http://bioconductor.org/biocLite.R")
 biocLite()

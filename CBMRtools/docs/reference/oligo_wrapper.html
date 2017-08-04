@@ -23,9 +23,10 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -51,6 +52,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="..//index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -75,17 +82,24 @@
     <p>wrapper script for microarray gene ST chips processing into expression set object</p>
     
 
-    <pre><span class='fu'>oligo_wrapper</span>(<span class='no'>indir</span>, <span class='no'>outdir</span>, <span class='no'>header</span>)</pre>
+    <pre class="usage"><span class='fu'>oligo_wrapper</span>(<span class='no'>indir</span>, <span class='no'>outdir</span>, <span class='no'>header</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>indir</dt>
-      <dd><p>input directory</p></dd>
-      <dt>outdir</dt>
-      <dd><p>output directory</p></dd>
-      <dt>header</dt>
-      <dd><p>of outfile</p></dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>indir</th>
+      <td><p>input directory</p></td>
+    </tr>
+    <tr>
+      <th>outdir</th>
+      <td><p>output directory</p></td>
+    </tr>
+    <tr>
+      <th>header</th>
+      <td><p>of outfile</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -93,10 +107,13 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>#running example</span>
-<span class='co'>#indir&lt;-"/Users/amyli/Desktop/temp_dir/example_script/raw"</span>
-<span class='co'>#outdir&lt;-"/Users/amyli/Desktop/temp_dir/example_script/processed"</span>
-<span class='co'>#dat&lt;-oligo_wrapper(indir = indir, outdir = outdir, header = "my_eset")</span></div></pre>
+    <pre class="examples"><div class='input'>#running example
+#indir<-"/Users/amyli/Desktop/temp_dir/example_script/raw"
+#outdir<-"/Users/amyli/Desktop/temp_dir/example_script/processed"
+#dat<-oligo_wrapper(indir = indir, outdir = outdir, header = "my_eset")
+
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
