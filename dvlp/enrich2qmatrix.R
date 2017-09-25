@@ -170,9 +170,6 @@ qmatrix2heatmap <- function
     annotation_col=NULL, # data frame of GSEA result annotations
     annotation_row=NULL, # data frame of pathway annotations
     annotation_colors=NULL, # List of names colors for annotations
-    show_row_labels = TRUE,
-    row_label_size = 10,
-    col_label_size = 10,
     ...
 )
 {
