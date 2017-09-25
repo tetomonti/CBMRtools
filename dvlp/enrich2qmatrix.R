@@ -173,6 +173,7 @@ qmatrix2heatmap <- function
     do.heat=FALSE,  # display heatmap
     rm.zero=TRUE,   # remove genesets/rows w/ no hits
     verbose=TRUE,   # extra arguments to my.heatmap
+    zero=1.0e-10,   # min p-value
     heatfile=NULL,  # save heatmap to file
                     # hclust methods
     aggMethod=c("ward.D2","ward.D","single","complete","average","mcquitty","median","centroid"),
@@ -185,11 +186,9 @@ qmatrix2heatmap <- function
 {
     require(pheatmap)
     aggMethod <- match.arg(aggMethod)
-
     levs <- 0:length(fdr)
-    zero <- -0.000001
     mx01 <- suppressWarnings(matrix(cut(as.vector(mx),
-                                        breaks=c(-1,-fdr,zero,rev(fdr),1),
+                                        breaks=c(-1,-(fdr+zero),0,rev(fdr),1),
                                         labels=as.numeric(c(-levs,rev(levs))),include.lowest=TRUE),
                                     nrow=nrow(mx),ncol=ncol(mx)))
     mx01 <- apply(mx01,2,as.numeric)
@@ -388,27 +387,34 @@ qmatrix2workbook <- function
     # Write data
     writeData(wb,sheetName,qmatrix,startCol=startCol + 1,startRow=startRow + 1, colNames = F, rowNames = F)
 
+    
+    
     # Add colors to fill in heatmap
-    mxMin <- min(imatrix, na.rm = T)
-    mxMax <- max(imatrix, na.rm = T)
-    mxU <- seq(mxMin, mxMax, by = 1)
+    
+    # Don't add colors if no significant gene sets
+    if(sum(imatrix) != 0){
 
-    mxAbsMax <- max(abs(mxU))
-    ncolors <- mxAbsMax*2+1
+      mxMin <- min(imatrix, na.rm = T)
+      mxMax <- max(imatrix, na.rm = T)
+      mxU <- seq(mxMin, mxMax, by = 1)
 
-    COL <- colGradient(col,length=ncolors)
-    names(COL) <- as.character(seq(-mxAbsMax, mxAbsMax, by = 1))
-    COL <- COL[names(COL) %in% mxU]
+      mxAbsMax <- max(abs(mxU))
+     ncolors <- mxAbsMax*2+1
 
-    ## Fill in colors based on significance
-    for ( i in 1:length(COL) )
-    {
-        colInd <- which(imatrix == as.numeric(names(COL)[i]), arr.ind=TRUE)
-        colInd[,1] <- colInd[,1] + startRow
+      COL <- colGradient(col,length=ncolors)
+      names(COL) <- as.character(seq(-mxAbsMax, mxAbsMax, by = 1))
+      COL <- COL[names(COL) %in% mxU]
+
+      ## Fill in colors based on significance
+      for ( i in 1:length(COL) )
+      {
+          colInd <- which(imatrix == as.numeric(names(COL)[i]), arr.ind=TRUE)
+         colInd[,1] <- colInd[,1] + startRow
         colInd[,2] <- colInd[,2] + startCol
-        if ( length(colInd)>0 ){
-            addStyle(wb, sheetName, style=createStyle(fgFill=COL[i]), rows=colInd[,1], cols=colInd[,2])
-        }
+          if ( length(colInd)>0 ){
+             addStyle(wb, sheetName, style=createStyle(fgFill=COL[i]), rows=colInd[,1], cols=colInd[,2])
+         }
+      }
     }
 
     ## Add values to row annotation
