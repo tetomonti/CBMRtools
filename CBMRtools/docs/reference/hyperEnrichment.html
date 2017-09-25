@@ -23,9 +23,10 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -51,6 +52,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="..//index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -75,23 +82,34 @@
     <p>Carry out set enrichment test based on hyper-geometric distribution</p>
     
 
-    <pre><span class='fu'>hyperEnrichment</span>(<span class='no'>drawn</span>, <span class='no'>categories</span>,
+    <pre class="usage"><span class='fu'>hyperEnrichment</span>(<span class='no'>drawn</span>, <span class='no'>categories</span>,
   <span class='kw'>ntotal</span> <span class='kw'>=</span> <span class='fu'>length</span>(<span class='fu'>unique</span>(<span class='fu'>unlist</span>(<span class='no'>categories</span>))), <span class='kw'>min.drawsize</span> <span class='kw'>=</span> <span class='fl'>4</span>,
   <span class='kw'>mht</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>drawn</dt>
-      <dd><p>One or more sets of 'drawn' items (e.g., genes). Basically, a list of signatures.</p></dd>
-      <dt>categories</dt>
-      <dd><p>list of gene sets (e.g., MSigDB c2)</p></dd>
-      <dt>ntotal</dt>
-      <dd><p>background population, i.e., the total no. of items from which items are supposed to have been drawn</p></dd>
-      <dt>min.drawsize</dt>
-      <dd><p>min no. of drawn items that must be among categories' items</p></dd>
-      <dt>mht</dt>
-      <dd><p>correct for multiple hypothesis testing across multiple 'draws'</p></dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>drawn</th>
+      <td><p>One or more sets of 'drawn' items (e.g., genes). Basically, a list of signatures.</p></td>
+    </tr>
+    <tr>
+      <th>categories</th>
+      <td><p>list of gene sets (e.g., MSigDB c2)</p></td>
+    </tr>
+    <tr>
+      <th>ntotal</th>
+      <td><p>background population, i.e., the total no. of items from which items are supposed to have been drawn</p></td>
+    </tr>
+    <tr>
+      <th>min.drawsize</th>
+      <td><p>min no. of drawn items that must be among categories' items</p></td>
+    </tr>
+    <tr>
+      <th>mht</th>
+      <td><p>correct for multiple hypothesis testing across multiple 'draws'</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
