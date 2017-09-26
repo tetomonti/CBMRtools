@@ -208,7 +208,7 @@ qmatrix2heatmap <- function
     }
     heat <- NULL
     ## sort rows and columns by HC
-    if ( do.sort || do.heat )
+    if ( do.sort )
     {
         ## Remove gene sets that cause crash - no overlap with another gene set
         dist.row <-dist(mx01,method="euclidean")
@@ -225,44 +225,58 @@ qmatrix2heatmap <- function
         }
         hc.row <- hcopt(dist.row,method=aggMethod)
         hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=aggMethod)
+        print(do.heat)
+    }
+      if ( do.heat ) 
+        {
 
-        if ( do.heat ) {
+          mxMin <- min(mx01, na.rm = T)
+          mxMax <- max(mx01, na.rm = T)
+          mxU <- seq(mxMin, mxMax, by = 1)
 
-            mxMin <- min(mx01, na.rm = T)
-            mxMax <- max(mx01, na.rm = T)
-            mxU <- seq(mxMin, mxMax, by = 1)
+          mxAbsMax <- max(abs(mxU))
+          ncolors <- mxAbsMax*2+1
 
-            mxAbsMax <- max(abs(mxU))
-            ncolors <- mxAbsMax*2+1
-
-            COL <- colGradient(c("blue","white","red"),length=ncolors)
-            names(COL) <- as.character(seq(-mxAbsMax, mxAbsMax, by = 1))
-            COL <- COL[names(COL) %in% mxU]
+          COL <- colGradient(c("blue","white","red"),length=ncolors)
+          names(COL) <- as.character(seq(-mxAbsMax, mxAbsMax, by = 1))
+          COL <- COL[names(COL) %in% mxU]
 
 
-            ## Create heatmap
-            if ( !is.null(heatfile) ) {
-                if ( !((outdev <- file.ext(heatfile)) %in% c("png","pdf","jpeg")) )
-                    stop( "file extension must be one of {png,pdf,jpeg}" )
-                match.fun(outdev)(heatfile)
-            }
+          ## Create heatmap
+          if ( !is.null(heatfile) ) {
+              if ( !((outdev <- file.ext(heatfile)) %in% c("png","pdf","jpeg")) )
+                  stop( "file extension must be one of {png,pdf,jpeg}" )
+              match.fun(outdev)(heatfile)
+          }
+          if( do.sort ){
+            heat <- pheatmap(mx01,
+                            color = COL,
+                            cluster_rows = hc.row,
+                            cluster_col = hc.col,
+                            annotation_col = annotation_col,
+                             annotation_row = annotation_row,
+                            annotation_colors = annotation_colors,
+                            legend = FALSE,
+                            ...
+                            )
+          } else {
             heat <- pheatmap(mx01,
                              color = COL,
-                             cluster_rows = hc.row,
-                             cluster_col = hc.col,
+                             cluster_rows = FALSE,
+                             cluster_col = FALSE,
                              annotation_col = annotation_col,
                              annotation_row = annotation_row,
                              annotation_colors = annotation_colors,
                              legend = FALSE,
                              ...
-                             )
-            if ( !is.null(heatfile) ) dev.off()
+            )
+          }
+          if ( !is.null(heatfile) ) dev.off()
         }
         if ( do.sort ) {
             mx <- mx[hc.row$order,hc.col$order]
             mx01 <- mx01[hc.row$order,hc.col$order]
         }
-    }
     return( list(mx=mx,mx01=mx01,heat=heat) )
 }
 #######################################################################
