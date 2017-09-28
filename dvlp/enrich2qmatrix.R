@@ -225,7 +225,6 @@ qmatrix2heatmap <- function
         }
         hc.row <- hcopt(dist.row,method=aggMethod)
         hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=aggMethod)
-        print(do.heat)
     }
       if ( do.heat ) 
         {
@@ -406,7 +405,8 @@ qmatrix2workbook <- function
     # Add colors to fill in heatmap
     
     # Don't add colors if no significant gene sets
-    if(sum(imatrix) != 0){
+
+    if(sum(imatrix, na.rm = T) != 0){
 
       mxMin <- min(imatrix, na.rm = T)
       mxMax <- max(imatrix, na.rm = T)
