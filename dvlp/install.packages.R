@@ -29,7 +29,8 @@ pkgs <- c("mclust",
           "XLConnect",
           "openxlsx",
           "data.table",
-          "dendextend")
+          "dendextend",
+          "pheatmap")
 install.packages(pkgs,repos="http://cran.r-project.org")
 require(devtools)
 install_github('hadley/staticdocs')
@@ -37,6 +38,8 @@ install_github('hadley/pkgdown')
 
 source("http://bioconductor.org/biocLite.R")
 biocLite()
-biocLite(c("biomaRt","ROC","pathifier","ConsensusClusterPlus","ASSIGN","Biobase","oligo","oligoClasses",
-           "limma","frma","GSEAlm"))
+biocLite(c("biomaRt","ROC","pathifier","ConsensusClusterPlus","ASSIGN","Biobase","oligo",
+           "oligoClasses","limma","frma","GSEAlm"))
 biocLite("DESeq2","edgeR")
+biocLite("SCAN.UPC")
+biocLite("GSVA")

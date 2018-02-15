@@ -4,7 +4,7 @@
 ##
 ## this is not well defined. Ideally, there would be overload of
 ## operators such as rownames, colnames, and indexing ([,]) so as to
-## make it transparent. 
+## make it transparent.
 
 ## use slotNames, getSlots, or getClass to see details about the class
 
@@ -16,9 +16,9 @@
 #'
 #' @slot signal is the [m x n] gene-by-sample matrix of expression levels
 #' @slot description is an m-sized character vector of genes' (or probesets') descriptions
-#' 
+#'
 #' @export
-#' 
+#'
 setClass("gctdata",
          representation=representation(
              signal="matrix",
@@ -109,6 +109,7 @@ setReplaceMethod(f="exptnames",
 
 ## READ GCT
 ##
+#' @export
 read.gct <- function( file, force.read=FALSE, do.save=TRUE, binext=".RData",verbose=TRUE )
 {
   # see if a binary object was cached
@@ -144,11 +145,11 @@ write.gct <- function( x, file, binext=".RData", do.save=TRUE, verbose=FALSE )
   if ( is.matrix(x) ) {
     x <- new("gctdata",
              signal=x,
-             description=rownames(x))             
+             description=rownames(x))
   }
   else if ( class(x)!="gctdata" )
     stop( "object does not belong to gctdata class" )
-  
+
   cat( "#1.2\n", file=file )
   cat( paste(dimGctdata(x),collapse="\t"), sep="" , "\n", file=file, append=TRUE )
   cat( paste( c("Name\tDescription",exptnames(x)),collapse="\t"), sep="", "\n",
@@ -189,6 +190,7 @@ set.descriptors <- function( x, dnames ) {
 }
 ## SUBSET GCTDATA
 ##
+#' @export
 subset.gctdata <- function( x, exptnames=NULL, genenames=NULL, ignore=FALSE )
 {
   if (class(x)!="gctdata") stop( "'gctdata' object expected" )
@@ -197,7 +199,7 @@ subset.gctdata <- function( x, exptnames=NULL, genenames=NULL, ignore=FALSE )
 
   g.idx <- 1:nrow(x)
   e.idx <- 1:ncol(x)
-  
+
   # sample subsetting
   #
   if ( !is.null(exptnames) )
@@ -236,9 +238,9 @@ subset.gctdata <- function( x, exptnames=NULL, genenames=NULL, ignore=FALSE )
 #' @slot calls is the [m x n] gene-by-sample matrix of P/M/A calls
 #' @slot description is an m-sized character vector of genes' (or probesets') descriptions
 #' @slot scale is the scaling factor used with each sample (if any)
-#' 
+#'
 #' @export
-#' 
+#'
 setClass("resdata",
        contains="gctdata",
        representation(calls="matrix",
@@ -307,7 +309,7 @@ read.res <- function
 
   calls <- desc <- NULL
   scale <- ""
-  
+
   # Reading header line
   #
   chip.names <-
@@ -318,7 +320,7 @@ read.res <- function
     stop("Unrecognized description label: ",chip.names[1]," (", description," expected)",sep="")
   if (chip.names[2]!=accession)
     stop("Unrecognized accession label: ",chip.names[1]," (", accession," expected)",sep="")
-  
+
   # Reading data (signal + calls)
   #
   dat <- read.delim(file,skip=3,sep=sep,header=FALSE,quote="",check.names=FALSE,row.names=2)
@@ -352,7 +354,7 @@ read.res <- function
   calls <- as.matrix(dat[,seq(3,ncol(dat),2)])
   dat <- as.matrix(dat[,seq(2,ncol(dat),2)])
   colnames(dat) <- colnames(calls) <- chip.names
-  
+
   VERBOSE(verbose, "done, ",nrow(dat), " genes and ", ncol(dat), " experiments.\n", sep="")
 
   dat <- new("resdata",
@@ -378,6 +380,7 @@ dimResdata <- function( x )
 }
 ## MERGE RESDATA
 ##
+#' @export
 merge.resdata <- function( X, Y )
 {
   if (class(X)!="resdata") stop("resdata expected for X")
@@ -391,10 +394,11 @@ merge.resdata <- function( X, Y )
       signal=cbind(getSignal(X),getSignal(Y)[genes,]),
       calls =cbind(getCalls(X),getCalls(Y)[genes,]),
       description=getDescription(X),
-      scale=c(getScale(X),getScale(Y)) )  
+      scale=c(getScale(X),getScale(Y)) )
 }
 ## SUBSET RESDATA
 ##
+#' @export
 subset.resdata <- function( x, exptnames=NULL, genenames=NULL, ignore=FALSE )
 {
   if (class(x)!="resdata") stop( "'resdata' object expected" )
@@ -403,7 +407,7 @@ subset.resdata <- function( x, exptnames=NULL, genenames=NULL, ignore=FALSE )
 
   g.idx <- 1:nrow(x)
   e.idx <- 1:ncol(x)
-  
+
   # sample subsetting
   #
   if ( !is.null(exptnames) )
@@ -499,6 +503,7 @@ subset.data <- function( x, exptnames=NULL, genenames=NULL, ignore=FALSE )
 }
 ## READ CLS
 ##
+#' @export
 read.cls <- function( file, rowskip=2, do.lbls=(rowskip==2), gc.lbl=FALSE, verbose=TRUE )
 {
   # INPUT:
@@ -532,7 +537,7 @@ read.cls <- function( file, rowskip=2, do.lbls=(rowskip==2), gc.lbl=FALSE, verbo
 
     VERBOSE( verbose, "class labels: ", paste(levels(cls),collapse=", "), "\n" )
   }
-  return( cls )    
+  return( cls )
 }
 ## WRITE CLS
 ##
@@ -570,7 +575,7 @@ tab2cls <- function(tab,col.name=NULL,cnames=NULL,levs=NULL,na.rm=TRUE)
     stop( "cnames must be same length as tab" )
   if ( !is.null(levs) && length(levs)!=length(unique(tab)) )
     stop( "levs must be as many as class values" )
-  
+
   cls <- if (na.rm) match(tab,unique(tab[!is.na(tab)]))-1 else match(tab,unique(tab))-1
   levels(cls) <- if (is.null(levs)) {if (na.rm) unique(tab[!is.na(tab)]) else unique(tab)} else levs
   if ( !is.null(cnames) )
@@ -603,7 +608,7 @@ create.cls <- function( X, levs=NULL, nms=NULL, do.sort=TRUE )
     stop( "names(X) is non-null, can't assign new names" )
   if ( !is.null(nms) )
     names(X) <- nms
-  
+
   if (do.sort) {
     ord <- order(X)
     nms <- names(X)
@@ -646,7 +651,7 @@ if (FALSE)
     setwd('~/Research/Projects/oralcancer/taz_yap_dpagt1/processed_data/')
 
     GCT <- read.gct('DUMMY.gct',force.read=TRUE)
-    
+
     print(genenames(GCT))
     genenames(GCT) <- paste("G",1:nrow(GCT),sep="")
     print(genenames(GCT))
@@ -654,7 +659,7 @@ if (FALSE)
     print(exptnames(GCT)[1:10])
     exptnames(GCT) <- paste("E",1:ncol(GCT),sep="")
     print(exptnames(GCT)[1:10])
-    
+
 
     RES <- read.res('DUMMY.res',force.read=TRUE)
 }

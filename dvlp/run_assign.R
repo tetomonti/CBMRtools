@@ -261,7 +261,8 @@ plotAll<-function
     do.log=TRUE,
     xlab="Samples",
     ylab="Signature",
-    geneID="gene_symbol"
+    geneID="gene_symbol",
+    simple.heatmap=TRUE
 )
 {
   ## checks
@@ -277,30 +278,32 @@ plotAll<-function
   assay.data<-assay.data[fData(eSet)[,geneID] %in% gene_list,]
   rownames(assay.data)<-fData(eSet)[,geneID][fData(eSet)[,geneID] %in% gene_list]
   gene_list<-rownames(assay.data)
-  
-  ## all
-  hc01.col <- hclust(dist(t(assay.data)),method="ward.D")
-  hc01.row <- hclust(as.dist(1-cor(t(assay.data))),method="ward.D")
-  
-  if (!is.null(colSideCols)){
-    heatmap.2(assay.data,
-              scale='row',
-              trace='none',
-              main=title,
-              Colv=as.dendrogram(hc01.col),
-              Rowv=as.dendrogram(hc01.row),
-              col=brewer.pal(11,"RdBu")[11:1],
-              ColSideColors=colSideCols)
-  }else{
-    heatmap.2(assay.data,
-              scale='row',
-              trace='none',
-              main=title,
-              Colv=as.dendrogram(hc01.col),
-              Rowv=as.dendrogram(hc01.row),
-              col=brewer.pal(11,"RdBu")[11:1])   
+
+  if ( simple.heatmap )
+  {
+      ## all
+      hc01.col <- hclust(dist(t(assay.data)),method="ward.D")
+      hc01.row <- hclust(as.dist(1-cor(t(assay.data))),method="ward.D")
+      
+      if (!is.null(colSideCols)){
+          heatmap.2(assay.data,
+                    scale='row',
+                    trace='none',
+                    main=title,
+                    Colv=as.dendrogram(hc01.col),
+                    Rowv=as.dendrogram(hc01.row),
+                    col=brewer.pal(11,"RdBu")[11:1],
+                    ColSideColors=colSideCols)
+      }else{
+          heatmap.2(assay.data,
+                    scale='row',
+                    trace='none',
+                    main=title,
+                    Colv=as.dendrogram(hc01.col),
+                    Rowv=as.dendrogram(hc01.row),
+                    col=brewer.pal(11,"RdBu")[11:1])   
+      }
   }
-  
   gene_scores <- output.data$mcmc.pos.mean.testData$S_pos[match.nona(rownames(assay.data),names(output.data$processed.data$Pi_matrix))]
   posteriors <- output.data$mcmc.pos.mean.testData$Delta_pos[match.nona(rownames(assay.data),names(output.data$processed.data$Pi_matrix))]
   sample_scores<-output.data$mcmc.pos.mean.testData$kappa_pos
