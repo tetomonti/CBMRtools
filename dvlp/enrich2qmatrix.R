@@ -179,6 +179,7 @@ qmatrix2heatmap <- function
     do.heat=FALSE,  # display heatmap
     rm.zero=TRUE,   # remove genesets/rows w/ no hits
     verbose=TRUE,   # extra arguments to my.heatmap
+    zero=1.0e-10,   # min p-value
     heatfile=NULL,  # save heatmap to file
                     # hclust methods
     aggMethod=c("ward.D2","ward.D","single","complete","average","mcquitty","median","centroid"),
@@ -186,19 +187,14 @@ qmatrix2heatmap <- function
     annotation_col=NULL, # data frame of GSEA result annotations
     annotation_row=NULL, # data frame of pathway annotations
     annotation_colors=NULL, # List of names colors for annotations
-    #show_row_labels=TRUE,
-    #row_label_size=10,
-    #col_label_size=10,
     ...
 )
 {
     require(pheatmap)
     aggMethod <- match.arg(aggMethod)
-
     levs <- 0:length(fdr)
-    zero <- -0.000001
     mx01 <- suppressWarnings(matrix(cut(as.vector(mx),
-                                        breaks=c(-1,-fdr,zero,rev(fdr),1),
+                                        breaks=c(-1,-(fdr+zero),0,rev(fdr),1),
                                         labels=as.numeric(c(-levs,rev(levs))),include.lowest=TRUE),
                                     nrow=nrow(mx),ncol=ncol(mx)))
     mx01 <- apply(mx01,2,as.numeric)
@@ -218,7 +214,7 @@ qmatrix2heatmap <- function
     }
     heat <- NULL
     ## sort rows and columns by HC
-    if ( do.sort || do.heat )
+    if ( do.sort )
     {
         ## Remove gene sets that cause crash - no overlap with another gene set
         dist.row <-dist(mx01,method="euclidean")
@@ -251,13 +247,23 @@ qmatrix2heatmap <- function
             mxMin <- min(mx01, na.rm = T)
             mxMax <- max(mx01, na.rm = T)
             mxU <- seq(mxMin, mxMax, by = 1)
+=======
+        hc.row <- hcopt(dist.row,method=aggMethod)
+        hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=aggMethod)
+    }
+      if ( do.heat ) 
+        {
 
-            mxAbsMax <- max(abs(mxU))
-            ncolors <- mxAbsMax*2+1
+          mxMin <- min(mx01, na.rm = T)
+          mxMax <- max(mx01, na.rm = T)
+          mxU <- seq(mxMin, mxMax, by = 1)
 
-            COL <- colGradient(c("blue","white","red"),length=ncolors)
-            names(COL) <- as.character(seq(-mxAbsMax, mxAbsMax, by = 1))
-            COL <- COL[names(COL) %in% mxU]
+          mxAbsMax <- max(abs(mxU))
+          ncolors <- mxAbsMax*2+1
+
+          COL <- colGradient(c("blue","white","red"),length=ncolors)
+          names(COL) <- as.character(seq(-mxAbsMax, mxAbsMax, by = 1))
+          COL <- COL[names(COL) %in% mxU]
 
 
             ## Create heatmap
@@ -268,17 +274,37 @@ qmatrix2heatmap <- function
             }
 
             ###this ignores do.sort argument and sorts regardless
+=======
+          ## Create heatmap
+          if ( !is.null(heatfile) ) {
+              if ( !((outdev <- file.ext(heatfile)) %in% c("png","pdf","jpeg")) )
+                  stop( "file extension must be one of {png,pdf,jpeg}" )
+              match.fun(outdev)(heatfile)
+          }
+          if( do.sort ){
+            heat <- pheatmap(mx01,
+                            color = COL,
+                            cluster_rows = hc.row,
+                            cluster_col = hc.col,
+                            annotation_col = annotation_col,
+                             annotation_row = annotation_row,
+                            annotation_colors = annotation_colors,
+                            legend = FALSE,
+                            ...
+                            )
+          } else {
             heat <- pheatmap(mx01,
                              color = COL,
-                             cluster_rows = hc.row,
-                             cluster_col = hc.col,
+                             cluster_rows = FALSE,
+                             cluster_col = FALSE,
                              annotation_col = annotation_col,
                              annotation_row = annotation_row,
                              annotation_colors = annotation_colors,
                              legend = FALSE,
                              ...
-                             )
-            if ( !is.null(heatfile) ) dev.off()
+            )
+          }
+          if ( !is.null(heatfile) ) dev.off()
         }
         if ( do.sort ) {
             row.ord<-1:nrow(mx)
@@ -289,7 +315,6 @@ qmatrix2heatmap <- function
             mx <- mx[row.ord,col.ord]
             mx01 <- mx01[row.ord,col.ord]
         }
-    }
     return( list(mx=mx,mx01=mx01,heat=heat) )
 }
 #######################################################################
@@ -415,27 +440,35 @@ qmatrix2workbook <- function
     # Write data
     writeData(wb,sheetName,qmatrix,startCol=startCol + 1,startRow=startRow + 1, colNames = F, rowNames = F)
 
+    
+    
     # Add colors to fill in heatmap
-    mxMin <- min(imatrix, na.rm = T)
-    mxMax <- max(imatrix, na.rm = T)
-    mxU <- seq(mxMin, mxMax, by = 1)
+    
+    # Don't add colors if no significant gene sets
 
-    mxAbsMax <- max(abs(mxU))
-    ncolors <- mxAbsMax*2+1
+    if(sum(imatrix, na.rm = T) != 0){
 
-    COL <- colGradient(col,length=ncolors)
-    names(COL) <- as.character(seq(-mxAbsMax, mxAbsMax, by = 1))
-    COL <- COL[names(COL) %in% mxU]
+      mxMin <- min(imatrix, na.rm = T)
+      mxMax <- max(imatrix, na.rm = T)
+      mxU <- seq(mxMin, mxMax, by = 1)
 
-    ## Fill in colors based on significance
-    for ( i in 1:length(COL) )
-    {
-        colInd <- which(imatrix == as.numeric(names(COL)[i]), arr.ind=TRUE)
-        colInd[,1] <- colInd[,1] + startRow
+      mxAbsMax <- max(abs(mxU))
+     ncolors <- mxAbsMax*2+1
+
+      COL <- colGradient(col,length=ncolors)
+      names(COL) <- as.character(seq(-mxAbsMax, mxAbsMax, by = 1))
+      COL <- COL[names(COL) %in% mxU]
+
+      ## Fill in colors based on significance
+      for ( i in 1:length(COL) )
+      {
+          colInd <- which(imatrix == as.numeric(names(COL)[i]), arr.ind=TRUE)
+         colInd[,1] <- colInd[,1] + startRow
         colInd[,2] <- colInd[,2] + startCol
-        if ( length(colInd)>0 ){
-            addStyle(wb, sheetName, style=createStyle(fgFill=COL[i]), rows=colInd[,1], cols=colInd[,2])
-        }
+          if ( length(colInd)>0 ){
+             addStyle(wb, sheetName, style=createStyle(fgFill=COL[i]), rows=colInd[,1], cols=colInd[,2])
+         }
+      }
     }
 
     ## Add values to row annotation
