@@ -70,7 +70,8 @@ cbmGSEA2qmatrix <- function
         mx <- absMX
         VERBOSE(verbose, " done, min(fdr):", min(abs(mx),na.rm=TRUE), "max(fdr):", max(mx,na.rm=TRUE),"\n")
     }
-    q2h <- qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,heatfile=heatfile,rm.zero=rm.zero,na.col=na.col,annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, aggMethod = aggMethod, ...)
+    q2h <- qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort, do.sort.row = do.sort.row, do.sort.col = dol.sort.col, 
+        do.heat=do.heat,heatfile=heatfile,rm.zero=rm.zero,na.col=na.col,annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, aggMethod = aggMethod, ...)
 
     if ( !is.null(outfile) )
     {
@@ -95,6 +96,8 @@ gsea2qmatrix <- function
     method=c("union","intersect"),
                          # union or intersection of genesets across signatures
     do.sort=TRUE,        # sort matrices by HC
+    do.sort.row = TRUE,
+    do.sort.col = TRUE,
     do.heat=FALSE,       # display heatmap
     rm.zero=TRUE,        # remove genesets/rows w/ no hits
     pvalID="FDR q-val",  # which significance measure to use (see GSEA output for choices)
@@ -144,7 +147,8 @@ gsea2qmatrix <- function
         else
             stop("unrecognized method:",method)
     }
-    q2h <- qmatrix2heatmap(mx=mx, fdr=fdr, do.sort=do.sort, do.heat=do.heat, heatfile=heatfile, rm.zero=rm.zero, na.col=na.col, annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, ...)
+    q2h <- qmatrix2heatmap(mx=mx, fdr=fdr, do.sort=do.sort, do.sort.row = do.sort.row,
+        do.sort.col = do.sort.col, do.heat=do.heat, heatfile=heatfile, rm.zero=rm.zero, na.col=na.col, annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, ...)
 
     nsig <- sum(apply(mx<=fdr[1],1,any,na.rm=TRUE)) # count num. of genesets with significant enrichment
 
@@ -169,7 +173,9 @@ qmatrix2heatmap <- function
 (
     mx,             # geneset-by-signature matrix of q-values
     fdr=c(.05,.01), # FDR thresholds (must be in decreasing order)
-    do.sort=TRUE,   # sort matrices by HC
+    do.sort=FALSE,   # sort matrices by HC
+    do.sort.row=FALSE, #sort row by HC
+    do.sort.col=FALSE, #sort col by HC
     do.heat=FALSE,  # display heatmap
     rm.zero=TRUE,   # remove genesets/rows w/ no hits
     verbose=TRUE,   # extra arguments to my.heatmap
@@ -227,9 +233,19 @@ qmatrix2heatmap <- function
         if( rmC > 0 ){
             VERBOSE(verbose, "Removed", rmC ,"genesets due to no overlap with another gene set(s).\n")
         }
-        hc.row <- hcopt(dist.row,method=aggMethod)
-        hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=aggMethod)
 
+        ##added conditional to account for do.sort argument
+        if(do.sort){
+            if(do.sort.row)
+            hc.row <- hcopt(dist.row,method=aggMethod)
+            else hc.row <- FALSE
+            if(do.sort.col)
+            hc.col <- hcopt(dist(t(mx01),method="euclidean"),method=aggMethod)
+            else hc.col <-FALSE
+        } else {
+            hc.row <-FALSE
+            hc.col <-FALSE
+        }
         if ( do.heat ) {
 
             mxMin <- min(mx01, na.rm = T)
@@ -250,6 +266,8 @@ qmatrix2heatmap <- function
                     stop( "file extension must be one of {png,pdf,jpeg}" )
                 match.fun(outdev)(heatfile)
             }
+
+            ###this ignores do.sort argument and sorts regardless
             heat <- pheatmap(mx01,
                              color = COL,
                              cluster_rows = hc.row,
@@ -263,8 +281,13 @@ qmatrix2heatmap <- function
             if ( !is.null(heatfile) ) dev.off()
         }
         if ( do.sort ) {
-            mx <- mx[hc.row$order,hc.col$order]
-            mx01 <- mx01[hc.row$order,hc.col$order]
+            row.ord<-1:nrow(mx)
+            col.ord<-1:ncol(mx)
+
+            if(do.sort.row) row.ord<-hc.row$order
+            if(do.sort.col) col.ord<-hc.col$order
+            mx <- mx[row.ord,col.ord]
+            mx01 <- mx01[row.ord,col.ord]
         }
     }
     return( list(mx=mx,mx01=mx01,heat=heat) )
@@ -320,7 +343,8 @@ hyper2qmatrix <- function
       mx <- absMX
       VERBOSE(verbose, " done, min(fdr):", min(abs(mx),na.rm=TRUE), "max(fdr):", max(mx,na.rm=TRUE),"\n")
     }
-    q2h <- qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort,do.heat=do.heat,rm.zero=rm.zero,na.col=na.col,annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, aggMethod = aggMethod, ...)
+    q2h <- qmatrix2heatmap(mx=mx,fdr=fdr,do.sort=do.sort, do.sort.row = do.sort.row, 
+        do.sort.col = do.sort.col, do.heat=do.heat,rm.zero=rm.zero,na.col=na.col,annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, aggMethod = aggMethod, ...)
 
     if ( !is.null(outfile) )
     {
