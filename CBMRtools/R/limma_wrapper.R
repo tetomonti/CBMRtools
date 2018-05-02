@@ -43,7 +43,9 @@ run_limma <- function(eset, treatment, cond, control, verbose = TRUE,
     fit2 <- contrasts.fit(fit, contrast.matrix)
     fit2 <- eBayes(fit2)
                                         #return full table without sorting
-    fit2.table<-topTable(fit2, coef=1, adjust="BH", number =length(fit2) ,
+    fit2.table<-topTable(fit2, coef=1, adjust="BH", 
+        #number =length(fit2) ,
+        number = nrow(fit2),
                          sort.by = "none")
     
     if (verbose){
