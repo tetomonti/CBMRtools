@@ -17,12 +17,17 @@ Some dependencies you may need to install first:
     install_github("hadley/ggplot2") #only works on R 3.1.2, for lower versions use install.packages("ggplot2")
     install_github("andrie/ggdendro")
 
+Additional dependencies may need to be installed through bioconductor prior to installation of CBMRtools
+
 #installing current tag
 From within R, run the following commands:
 
     library(devtools)
-    PAT <- "GIT_REPO_KEY" #contact lia978 to request access 
-    install_github("montilab/CBMRtools/CBMRtools",ref="v1.1.1", auth_token = PAT)
+	
+    #install from master
+    install_github("montilab/CBMRtools/CBMRtools")
+    #install from specific branch
+    install_github("montilab/CBMRtools/CBMRtools",ref="v1.1.3")
     require(CBMRtools)
 
 
