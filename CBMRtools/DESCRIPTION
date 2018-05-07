@@ -5,6 +5,10 @@ Authors@R: c(person("Li", "Amy", email = "ajli@bu.edu", role =  c("aut", "cre"))
 Description: Miscellanea scripts developed by CBM/montilab members
 Depends:
     R (>= 3.1.0),
+Imports:
+    data.table,
+    oligo,
+    oligoClasses,
     ggplot2,
     ggdendro,
     combinat,
@@ -20,11 +24,8 @@ Depends:
     scales,
     survival,
     DESeq2,
-    XML
-Imports:
-    data.table,
-    oligo,
-    oligoClasses
+    XML,
+    limma
 License: MIT + file LICENSE
 LazyData: true
 RoxygenNote: 6.0.1
