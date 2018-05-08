@@ -7,17 +7,10 @@ You need R 3.0.0 or higher. If on scc4, before starting R, type:
 
 it is also recommended to ssh with X11 forward (ssh -X)
 
-Some dependencies you may need to install first are specified in the [DESCRIPTION](https://github.com/montilab/CBMRtools/blob/master/CBMRtools/DESCRIPTION) file. While install_github() automatically tries to install package dependencies from CRAN, if you have non-CRAN package dependencies such as Bioconductor packages, you may need to install them independently. See this [package](https://github.com/lia978/RPackageDependenciesInstall) for a fast and easy way to install both Cran and Bioconductor package dependencies listed in the DESCRIPTION file.
-
-
-After successful installation of dependencies, to install CBMRtools, run the following commands within R:
 
 ```R
     library(devtools)
-	
-    #install from master
     install_github("montilab/CBMRtools/CBMRtools")
-    
 ```
 
 # Documentations
@@ -53,7 +46,7 @@ Within this github, CBMRtools' code is located at /CBMRtools/R
 
 Add your R function to <code>/CBMRtools/R/</code> **do not add standalone scripts, wrap all R code into functions**
 
-Specify dependencies: within the file <code>/CBMRtools/DESCRIPTION</code>, add to the section Depends the list of packages your function depends on (if any)
+Specify dependencies: within the file <code>/CBMRtools/DESCRIPTION</code>, add to the section Depends the list of packages your function depends on (if any). Bioconductor package dependencies should be specified under "biocViews" to ensure proper installation by install_github(). 
 
 Add license info to the file and roxygen comments at the top of each function you want to document. You don’t need to write this from scratch, see template at	<code>template.R</code> and an example of how to use this template at 
 <code>/CBMRtools/R/variationFilter.R</code>.
