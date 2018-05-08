@@ -1,4 +1,4 @@
-**Installing CBMRtools with Github repo**
+**Installing CBMRtools from Github repo**
 ========
 
 You need R 3.0.0 or higher. If on scc4, before starting R, type:
@@ -18,7 +18,8 @@ Next, to install CBMRtools, run the following commands within R:
 	
     #install from master
     install_github("montilab/CBMRtools/CBMRtools")
-    #install from specific branch
+    
+    #or install from specific branch
     install_github("montilab/CBMRtools/CBMRtools",ref="v1.1.3")
     require(CBMRtools)
 ```
