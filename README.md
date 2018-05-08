@@ -1,6 +1,4 @@
-
-.. use and add to CBMRtools
-**Install CBMRtools with install_github**
+**Installing CBMRtools with Github repo**
 ========
 
 You need R 3.0.0 or higher. If on scc4, before starting R, type:
@@ -9,19 +7,13 @@ You need R 3.0.0 or higher. If on scc4, before starting R, type:
 
 it is also recommended to ssh with X11 forward (ssh -X)
 
-Some dependencies you may need to install first:
+Some dependencies you may need to install first are specified in the [DESCRIPTION](https://github.com/montilab/CBMRtools/blob/master/CBMRtools/DESCRIPTION) file. While  install_github() tries to install package dependencies from CRAN, if you non-CRAN packages such as Bioconductor packages, you may need to install them independently. 
+See this [package](https://github.com/lia978/RPackageDependenciesInstall) for a fast and easy way to install both Cran and bioconductor packages listed from the DESCRIPTION file.
 
-    install.packages("devtools")
-    require("devtools")
-    install_github("hadley/staticdocs")
-    install_github("hadley/ggplot2") #only works on R 3.1.2, for lower versions use install.packages("ggplot2")
-    install_github("andrie/ggdendro")
 
-Additional dependencies may need to be installed through bioconductor prior to installation of CBMRtools
+Next, to install CBMRtools, run the following commands within R:
 
-#installing current tag
-From within R, run the following commands:
-
+```R
     library(devtools)
 	
     #install from master
@@ -29,9 +21,9 @@ From within R, run the following commands:
     #install from specific branch
     install_github("montilab/CBMRtools/CBMRtools",ref="v1.1.3")
     require(CBMRtools)
+```
 
-
-#reading documentation
+# Documentations
 documentation for this package is currently found at:
 http://montilab.bumc.bu.edu/~montilab/CBMRtoolsHtml/web/index.html
 
