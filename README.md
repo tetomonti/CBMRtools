@@ -7,11 +7,11 @@ You need R 3.0.0 or higher. If on scc4, before starting R, type:
 
 it is also recommended to ssh with X11 forward (ssh -X)
 
-Some dependencies you may need to install first are specified in the [DESCRIPTION](https://github.com/montilab/CBMRtools/blob/master/CBMRtools/DESCRIPTION) file. While  install_github() tries to install package dependencies from CRAN, if you non-CRAN packages such as Bioconductor packages, you may need to install them independently. 
+Some dependencies you may need to install first are specified in the [DESCRIPTION](https://github.com/montilab/CBMRtools/blob/master/CBMRtools/DESCRIPTION) file. While install_github() automatically tries to install package dependencies from CRAN, if you non-CRAN package dependencies such as Bioconductor packages, you may need to install them independently. 
 See this [package](https://github.com/lia978/RPackageDependenciesInstall) for a fast and easy way to install both Cran and bioconductor packages listed from the DESCRIPTION file.
 
 
-Next, to install CBMRtools, run the following commands within R:
+After successful installation of dependencies, to install CBMRtools, run the following commands within R:
 
 ```R
     library(devtools)
@@ -19,9 +19,6 @@ Next, to install CBMRtools, run the following commands within R:
     #install from master
     install_github("montilab/CBMRtools/CBMRtools")
     
-    #or install from specific branch
-    install_github("montilab/CBMRtools/CBMRtools",ref="v1.1.3")
-    require(CBMRtools)
 ```
 
 # Documentations
