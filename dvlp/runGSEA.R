@@ -47,74 +47,74 @@ runGSEA <- function
     verbose=TRUE
 )
 {
-   if ( !dir.exists(outdir) ) stop( "undefined outdir: ",outdir )
-   
-   testname <- paste(rptLabel,test,'vs',control,sep='_')
-   testname <- gsub(' ','_',testname)
-
-   ## use only the samples the have either test or control classes
-   rdata <- eSet[,pData(eSet)[[covariate]] %in% c(test,control)]
-   
-   ## ordering them in a way that we have first test and then control
-   rdata <- rdata[,c(grep(paste('^',test,'$',sep=''),pData(rdata)[[covariate]]),
-                   grep(paste('^',control,'$',sep=''),pData(rdata)[[covariate]]))]
-   
-   ## dump expression matrix into a tab-delimited txt file
-   VERBOSE(verbose,"Writing expression data to file:",gepFile)
-   write.table(rbind(c('symbols',colnames(rdata)),
-                     cbind(featureNames(rdata),exprs(rdata))),
-               file=gepFile,
-               quote=FALSE,
-               sep='\t',
-               col.names=FALSE,
-               row.names=FALSE)
-   VERBOSE(verbose,", done.\n")
-   
-   ## dump phenotypes into a cls file
-   VERBOSE(verbose,"Writing class template to file:", clsFile)
-   pheno <- as.character(pData(rdata)[[covariate]])
-   con <- file(clsFile,open='w')
-   write(paste(length(pheno),'2 1'),con)
-   write(paste('# ',test,' ',control,sep=''),con)
-   classes <- ''
-   for (i in 1:length(pheno)){
-      classes <- paste(classes,pheno[i])
-   }
-   write(classes,con)
-   close(con)         
-   VERBOSE(verbose,", done.\n")
-   
-   ## keep track of the directory content (will see why below)
-   lsBefore <- if ( dir.exists(outdir) ) list.files(outdir)
-
-   CMD <- paste("java -Xmx3072m -cp ", jarFile,
-                " xtools.gsea.Gsea -res ", gepFile, " -cls ", clsFile, "#", test, "_versus_", control," -gmx ", gmtFile,
-                " -collapse false -nperm ", nperm,
-                " -permute gene_set -rnd_type no_balance -scoring_scheme weighted -rpt_label ", testname, 
-                " -metric Signal2Noise -sort real -order descending -include_only_symbols false",
-                " -make_sets true -median false -num 100 -plot_top_x ", topX,
-                " -rnd_seed timestamp -save_rnd_lists false -set_max ", maxG, " -set_min ", minG, 
-                " -zip_report false -out ", outdir, " -gui false", sep="")
-   
-   ## call java gsea version
-   VERBOSE(verbose,CMD,"\n")
-   system(CMD)
-   if (do.rm) unlink(c(clsFile,gepFile))
-
-   ## determine the name of the generated directory
-   lsAfter <- list.files(outdir)
-   OUT <- setdiff(lsAfter,lsBefore)
-   if ( length(OUT)>1 ) stop( "more than one output directories: ", paste(OUT,sep=",") )
+    if ( !dir.exists(outdir) ) stop( "undefined outdir: ",outdir )
+       
+    testname <- paste(rptLabel,test,'vs',control,sep='_')
+    testname <- gsub(' ','_',testname)
+    
+    ## use only the samples the have either test or control classes
+    rdata <- eSet[,pData(eSet)[[covariate]] %in% c(test,control)]
+    
+    ## ordering them in a way that we have first test and then control
+    rdata <- rdata[,c(grep(paste('^',test,'$',sep=''),pData(rdata)[[covariate]]),
+                      grep(paste('^',control,'$',sep=''),pData(rdata)[[covariate]]))]
+    
+    ## dump expression matrix into a tab-delimited txt file
+    VERBOSE(verbose,"Writing expression data to file:",gepFile)
+    write.table(rbind(c('symbols',colnames(rdata)),
+                      cbind(featureNames(rdata),exprs(rdata))),
+                file=gepFile,
+                quote=FALSE,
+                sep='\t',
+                col.names=FALSE,
+                row.names=FALSE)
+    VERBOSE(verbose,", done.\n")
+    
+    ## dump phenotypes into a cls file
+    VERBOSE(verbose,"Writing class template to file:", clsFile)
+    pheno <- as.character(pData(rdata)[[covariate]])
+    con <- file(clsFile,open='w')
+    write(paste(length(pheno),'2 1'),con)
+    write(paste('# ',test,' ',control,sep=''),con)
+    classes <- ''
+    for (i in 1:length(pheno)){
+        classes <- paste(classes,pheno[i])
+    }
+    write(classes,con)
+    close(con)         
+    VERBOSE(verbose,", done.\n")
+    
+    ## keep track of the directory content (will see why below)
+    lsBefore <- if ( dir.exists(outdir) ) list.files(outdir)
+    
+    CMD <- paste("java -Xmx3072m -cp ", jarFile,
+                 " xtools.gsea.Gsea -res ", gepFile, " -cls ", clsFile, "#", test, "_versus_", control," -gmx ", gmtFile,
+                 " -collapse false -nperm ", nperm,
+                 " -permute gene_set -rnd_type no_balance -scoring_scheme weighted -rpt_label ", testname, 
+                 " -metric Signal2Noise -sort real -order descending -include_only_symbols false",
+                 " -make_sets true -median false -num 100 -plot_top_x ", topX,
+                 " -rnd_seed timestamp -save_rnd_lists false -set_max ", maxG, " -set_min ", minG, 
+                 " -zip_report false -out ", outdir, " -gui false", sep="")
+    
+    ## call java gsea version
+    VERBOSE(verbose,CMD,"\n")
+    system(CMD)
+    if (do.rm) unlink(c(clsFile,gepFile))
+    
+    ## determine the name of the generated directory
+    lsAfter <- list.files(outdir)
+    OUT <- setdiff(lsAfter,lsBefore)
+    if ( length(OUT)>1 ) stop( "more than one output directories: ", paste(OUT,sep=",") )
    VERBOSE(verbose,"output saved to:",OUT,"\n")
-   
-   ## determine the names and read the tabular results files' content, to be returned
-   posFile <- system( paste("ls ",outdir,"/",OUT,"/gsea_report_for_",test,"_*.xls",sep=""), intern=TRUE )
-   negFile <- system( paste("ls ",outdir,"/",OUT,"/gsea_report_for_",control,"_*.xls",sep=""), intern=TRUE )
-   VERBOSE(verbose,"posFile:",posFile,"\n")
-   VERBOSE(verbose,"negFile:",negFile,"\n")
-   POS <- read.delim(posFile,check.names=FALSE,stringsAsFactors=FALSE)
-   NEG <- read.delim(negFile,check.names=FALSE,stringsAsFactors=FALSE)
-   return( list(pos=POS,neg=NEG) )
+    
+    ## determine the names and read the tabular results files' content, to be returned
+    posFile <- system( paste("ls ",outdir,"/",OUT,"/gsea_report_for_",test,"_*.xls",sep=""), intern=TRUE )
+    negFile <- system( paste("ls ",outdir,"/",OUT,"/gsea_report_for_",control,"_*.xls",sep=""), intern=TRUE )
+    VERBOSE(verbose,"posFile:",posFile,"\n")
+    VERBOSE(verbose,"negFile:",negFile,"\n")
+    POS <- read.delim(posFile,check.names=FALSE,stringsAsFactors=FALSE)
+    NEG <- read.delim(negFile,check.names=FALSE,stringsAsFactors=FALSE)
+    return( list(pos=POS,neg=NEG) )
 }
 #####################################################################################
 #' runGSEApreranked

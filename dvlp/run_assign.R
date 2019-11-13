@@ -31,7 +31,8 @@ run_assign<-function(ES,         # ExpressionSet object
   rownames(mat)<-fData(ES)[,geneID][fData(ES)[,geneID] %in% eSig]
   gene_list<-rownames(mat)
   if(length(gene_list) > length(unique(gene_list)))
-    stop(paste("Duplicate entries present in matrix when filtering in for gene list..\n Please either remove these genes or consolidate before projecting onto dataset:\n",
+    stop(paste("Duplicate entries present in matrix when filtering in for gene list..\n",
+               "Please either remove these genes or consolidate before projecting onto dataset:\n",
                names(which(table(gene_list)>1)),sep="\n"))
   
   ## Take log transform (if only normalized RNASeq data), adding pseudocount to avoid NA's
@@ -80,7 +81,7 @@ run_assign<-function(ES,         # ExpressionSet object
   
   save( output.data, file=paste(oDir,"output.rda",sep='/') )
   cat("Done!\n")
-  return( output.data)
+  return( output.data )
 }
 ## function: ANNOTATE ASSIGN OUTPUT
 ##
@@ -138,7 +139,6 @@ assign_heatmap<-function(x,
         x <- (x - low)/(high - low)
         x
     }
-
     ## ordering the heatmap
     gene_order<-order(gene_scores,decreasing=T)
     sample_order<-order(sample_scores,decreasing=T)   
@@ -262,7 +262,8 @@ plotAll<-function
     xlab="Samples",
     ylab="Signature",
     geneID="gene_symbol",
-    simple.heatmap=TRUE
+    simple.heatmap=FALSE,
+    do.barplot=FALSE
 )
 {
   ## checks
@@ -274,8 +275,9 @@ plotAll<-function
     cat("Taking log2-transorm of expression values ..\n\n")
     exprs(eSet) <- log2( exprs(eSet)+1 )
   }
-  assay.data<-log2(exprs(eSet)+1)
-  assay.data<-assay.data[fData(eSet)[,geneID] %in% gene_list,]
+  assay.data <- exprs(eSet)
+  assay.data <- assay.data[fData(eSet)[,geneID] %in% gene_list,,drop=FALSE]
+  if ( nrow(assay.data)<1 ) stop( "something wrong in gene mapping" )
   rownames(assay.data)<-fData(eSet)[,geneID][fData(eSet)[,geneID] %in% gene_list]
   gene_list<-rownames(assay.data)
 
@@ -304,8 +306,13 @@ plotAll<-function
                     col=brewer.pal(11,"RdBu")[11:1])   
       }
   }
-  gene_scores <- output.data$mcmc.pos.mean.testData$S_pos[match.nona(rownames(assay.data),names(output.data$processed.data$Pi_matrix))]
-  posteriors <- output.data$mcmc.pos.mean.testData$Delta_pos[match.nona(rownames(assay.data),names(output.data$processed.data$Pi_matrix))]
+  if ( do.barplot ) {
+      assign.gene.barplot(output.data)
+  }
+  gene_scores <-
+      output.data$mcmc.pos.mean.testData$S_pos[match.nona(rownames(assay.data),names(output.data$processed.data$Pi_matrix))]
+  posteriors <-
+      output.data$mcmc.pos.mean.testData$Delta_pos[match.nona(rownames(assay.data),names(output.data$processed.data$Pi_matrix))]
   sample_scores<-output.data$mcmc.pos.mean.testData$kappa_pos
   sample_probs<-output.data$mcmc.pos.mean.testData$gamma_pos
   
@@ -318,7 +325,34 @@ plotAll<-function
                  colSideCols=colSideCols,
                  main=title,xlab=xlab,ylab=ylab)
 }
+## function: ASSIGN GENE BARPLOT
+##
+assign.gene.barplot <- function
+(
+  aObj,
+  gene_cols=rep('green',length(aObj$mcmc.pos.mean.testData$S_pos)),
+  posterior_cutoff=.95,
+  do.abs=FALSE,
+  one.dir=FALSE,
+  rnames=NULL,
+  ...
+)
+{
+    S_pos <- aObj$mcmc.pos.mean.testData$S_pos
+    delta_pos <- aObj$mcmc.pos.mean.testData$Delta_pos
+    gene_cols[delta_pos<posterior_cutoff]<-'grey'
+    if (one.dir) {
+      delta_pos <- delta_pos[S_pos>0,,drop=FALSE]
+      gene_cols <- gene_cols[S_pos>0]
+      S_pos <- S_pos[S_pos>0]
+    }
+    bar_ord<-order(S_pos)
 
+    X <- if (do.abs) -1*abs(S_pos[bar_ord]) else S_pos[bar_ord]
+    rnames <- if (is.null(rnames)) rownames(delta_pos)[bar_ord] else rnames[bar_ord]
+    par(mar=c(5, 12, 4, 2) + 0.1)
+    barplot(X,horiz=TRUE,border=NA,col=gene_cols[bar_ord],names=rnames,las=2,...)
+}
 #Read arguments from command line
 #args<-commandArgs(TRUE)
 #ES<-args[1]

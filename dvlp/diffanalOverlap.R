@@ -87,13 +87,15 @@ diffanal2signatures <- function
 
 signatureOverlap <- function
 (
-    SIGlist,     # a list of lists of gene identifiers
-    ntotal,      # background population size for the hyper test
-    adjust=TRUE, # adjust p-values across all signature comparisons
-    outfile=NULL # write summary table to output file
+    SIGlist,       # a list of lists of gene identifiers
+    ntotal,        # background population size for the hyper test
+    adjust=TRUE,   # adjust p-values across all signature comparisons
+    do.sort=FALSE, # re-order based on similarity/overlap
+    outfile=NULL   # write summary table to output file
 )
 {
-    OVLP <- NOVLP <- JOVLP <- matrix(NA,length(SIGlist),length(SIGlist),dimnames=list(names(SIGlist),names(SIGlist)))
+    OVLP <- NOVLP <- JOVLP <-
+        matrix(NA,length(SIGlist),length(SIGlist),dimnames=list(names(SIGlist),names(SIGlist)))
     for ( i in 1:(length(SIGlist)-1) ) {
         for ( j in (i+1):length(SIGlist) ) {
             n1 <- length(SIGlist[[i]])
@@ -107,12 +109,31 @@ signatureOverlap <- function
     if ( adjust ) {
         OVLP[upper.tri(OVLP)] <- p.adjust(OVLP[upper.tri(OVLP)],method="BH")
     }
+    if ( do.sort ) {
+        OVLP[lower.tri(OVLP)] <-   t(OVLP)[lower.tri(OVLP)];   diag(OVLP) <- 0
+        NOVLP[lower.tri(NOVLP)] <- t(NOVLP)[lower.tri(NOVLP)]; diag(NOVLP) <- 0
+        JOVLP[lower.tri(JOVLP)] <- t(JOVLP)[lower.tri(JOVLP)]; diag(JOVLP) <- 1
+
+        #hc <- hcopt(as.dist(1-JOVLP),method="ward.D")
+        
+        #OVLP <- OVLP[hc$order,hc$order]
+        #NOVLP <- NOVLP[hc$order,hc$order]
+        #JOVLP <- JOVLP[hc$order,hc$order]
+    }
     if ( !is.null(outfile) ) {
-        my.write.table(OVLP,names="overlap",file=outfile)
-        cat("\n",file=outfile,append=TRUE)
-        my.write.table(NOVLP,names="Noverlap",file=outfile,append=TRUE)
-        cat("\n",file=outfile,append=TRUE)
-        my.write.table(JOVLP,names="Jaccard",file=outfile,append=TRUE)
+        if ( file.ext(outfile)=="txt" ) {
+            my.write.table(OVLP,names="overlap",file=outfile)
+            cat("\n",file=outfile,append=TRUE)
+            my.write.table(NOVLP,names="Noverlap",file=outfile,append=TRUE)
+            cat("\n",file=outfile,append=TRUE)
+            my.write.table(JOVLP,names="Jaccard",file=outfile,append=TRUE)
+        }
+        else if ( file.ext(outfile)=="xlsx" ) {
+            write.xlsx(list(overlap=OVLP,noverlap=NOVLP,jaccard=JOVLP),file=outfile,row.names=TRUE)
+        }
+        else {
+            warning( "unrecognized file extension, no output written" )
+        }
     }
     return( list(signatures=SIGlist,overlap=OVLP,noverlap=NOVLP,jaccard=JOVLP) )
 }

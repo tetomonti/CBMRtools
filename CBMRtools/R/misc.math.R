@@ -96,6 +96,7 @@ fast.sum <- function(x,cls=NULL,na.rm=F)
   x[is.na(x)] <- 0
   return (drop(x %*% In))
 }
+#' @export
 fast.mean <- function( x, cls=NULL, na.rm=F )
 {
   if (is.vector(x))

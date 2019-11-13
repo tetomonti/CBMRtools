@@ -107,7 +107,7 @@ make.dir <- function( dname )
   if ( is.na(file.info(dname)$isdir) ) system(paste('mkdir',dname))
 }
 #' @export
-file.ext <- function( filen, w.sep=F )
+file.ext <- function( filen, w.sep=FALSE )
 {
   ext <- rev(unlist(strsplit( filen, "\\.")))[1]
   if ( w.sep )
@@ -347,7 +347,7 @@ segment.overlap <- function(seg1,seg2,do.plot=F)
 ## REPMAT
 ##
 ## replicate a matrix or data.frame row- or column-wise
-
+#' @export
 repmat <- function(MX,MARGIN=2,n,each=FALSE)
 {
   m <- if ( MARGIN==1 ) ncol(MX) else nrow(MX)
@@ -367,19 +367,19 @@ which.2D <- function( x )
                       function(z){ if ((n <- length(xr[[z]]))>0) t(cbind(rep(z,n),xr[[z]]))}))
   matrix(xr,length(xr)/2,2,byrow=T)
 }
-read.csv.delim <- function(file,header=T,sep=",",stringsAsFactors=F,check.names=F,blank.lines.skip=T,...)
+read.csv.delim <- function(file,header=TRUE,sep=",",stringsAsFactors=F,check.names=F,blank.lines.skip=T,...)
 {
   read.csv(file,header=header,sep=sep,stringsAsFactors=stringsAsFactors,check.names=check.names,
            blank.lines.skip=blank.lines.skip,...)
 }
 #' @export
-read.tab.delim <- function(file,header=T,sep="\t",stringsAsFactors=F,check.names=F,blank.lines.skip=T,...)
+read.tab.delim <- function(file,header=TRUE,sep="\t",stringsAsFactors=FALSE,check.names=FALSE,blank.lines.skip=TRUE,...)
 {
   read.delim(file,header=header,sep=sep,stringsAsFactors=stringsAsFactors,check.names=check.names,
              blank.lines.skip=blank.lines.skip,...)
 }
 #' @export
-read.delim.wsave <- function(file,do.save=T,force.read=F,verbose=T,ext=".RData",...)
+read.delim.wsave <- function(file,do.save=TRUE,force.read=FALSE,verbose=TRUE,ext=".RDS",...)
 {
   binfile <- paste(file.stub(file),ext,sep="")
   binfo <- file.info(binfile)
@@ -389,7 +389,7 @@ read.delim.wsave <- function(file,do.save=T,force.read=F,verbose=T,ext=".RData",
   if ( !force.read && !is.na(binfo$size) && binfo$mtime>finfo$mtime )
   {
     VERBOSE(verbose, "Loading binary version '", binfile, "' ..",sep="")
-    dat <- load.var(binfile)
+    dat <- readRDS(binfile)
     VERBOSE(verbose, "done.\n")
     return(dat)
   }
@@ -401,7 +401,7 @@ read.delim.wsave <- function(file,do.save=T,force.read=F,verbose=T,ext=".RData",
 
   if ( do.save ) {
     VERBOSE(verbose,"Saving binary version to '", binfile, "' ..", sep="")
-    save(dat,file=binfile)
+    saveRDS(dat,file=binfile)
     VERBOSE(verbose, "done.\n")
   }
   dat
@@ -497,6 +497,7 @@ ntabulate <- function( X, do.tab=F )
   }
   tmp
 }
+#' @export
 list2table <- function( obj, fill=NA )
 {
   if ( !is.list(obj) )
@@ -509,12 +510,13 @@ list2table <- function( obj, fill=NA )
   }
   mx
 }
-table2list <- function( tab, header=TRUE, fill=NA )
+table2list <- function( tab, header=TRUE, fill="" )
 {
-  LS <- vector('list',ncol(tab))
-  if ( header ) names(LS) <- colnames(tab)
-  for ( i in 1:ncol(tab) ) LS[[i]] <- tab[tab[,i]!=fill,i]
-  LS
+    tab[is.na(tab)] <- fill
+    LS <- vector('list',ncol(tab))
+    if ( header ) names(LS) <- colnames(tab)
+    for ( i in 1:ncol(tab) ) LS[[i]] <- tab[tab[,i]!=fill,i]
+    LS
 }
 ## write.table wrapper that adds a column header to row names column, if specified
 ##

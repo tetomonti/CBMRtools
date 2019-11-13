@@ -147,76 +147,80 @@ make_legend_continuous<-function(hmcolors,
 	p.legend<-g_legend(p)
 	return(p.legend)
 }
-
 #' @export
-clust_eset<-function(eset){
-	mat<-exprs(eset)
+clust_eset <- function(eset)
+{
+    mat<-exprs(eset)
 
-	#column clustering
-	#using euclidean distance, ward.D agglomeration
-	distC <- function(x) dist(t(x), method="euclidean")
-	dist_c<-distC(mat)
-	hc<-hcopt(dist_c, method = "ward.D")
+    ## column clustering
+    ## using euclidean distance, ward.D agglomeration
+    distC <- function(x) dist(t(x), method="euclidean")
+    dist_c <- distC(mat)
+    hc<-hcopt(dist_c, method = "ward.D")
 
-	#row clustering
-	#using 1-cor as distance, ward.D agglomeration
-	distR <- function(x) stats::as.dist(1- cor(t(x)))
-	dist_r<-distR(mat)
-	hr<-hcopt(dist_r, method = "ward.D")
+    ## row clustering
+    ## using 1-cor as distance, ward.D agglomeration
+    distR <- function(x) stats::as.dist(1-cor(t(x),use="pairwise.complete.obs"))
+    dist_r <- distR(mat)
+    hr <- hcopt(dist_r, method = "ward.D")
 
-	return(list(hc = hc, hr = hr))
+    return(list(hc = hc, hr = hr))
 }
-
 #' \code{ggheat.make.groups} splits eset into list of esets based on phenotype label, do clustering within groups
 #' @param eset expression set
 #' @param labelcol column name for grouping in pData(eset)
 #' @param labelvals values to group on (e.g. factor levels of pData(eset)[, labelcol])
 #' clustFUN clustering function for eset, e.g. clust_eset
 #' @export
-ggheat.make.groups<-function(eset,
-	labelcol,  #column name for grouping in pData(eset)
-	labelvals, #values to group on (e.g. factor levels of pData(eset)[, labelcol])
-	clustFUN, #clustering output for eset
-	fixRowOrd = TRUE
-	){
-
-	#recommended fix to keep horizontal alignment
-	nmax<-max(sapply(colnames(eset), function(i) nchar(i)))
-	colnames(eset)<-sapply(colnames(eset), function(i)
+ggheat.make.groups <- function(eset,
+	labelcol,  # column name for grouping in pData(eset)
+	labelvals, # values to group on (e.g. factor levels of pData(eset)[, labelcol])
+	clustFUN,  # clustering output for eset
+	fixRowOrd = TRUE,
+        clusterRows = TRUE
+	)
+{
+    ## recommended fix to keep horizontal alignment
+    nmax <- max(sapply(colnames(eset), function(i) nchar(i)))
+    colnames(eset)<-sapply(colnames(eset), function(i)
 	paste( paste(rep("  ", nmax - nchar(i)+1), collapse = ""), i, sep = ""))
 
-	labelvec<-as.character(pData(eset)[, labelcol])
-	numvals<-sapply(labelvals, function(i) sum(which(labelvec %in% i)))
-	if(any(numvals < 3))
-		stop("one or more groups is missing or has less than 3 members")
+    labelvec <- as.character(pData(eset)[, labelcol])
+    numvals <- sapply(labelvals, function(i) sum(labelvec %in% i))
+    if(any(numvals < 3))
+        stop("one or more groups is missing or has less than 3 members")
 
-	reslist<-lapply(labelvals, function(i){
-		eseti<-eset[, labelvec %in% i]
-		clusti<-clustFUN(eseti)
-		return(list(eseti = eseti, clusti = clusti))
-		})
-	esetlist<-lapply(reslist, function(i)
-		i$eseti)
-	hclist<-lapply(reslist, function(i)
-		i$clusti$hc)
+    reslist <- lapply(labelvals, function(i){
+        eseti <- eset[, labelvec %in% i]
+        clusti <- clustFUN(eseti)
+        return(list(eseti = eseti, clusti = clusti))
+    })
+    esetlist <- lapply( reslist, function(i)
+        i$eseti )
+    hclist <- lapply( reslist, function(i)
+        i$clusti$hc )
 
-	hrlist<-lapply(reslist, function(i)
-		i$clusti$hr)
+    hrlist<-lapply(reslist, function(i)
+        i$clusti$hr)
 
-	if(fixRowOrd){
-		##fixed row clustering for all samples
-		hr.all<-clustFUN(eset)$hr
-		hrlist<-lapply(1:length(labelvals), function(i){hr.all})
-	}
-
-	return(list(esetlist = esetlist, hclist = hclist, hrlist = hrlist))
+    if( fixRowOrd ) {
+        if ( clusterRows ) {
+            ## fixed row clustering for all samples
+            hr.all <- clustFUN(eset)$hr
+            hrlist <- lapply(1:length(labelvals), function(i){hr.all})
+        }
+        else {
+            hrlist <- lapply(1:length(labelvals), function(i){NA})
+        }
+    }
+    return(list(esetlist = esetlist, hclist = hclist, hrlist = hrlist))
 }
 
-#helper function for plotting discretized heatmap
+## helper function for plotting discretized heatmap
 #' \code{ggheat.continuous} helper function for plotting ggheatmap, see \code{ggheat.continuous.single} and
 #' \code{ggheat.continuous.group} for examples of usage
 #' @export
-ggheat.continuous<-function(eset,
+ggheat.continuous <- function(eset,
 	hc = NA, #hcopt for column leave NA for no ordering
 	hr = NA, #hcopt for row leave NA for no ordering
 	hmcolors = NA,
@@ -381,8 +385,8 @@ ggheat.continuous<-function(eset,
 	if(length(col_lab)>1)
 		rownames(columnlab)<-1:nrow(columnlab)
 
-	dtcol<-data.table(melt(as.matrix(columnlab)))
-	names(col_values)<-col_breaks
+	dtcol <- data.table(melt(as.matrix(columnlab)))
+	names(col_values) <- col_breaks
 
 	text.lab.y<-element_text(size = ysizelab)
 	if(type %in% c("middle", "right")){
@@ -504,7 +508,7 @@ ggheat.continuous<-function(eset,
 #' 	ysizelab = 7,
 #' 	xright = 0.18)
 #' @export
-ggheat.continuous.single<-function(eset,
+ggheat.continuous.single <- function(eset,
 	hc,
 	hr,
 	hmcolors = NA,
@@ -520,58 +524,55 @@ ggheat.continuous.single<-function(eset,
 	xright = 0.24,
 	override.hc = NA){
 
-	#default heatmap fill gradient
-	if(suppressWarnings(is.na(hmcolors)[1])){
-		warning("heatmap color gradient not specified, setting to default hmcolors")
-		hmcolors<-function(... ) scale_fill_gradient2(low = "blue", mid = "white",
-       high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
-	}
+    ## default heatmap fill gradient
+    if(suppressWarnings(is.na(hmcolors)[1])){
+        warning("heatmap color gradient not specified, setting to default hmcolors")
+        hmcolors<-function(... ) scale_fill_gradient2(low = "blue", mid = "white",
+                                                      high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
+    }
+    col_legend_vec <- merge_labels(col_legend)
+    col_values <- col_legend_vec$col_values
+    col_breaks <- col_legend_vec$col_breaks
+    col_labels <- col_legend_vec$col_labels
 
-	col_legend_vec<-merge_labels(col_legend)
-	col_values<-col_legend_vec$col_values
-	col_breaks<-col_legend_vec$col_breaks
-	col_labels<-col_legend_vec$col_labels
+    p1 <- ggheat.continuous(eset,
+                            hc, # hcopt for column leave NA for no ordering
+                            hr, # hcopt for row leave NA for no ordering
+                            hmcolors,
+                            col_lab,
+                            col_values,
+                            col_breaks,
+                            col_labels,
+                            ylabstr,
+                            type="regular",
+                            fout =NA,
+                            p.heights,
+                            xsize,
+                            ysize,
+                            ysizelab,
+                            override.hc
+                            )
 
-	p1<-ggheat.continuous(eset,
-		hc, #hcopt for column leave NA for no ordering
-		hr, #hcopt for row leave NA for no ordering
-		hmcolors,
-		col_lab,
-		col_values,
-		col_breaks,
-		col_labels,
-		ylabstr,
-		type="regular",
-		fout =NA,
-		p.heights,
-		xsize,
-		ysize,
-		ysizelab,
-		override.hc
-		)
+    pcol.legend<-make_legend_list(col_legend,
+                                  legend.key.size =  unit(0.2, "in"),
+                                  legend.text = element_text(size=10),
+                                  legend.title = element_text(colour = 'black', face = "bold", size = 10))
+    clow<-min(exprs(eset))
+    chigh<-max(exprs(eset))
 
-	pcol.legend<-make_legend_list(col_legend,
-		legend.key.size =  unit(0.2, "in"),
-		legend.text = element_text(size=10),
-		legend.title = element_text(colour = 'black', face = "bold", size = 10))
+    hm.legend<-make_legend_continuous(hmcolors, clow = clow, chigh = chigh, n = 25, label = hmtitle)
 
-	clow<-min(exprs(eset))
-	chigh<-max(exprs(eset))
+    plist<-list()
+    plist[[1]]<-p1
+    plist[[2]]<-arrangeGrob(pcol.legend, hm.legend, nrow = 2, ncol = 1)
+    plist$nrow <-1
+    plist$widths<-c(1-xright, xright)
 
-	hm.legend<-make_legend_continuous(hmcolors, clow = clow, chigh = chigh, n = 25, label = hmtitle)
-
-	plist<-list()
-	plist[[1]]<-p1
-	plist[[2]]<-arrangeGrob(pcol.legend, hm.legend, nrow = 2, ncol = 1)
-	plist$nrow <-1
-	plist$widths<-c(1-xright, xright)
-
-	plistdev<-do.call(grid.arrange, plist)
-	if(!is.na(fout))
-		ggsave(plistdev, file = fout)
-	return(plist)
+    plistdev<-do.call(grid.arrange, plist)
+    if(!is.na(fout))
+        ggsave(plistdev, file = fout)
+    return(plist)
 }
-
 #' \code{ggheat.continuous.group} ggheatmap function for plotting groups of esets, within-group column clustering
 #' @param esetlist list of expression sets, see ?heatmap.make.groups for preprocessing
 #' @param	hclist list of column clustering from hclust or hcopt
@@ -659,19 +660,18 @@ ggheat.continuous.group<-function(esetlist,
 
 	#default heatmap fill gradient
 	if(suppressWarnings(is.na(hmcolors)[1])){
-		warning("heatmap color gradient not specified, setting to default hmcolors")
-		hmcolors<-function(... ) scale_fill_gradient2(low = "blue", mid = "white",
-       high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
+            warning("heatmap color gradient not specified, setting to default hmcolors")
+            hmcolors<-function(... ) scale_fill_gradient2(low = "blue", mid = "white",
+                                                          high = "red", midpoint = 0, limits=c(-3,3), oob=squish, ...)
 	}
+	col_legend_vec <- merge_labels(col_legend)
+	col_values <- col_legend_vec$col_values
+	col_breaks <- col_legend_vec$col_breaks
+	col_labels <- col_legend_vec$col_labels
 
-	col_legend_vec<-merge_labels(col_legend)
-	col_values<-col_legend_vec$col_values
-	col_breaks<-col_legend_vec$col_breaks
-	col_labels<-col_legend_vec$col_labels
-
-	p1<-ggheat.continuous(esetlist[[1]],
-		hclist[[1]], #hcopt for column leave NA for no ordering
-		hrlist[[1]], #hcopt for row leave NA for no ordering
+	p1 <- ggheat.continuous(esetlist[[1]],
+		hclist[[1]], # hcopt for column leave NA for no ordering
+		hrlist[[1]], # hcopt for row leave NA for no ordering
 		hmcolors,
 		col_lab,
 		col_values,

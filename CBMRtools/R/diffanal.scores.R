@@ -1,9 +1,9 @@
 # function: T SCORE
 #
-#' @export 
+#' @export
 #
 tScore <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalized=FALSE,
-                     do.test=FALSE, verbose=FALSE, var.equal=FALSE, min.sd=NULL, 
+                     do.test=FALSE, verbose=FALSE, var.equal=FALSE, min.sd=NULL,
                      alternative=c("two.sided","greater","less") )
 {
   # INPUT:
@@ -16,7 +16,7 @@ tScore <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalized
   # OUTPUT:
   #  snr - m vector (positive are upregulated for x, or for
   #        lower label -- condition 1 -- when cls is specified)
-  
+
   # some checks on the input
   #
   alternative <- match.arg(alternative)
@@ -33,13 +33,13 @@ tScore <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalized
       stop( "cls must be binary" )
     y <- x[,cls==lev[2],drop=FALSE]
     x <- x[,cls==lev[1],drop=FALSE]
-  }  
+  }
   if ( nrow(x)!=nrow(y) ) stop( "x and y must be of same length\n" )
   if ( ncol(x)<3 ) warning( "x has less than 3 observations\n" )
   if ( ncol(y)<3 ) warning( "y has less than 3 observations\n" )
 
   score <- NULL
-  
+
   # paired score
   #
   if ( paired )
@@ -99,12 +99,12 @@ tScore <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalized
   x.idx <- 1:ncol(x)
 
   VERBOSE( verbose, ifelse( robust, "\tWilcoxon test .. ", "\tt test .. " ) )
-  
+
   n1 <- (ncol(x)); if (n1<2) stop( "need at least 2 obs per class" )
   n2 <- (ncol(y)); if (n2<2) stop( "need at least 2 obs per class" )
   cls <- c( rep(1,n1), rep(0,n2) ); cls <- cbind( cls, 1-cls )
   x <- cbind(x,y)
-  
+
   if ( robust )
   {
     rnk <- t(apply(-x,1,rank))
@@ -118,30 +118,30 @@ tScore <- function( x, cls=NULL, y=NULL, robust=FALSE, paired=FALSE, generalized
   ##
   s  <- x %*% cls
   s2 <- x^2 %*% cls
-  s2[,1] <- (s2[,1] - (s[,1]^2)/n1) / (n1-1) # variance in 1st class 
-  s2[,2] <- (s2[,2] - (s[,2]^2)/n2) / (n2-1) # variance in 2nd class 
+  s2[,1] <- (s2[,1] - (s[,1]^2)/n1) / (n1-1) # variance in 1st class
+  s2[,2] <- (s2[,2] - (s[,2]^2)/n2) / (n2-1) # variance in 2nd class
   s[,1] <- s[,1]/n1
   s[,2] <- s[,2]/n2
-  
+
   if ( !is.null(min.sd) ) {
     min.var <- min.sd*min.sd
     s2[s2[,1]<min.var,1] <- min.var
     s2[s2[,2]<min.var,2] <- min.var
-  }    
+  }
   stderr <- if (var.equal)
     sqrt( (((n1-1)*s2[,1] + (n2-1)*s2[,2])/(n1+n2-2)) * (1/n1+1/n2) )
   else
     sqrt( s2[,1]/n1 + s2[,2]/n2 )
-  
+
   score <- (s[,1]-s[,2]) / stderr
-  
+
   if ( do.test )
   {
     df <- if ( var.equal ) # degrees of freedom
       n1+n2-2
     else
       stderr^4 / ( (s2[,1]/n1)^2/(n1-1) + (s2[,2]/n2)^2/(n2-1)) # Welch approximation of df
-    
+
     pval <- if (alternative == "less") {
       pt(score, df=df)
     }
@@ -170,7 +170,7 @@ fix.sd <- function( s, m, s.percent=0.2 )
       stop("s and m must be same length")
 
     abs.m <- abs( m )
-    min.s <- abs.m * s.percent 
+    min.s <- abs.m * s.percent
     min.s[min.s<s] <- s[min.s<s]
     min.s[min.s<=0] <- 0.1
     return( min.s )
@@ -199,14 +199,14 @@ snr <- function( x, cls=NULL, y=NULL, robust=FALSE, fix=TRUE, gc=fix, min.sd=0.0
   # OUTPUT:
   #  snr - m vector (positive are upregulated for x, or for
   #        lower label -- 1st condition -- when cls is specified)
-  
+
   # some checks on the input
   #
   if ( is.null(y) && is.null(cls) )
     stop( "must specify either y or cls" )
   if ( fix && min.sd>0 )
     stop( "can't use both sd's fix and min.sd" )
-  
+
   if ( is.null(y) )
   {
     lev <- sort(unique(cls))
@@ -216,7 +216,7 @@ snr <- function( x, cls=NULL, y=NULL, robust=FALSE, fix=TRUE, gc=fix, min.sd=0.0
       stop( "cls must be binary" )
     y <- x[,cls==lev[2],drop=FALSE]
     x <- x[,cls==lev[1],drop=FALSE]
-  }  
+  }
   if ( nrow(x)!=nrow(y) ) stop( "x and y must be of same length\n" )
   if ( ncol(x)<3 ) warning( "x has less than 3 observations\n" )
   if ( ncol(y)<3 ) warning( "y has less than 3 observations\n" )
@@ -269,7 +269,7 @@ snr <- function( x, cls=NULL, y=NULL, robust=FALSE, fix=TRUE, gc=fix, min.sd=0.0
     if ( fix ) s <- fix.sd(s,m,s.percent=.05)
     snr <- m/s
     VERBOSE( verbose, " done.\n" )
-    
+
     if ( do.test )
     {
       VERBOSE( verbose, "computing asymptotic p-values (n=", ncol(d), ") ..", sep="" )
@@ -300,7 +300,7 @@ snr <- function( x, cls=NULL, y=NULL, robust=FALSE, fix=TRUE, gc=fix, min.sd=0.0
     {
       x.s[x.s<min.sd] <- min.sd
       y.s[y.s<min.sd] <- min.sd
-    }      
+    }
     snr <- (x.m-y.m)/(x.s+y.s)
   }
   else
@@ -309,7 +309,7 @@ snr <- function( x, cls=NULL, y=NULL, robust=FALSE, fix=TRUE, gc=fix, min.sd=0.0
     n2 <- ncol(y)
     cls <- c( rep(1,n1), rep(0,n2) ); cls <- cbind( cls, 1-cls )
     X <- cbind(x,y)
-    
+
     s  <- X %*% cls
     s2 <- X^2 %*% cls
     s2[,1] <- (s2[,1] - (s[,1]^2)/n1) / (n1-1); s2[s2[,1]<0,1] <- 0
@@ -318,18 +318,18 @@ snr <- function( x, cls=NULL, y=NULL, robust=FALSE, fix=TRUE, gc=fix, min.sd=0.0
     s2[,2] <- sqrt( s2[,2] )
     s[,1] <- s[,1]/n1
     s[,2] <- s[,2]/n2
-    
+
     # thresholding as implemented in GeneCluster (to handle zero variance)
     #
     if ( fix ) {
       s2[,1] <- fix.sd(s2[,1],s[,1])
       s2[,2] <- fix.sd(s2[,2],s[,2])
-    }    
+    }
     if ( min.sd>0 )
     {
       s2[s2[,1]<min.sd,1] <- min.sd
       s2[s2[,2]<min.sd,2] <- min.sd
-    }      
+    }
     snr <- (s[,1]-s[,2]) / (s2[,1]+s2[,2])
   }
   if ( do.test )
@@ -347,6 +347,7 @@ snr <- function( x, cls=NULL, y=NULL, robust=FALSE, fix=TRUE, gc=fix, min.sd=0.0
 }
 # function: CLS STATS
 #
+#' @export
 cls.stats <- function( x, cls=NULL, control=NULL, rnd=NULL, robust=FALSE, unlog=FALSE, gc=FALSE, paired=FALSE )
 {
   if ( is.null(cls) )
@@ -373,7 +374,7 @@ cls.stats <- function( x, cls=NULL, control=NULL, rnd=NULL, robust=FALSE, unlog=
   }
   fold.chg <- {
     if ( paired ) {
-      if (robust) 
+      if (robust)
         2^apply(log2(x[,cls==lev[1]])-log2(x[,cls==lev[2]]),1,median)
       else
         2^(drop(fast.mean(log2(x[,cls==lev[1]])-log2(x[,cls==lev[2]]))))

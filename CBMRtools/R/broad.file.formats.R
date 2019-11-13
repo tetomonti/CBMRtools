@@ -1,4 +1,4 @@
-# source("~/dvlp/R/read.res.new.R")
+## source("~/dvlp/R/read.res.new.R")
 
 ## simple classes to support Broad's '.res' and '.gct' format
 ##
@@ -583,6 +583,14 @@ tab2cls <- function(tab,col.name=NULL,cnames=NULL,levs=NULL,na.rm=TRUE)
 
   cls
 }
+## FACTOR 2 CLS
+##
+factor2cls <- function(FCT)
+{
+  cls <- match(FCT,levels(FCT))-1
+  levels(cls) <- levels(FCT)
+  cls
+}
 ## MANY 2 ONE CLS
 ##
 many2one <- function( cls ) many2one.cls(cls) # just for backward compatibility
@@ -637,6 +645,18 @@ subset.all <- function( dat, cls, subfile=NULL, subset=NULL, verbose=FALSE )
   cls <- subset.cls( cls, s.idx )
   VERBOSE( verbose, "done, [", paste(dim(dat),collapse=" x "), "] data entries.\n", sep="" )
   list( data=dat, cls=cls )
+}
+###############################################################################################
+## gmt file
+###############################################################################################
+#' @export
+read.gmt <- function( file, verbose=TRUE )
+{
+    gsets <- lapply( readLines(file), strsplit, "\t" )
+    names(gsets) <- sapply( gsets, function(z) z[[1]][1] )
+    cat("Read", length(gsets), "genesets.\n")
+##    VERBOSE(verbose, "Read", length(gsets), "genesets.\n")
+    gsets <- lapply( gsets, function(z) z[[1]][-(1:2)] )
 }
 
 ###############################################################################################
