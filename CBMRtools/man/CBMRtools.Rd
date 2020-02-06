@@ -3,7 +3,6 @@
 \docType{package}
 \name{CBMRtools}
 \alias{CBMRtools}
-\alias{CBMRtools-package}
 \title{CBMRtools}
 \description{
 A package for accessing general-use R scripts developed by montilab members

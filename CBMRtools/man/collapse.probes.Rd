@@ -4,8 +4,12 @@
 \alias{collapse.probes}
 \title{collapse eSet object by non-unique row feature IDs}
 \usage{
-collapse.probes(eset, fdat.id = "SYMBOL", method = c("single.mad",
-  "summarize.mean", "summarize.median", "summarize.max", "summarize.min"))
+collapse.probes(
+  eset,
+  fdat.id = "SYMBOL",
+  method = c("single.mad", "summarize.mean", "summarize.median", "summarize.max",
+    "summarize.min")
+)
 }
 \arguments{
 \item{fdat.id}{feature id to collapse on}

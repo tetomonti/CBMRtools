@@ -4,9 +4,17 @@
 \alias{nnAnalysis}
 \title{nnAnalysis}
 \usage{
-nnAnalysis(dat, y = NULL, y.i = NULL, score = c("pearson", "spearman",
-  "euclid"), nperm = 0, control = NULL, seed = NULL, verbose = F,
-  smooth = 1)
+nnAnalysis(
+  dat,
+  y = NULL,
+  y.i = NULL,
+  score = c("pearson", "spearman", "euclid"),
+  nperm = 0,
+  control = NULL,
+  seed = NULL,
+  verbose = F,
+  smooth = 1
+)
 }
 \arguments{
 \item{dat}{NxM genes-by-sample matrix ('ExpressionSet' or 'resdata' or 'gctdata' object)}

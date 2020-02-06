@@ -51,7 +51,7 @@ run_limma <- function(
     fit2 <- eBayes(fit2)
 
     ## extract full table without sorting
-    fit2.table <- topTable(fit2, coef=1, adjust="BH", number=nrow(fit2), sort.by="none")
+    fit2.table <- topTable(fit2, coef=1, adjust="BH", number=+Inf, sort.by="none")
 
     ## augment table w/ additional summary statistics (if required)
     if (verbose) {

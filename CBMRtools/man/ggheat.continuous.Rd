@@ -5,10 +5,24 @@
 \title{\code{ggheat.continuous} helper function for plotting ggheatmap, see \code{ggheat.continuous.single} and
 \code{ggheat.continuous.group} for examples of usage}
 \usage{
-ggheat.continuous(eset, hc = NA, hr = NA, hmcolors = NA, col_lab,
-  col_values, col_breaks, col_labels, ylabstr = "", type = c("left",
-  "right", "middle", "regular"), fout = NA, p.heights = c(1.5, 0.5, 5),
-  xsize = 4, ysize = 4, ysizelab = 7, override.hc = NA)
+ggheat.continuous(
+  eset,
+  hc = NA,
+  hr = NA,
+  hmcolors = NA,
+  col_lab,
+  col_values,
+  col_breaks,
+  col_labels,
+  ylabstr = "",
+  type = c("left", "right", "middle", "regular"),
+  fout = NA,
+  p.heights = c(1.5, 0.5, 5),
+  xsize = 4,
+  ysize = 4,
+  ysizelab = 7,
+  override.hc = NA
+)
 }
 \description{
 \code{ggheat.continuous} helper function for plotting ggheatmap, see \code{ggheat.continuous.single} and

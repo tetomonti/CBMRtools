@@ -4,11 +4,24 @@
 \alias{variationFilter}
 \title{subset an expression dataset by extracting genes based on their level of variation}
 \usage{
-variationFilter(dat, score = c("mad", "sd", "cv"), dir = c("top", "bottom"),
-  transform = c("none", "log2", "exp2", "log", "exp"), ngenes = NULL,
-  min.score = NULL, min.log = 1, rnd = 4, do.plot = FALSE, pch = ".",
-  lgnd.coord = 1, do.log = "", qnt.lev = 0.5, min.qnt = -Inf,
-  no.affx = FALSE, verbose = TRUE)
+variationFilter(
+  dat,
+  score = c("mad", "sd", "cv"),
+  dir = c("top", "bottom"),
+  transform = c("none", "log2", "exp2", "log", "exp"),
+  ngenes = NULL,
+  min.score = NULL,
+  min.log = 1,
+  rnd = 4,
+  do.plot = FALSE,
+  pch = ".",
+  lgnd.coord = 1,
+  do.log = "",
+  qnt.lev = 0.5,
+  min.qnt = -Inf,
+  no.affx = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{dat}{an expressionSet object}

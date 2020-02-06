@@ -4,16 +4,37 @@
 \alias{heatmap.ggplot2}
 \title{heatmap.ggplot2}
 \usage{
-heatmap.ggplot2(eSet, brewer.pal.name = "RdBu", brewer.pal.rev = TRUE,
-  brewer.numColors = 11, col.legend.brewer = "", row.legend.brewer = "",
-  col.clust = TRUE, row.clust = TRUE, col.clust.hc = NA,
-  row.clust.hc = NA, col.lab = "", row.lab = "", heatmap.y.text = FALSE,
-  heatmap.x.text = FALSE, heatmap.y.text.size = 7,
-  heatmap.x.text.size = 6, heatmap.colorlegend.name = "val",
-  title.text = "", col.legend.name = "", row.legend.name = "",
-  legend.lab.max.char = 15, row.scaling = "none", z.norm = FALSE,
-  cuttree.col = 0, cuttree.row = 0, verbose = FALSE, grid.heights = NA,
-  grid.widths = NA, show = FALSE)
+heatmap.ggplot2(
+  eSet,
+  brewer.pal.name = "RdBu",
+  brewer.pal.rev = TRUE,
+  brewer.numColors = 11,
+  col.legend.brewer = "",
+  row.legend.brewer = "",
+  col.clust = TRUE,
+  row.clust = TRUE,
+  col.clust.hc = NA,
+  row.clust.hc = NA,
+  col.lab = "",
+  row.lab = "",
+  heatmap.y.text = FALSE,
+  heatmap.x.text = FALSE,
+  heatmap.y.text.size = 7,
+  heatmap.x.text.size = 6,
+  heatmap.colorlegend.name = "val",
+  title.text = "",
+  col.legend.name = "",
+  row.legend.name = "",
+  legend.lab.max.char = 15,
+  row.scaling = "none",
+  z.norm = FALSE,
+  cuttree.col = 0,
+  cuttree.row = 0,
+  verbose = FALSE,
+  grid.heights = NA,
+  grid.widths = NA,
+  show = FALSE
+)
 }
 \arguments{
 \item{eSet}{expression set object to plot}

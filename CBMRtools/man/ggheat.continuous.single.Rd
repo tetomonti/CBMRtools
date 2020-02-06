@@ -4,10 +4,23 @@
 \alias{ggheat.continuous.single}
 \title{\code{ggheat.continuous.single} ggheatmap function for plotting a single eset}
 \usage{
-ggheat.continuous.single(eset, hc, hr, hmcolors = NA,
-  hmtitle = "expression", col_lab, col_legend, ylabstr = "", fout = NA,
-  p.heights = c(1.5, 0.5, 5), xsize = 4, ysize = 4, ysizelab = 7,
-  xright = 0.24, override.hc = NA)
+ggheat.continuous.single(
+  eset,
+  hc,
+  hr,
+  hmcolors = NA,
+  hmtitle = "expression",
+  col_lab,
+  col_legend,
+  ylabstr = "",
+  fout = NA,
+  p.heights = c(1.5, 0.5, 5),
+  xsize = 4,
+  ysize = 4,
+  ysizelab = 7,
+  xright = 0.24,
+  override.hc = NA
+)
 }
 \arguments{
 \item{eset}{expression set}

@@ -4,9 +4,14 @@
 \alias{hyperEnrichment}
 \title{Carry out set enrichment test based on hyper-geometric distribution}
 \usage{
-hyperEnrichment(drawn, categories,
-  ntotal = length(unique(unlist(categories))), min.drawsize = 4,
-  mht = TRUE, verbose = TRUE)
+hyperEnrichment(
+  drawn,
+  categories,
+  ntotal = length(unique(unlist(categories))),
+  min.drawsize = 4,
+  mht = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{drawn}{One or more sets of 'drawn' items (e.g., genes). Basically, a list of signatures.}

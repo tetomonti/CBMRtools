@@ -4,8 +4,16 @@
 \alias{run_limma}
 \title{wrapper for running limma with additional columns attached}
 \usage{
-run_limma(eset, treatment, cond, control, verbose = TRUE,
-  sort.by = "adj.P.Val", decreasing = FALSE, cutoff = NA)
+run_limma(
+  eset,
+  treatment,
+  cond,
+  control,
+  sort.by = "adj.P.Val",
+  decreasing = FALSE,
+  cutoff = NA,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{eset}{expression set object with gene expression}
@@ -16,13 +24,13 @@ run_limma(eset, treatment, cond, control, verbose = TRUE,
 
 \item{control}{value in treatment specifying the control condition}
 
-\item{verbose}{whether to display additional columns in report table}
-
 \item{sort.by}{column to sort by}
 
 \item{decreasing}{direction for sorting}
 
 \item{cutoff}{threshold value for keeping results}
+
+\item{verbose}{whether to display additional columns in report table}
 }
 \description{
 wrapper for running limma with additional columns attached
@@ -31,6 +39,6 @@ wrapper for running limma with additional columns attached
 data(eSet.brca.100)
 eset<-eSet.brca.100
 eset<-eset[, eset$ER_status \%in\% c("Positive", "Negative")]
-res<-run_limma(eset = eset, treatment = "ER_status", cond = "Positive", 
+res<-run_limma(eset = eset, treatment = "ER_status", cond = "Positive",
 	control = "Negative", verbose = TRUE, sort.by = "adj.P.Val", decreasing = FALSE, cutoff = 0.05)
 }

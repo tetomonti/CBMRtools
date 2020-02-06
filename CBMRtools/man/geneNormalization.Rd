@@ -4,8 +4,7 @@
 \alias{geneNormalization}
 \title{geneNormalization}
 \usage{
-geneNormalization(norm, base, norm.sub = NULL, base.sub = NULL,
-  robust = FALSE)
+geneNormalization(norm, base, norm.sub = NULL, base.sub = NULL, robust = FALSE)
 }
 \arguments{
 \item{norm}{dataset to normalize}

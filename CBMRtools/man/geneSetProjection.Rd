@@ -4,9 +4,17 @@
 \alias{geneSetProjection}
 \title{geneSetProjection}
 \usage{
-geneSetProjection(dat, pairing, GS, method = c("ks", "logistic", "median",
-  "mean"), collapse = TRUE, weighted = TRUE, absolute = FALSE,
-  min.gset = 5, verbose = TRUE)
+geneSetProjection(
+  dat,
+  pairing,
+  GS,
+  method = c("ks", "logistic", "median", "mean"),
+  collapse = TRUE,
+  weighted = TRUE,
+  absolute = FALSE,
+  min.gset = 5,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{dat}{ExpressionSet data object ( require(biobase) )}

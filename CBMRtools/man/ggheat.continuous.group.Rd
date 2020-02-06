@@ -4,10 +4,23 @@
 \alias{ggheat.continuous.group}
 \title{\code{ggheat.continuous.group} ggheatmap function for plotting groups of esets, within-group column clustering}
 \usage{
-ggheat.continuous.group(esetlist, hclist, hrlist, hmcolors,
-  hmtitle = "expression", col_lab, col_legend, ylabstr = "", fout,
-  p.heights = c(1.5, 0.5, 5), xsize = 4, ysize = 4, ysizelab = 7,
-  xleft = 0.15, xright = 0.24)
+ggheat.continuous.group(
+  esetlist,
+  hclist,
+  hrlist,
+  hmcolors,
+  hmtitle = "expression",
+  col_lab,
+  col_legend,
+  ylabstr = "",
+  fout,
+  p.heights = c(1.5, 0.5, 5),
+  xsize = 4,
+  ysize = 4,
+  ysizelab = 7,
+  xleft = 0.15,
+  xright = 0.24
+)
 }
 \arguments{
 \item{esetlist}{list of expression sets, see ?heatmap.make.groups for preprocessing}

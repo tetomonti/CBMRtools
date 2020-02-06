@@ -4,8 +4,15 @@
 \alias{run_deseq}
 \title{Run DESeq2 on eset object}
 \usage{
-run_deseq(eset, class_id, control, treatment, verbose = TRUE,
-  sortByPValue = TRUE, FDRcutoff = NULL)
+run_deseq(
+  eset,
+  class_id,
+  control,
+  treatment,
+  verbose = TRUE,
+  sortByPValue = TRUE,
+  FDRcutoff = NULL
+)
 }
 \arguments{
 \item{eset}{expression set object with raw count data}
@@ -21,8 +28,6 @@ run_deseq(eset, class_id, control, treatment, verbose = TRUE,
 \item{sortByPValue}{whether to sort results by nominal p-value, if verbose = TRUE}
 
 \item{FDRcutoff}{FDR threshold for filtering results, if verbose = TRUE}
-
-\item{control}{value in treatment specifying the control condition}
 }
 \description{
 Run DESeq2 on eset object

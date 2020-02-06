@@ -4,15 +4,37 @@
 \alias{cbmGSEA}
 \title{cbmGSEA}
 \usage{
-cbmGSEA(eSet = NULL, rnkScore = NULL, pheno = NULL, tag = NULL,
-  cond = NULL, control = NULL, geneId = NULL, gSet, minGset = 5,
-  nperm = 100, score = c("tScore", "delta"), do.abs = FALSE,
-  robust = FALSE, method = c("pearson", "spearman", "euclidean"),
-  alternative = c("two.sided", "greater", "less"), weighted = FALSE,
-  weight.p = 1, smoother = 1, clsLev = c("neg", "pos"), confound = NULL,
-  seed = NULL, do.pval = !weighted, exhaustive = FALSE,
-  do.plot = !is.null(plot.name), plot.name = NULL, plot.dev = pdf,
-  topG = 20, verbose = FALSE, ...)
+cbmGSEA(
+  eSet = NULL,
+  rnkScore = NULL,
+  pheno = NULL,
+  tag = NULL,
+  cond = NULL,
+  control = NULL,
+  geneId = NULL,
+  gSet,
+  minGset = 5,
+  nperm = 100,
+  score = c("tScore", "delta"),
+  do.abs = FALSE,
+  robust = FALSE,
+  method = c("pearson", "spearman", "euclidean"),
+  alternative = c("two.sided", "greater", "less"),
+  weighted = FALSE,
+  weight.p = 1,
+  smoother = 1,
+  clsLev = c("neg", "pos"),
+  confound = NULL,
+  seed = NULL,
+  do.pval = !weighted,
+  exhaustive = FALSE,
+  do.plot = !is.null(plot.name),
+  plot.name = NULL,
+  plot.dev = pdf,
+  topG = 20,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{eSet}{an [m-genes x n-samples] matrix}
